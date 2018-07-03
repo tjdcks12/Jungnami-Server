@@ -30,7 +30,6 @@ router.get('/', async(req, res, next) => {
     result.push(userinfo);
   }
 
-
   res.json({
     data : result,
     message : "data ok",
