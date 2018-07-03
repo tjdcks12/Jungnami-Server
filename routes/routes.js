@@ -22,6 +22,8 @@ router.use('/search', require('./search/search_routes'));
 // User
 router.use('/user', require('./user/user_routes'));
 
+// Test
+router.use('/test', require('./test/test_routes'));
 
 
 module.exports = router;
