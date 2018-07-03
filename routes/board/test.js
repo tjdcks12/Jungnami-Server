@@ -1,4 +1,4 @@
-//test
+// 데이터 전송 test 및 양식
 
 var express = require('express');
 const router = express.Router();
@@ -11,16 +11,30 @@ router.get('/', async(req, res, next) => {
   console.log("test");
 
   let testsql = "SELECT * FROM user";
-  let result = await db.queryParamCnt_Arr(testsql,[]);
+  let userQuery = await db.queryParamCnt_Arr(testsql,[]);
 
-  if(result.length == 0){
-    console.log("test ok");
+  if(userQuery.length == 0){
+    console.log("query not ok");
   }else{
-    console.log("id : " + result[0].id);
+    console.log("query ok");
   }
 
+  var result = [];
+  for(var i=0; i<userQuery.length; i++){
+    var userinfo = {};
+
+    userinfo.id = userQuery[i].id;
+    userinfo.name = userQuery[i].name;
+    userinfo.nickname = userQuery[i].nickname;
+
+    result.push(userinfo);
+  }
+
+
   res.json({
-    data : result
+    data : result,
+    message : "data ok",
+    status : 200
   });
 });
 
