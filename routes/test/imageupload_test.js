@@ -27,11 +27,12 @@ router.post('/', upload.array('image'), async(req, res) => {
 	console.log(req.files);
 
   let testsql = "INSERT INTO board (board_user_id, content, img_url, board_shared) VALUES (?,?,?,?)";
-  let userQuery = await db.queryParamCnt_Arr(testsql,["1","이종찬",req.files[0].location,0]);
+  let queryResult = await db.queryParamCnt_Arr(testsql,["1","이종찬",req.files[0].location,0]);
 
 	res.status(201).send({
 		message : "Successfully Store files"
 	});
 });
+
 
 module.exports = router;
