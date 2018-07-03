@@ -1,8 +1,10 @@
+//test
+
 var express = require('express');
-var router = express.Router();
+const router = express.Router();
 
 const async = require('async');
-const db = require('../module/pool.js');
+const db = require('../../module/pool.js');
 
 /* database test */
 router.get('/', async(req, res, next) => {
