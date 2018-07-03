@@ -1,11 +1,25 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+const async = require('async');
+const db = require('../module/pool.js');
 
-//push test
+/* database test */
+router.get('/', async(req, res, next) => {
+  console.log("test");
+
+  let testsql = "SELECT * FROM user";
+  let result = await db.queryParamCnt_Arr(testsql,[]);
+
+  if(result.length == 0){
+    console.log("test ok");
+  }else{
+    console.log("id : " + result[0].id);
+  }
+
+  res.json({
+    data : result
+  });
+});
 
 module.exports = router;
