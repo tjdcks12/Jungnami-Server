@@ -1,5 +1,5 @@
-/* 정당별 호감/비호감 의원 리스트 */
-/*  /legislatorlist/legislatorlist */
+/* 지역별 호감/비호감 의원 리스트 */
+/*  /legislatorlist/region */
 /* 종찬 */
 
 var express = require('express');
@@ -8,7 +8,7 @@ const router = express.Router();
 const async = require('async');
 const db = require('../../module/pool.js');
 
-router.get('/:islike/:p_name', async(req, res, next) => {
+router.get('/:islike/:r_city', async(req, res, next) => {
   var cnt; // 의석 수
   const time = new Date();
   var data = []; // 응답할 데이터
@@ -34,17 +34,17 @@ router.get('/:islike/:p_name', async(req, res, next) => {
     }
 
     // 의석 수 가져오기
-    let select_legislatorcnt = "SELECT count(*) as cnt FROM legislator where l_party_name = ?";
-    let result_legislatorcnt = await db.queryParamCnt_Arr(select_legislatorcnt,[req.params.p_name]);
+    let select_legislatorcnt = "SELECT count(*) as cnt FROM legislator where region_city = ?";
+    let result_legislatorcnt = await db.queryParamCnt_Arr(select_legislatorcnt,[req.params.r_city]);
     cnt = result_legislatorcnt[0].cnt;
 
     //의원정보 가져오기
     let select_legislator = "SELECT id, name, region_city, region_state, profile_img_url, isPpresident, isLpresident, isPPpresident, score FROM legislator ";
     select_legislator += "LEFT JOIN (SELECT  lv_legislator_id, count(*) as score FROM legislatorVote ";
     select_legislator += "WHERE islike = ? GROUP BY lv_legislator_id) as lv ";
-    select_legislator += "ON legislator.id = lv.lv_legislator_id where legislator.l_party_name = ? ORDER BY score DESC";
+    select_legislator += "ON legislator.id = lv.lv_legislator_id where legislator.region_city = ? ORDER BY score DESC";
 
-    let result_legislator = await db.queryParamCnt_Arr(select_legislator,[req.params.islike, req.params.p_name]);
+    let result_legislator = await db.queryParamCnt_Arr(select_legislator,[req.params.islike, req.params.r_city]);
 
     // return할 result
     let result = [];
@@ -53,7 +53,7 @@ router.get('/:islike/:p_name', async(req, res, next) => {
 
       // 의원 id
       data.id = result_legislator[i].id;
-      
+
       // 이름
       data.name = result_legislator[i].name;
 
