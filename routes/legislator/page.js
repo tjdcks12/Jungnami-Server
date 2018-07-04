@@ -6,12 +6,11 @@ const router = express.Router();
 const async = require('async');
 const db = require('../../module/pool.js');
 
-/*  호감, 비호감 순 리스트  */
-/*  /ranking/rankinglist/:islike  */
-router.get('/:islike/:u_id', async(req, res, next) => {
+/*  국회의원 페이지  */
+/*  /legislator/page/:l_id  */
+router.get('/:l_id', async(req, res, next) => {
 
-  let islike =+ req.params.islike;
-  let u_id = req.params.u_id;
+  let l_id = req.params.u_id;
 
   try {
     let listSql = "SELECT * FROM legislator LEFT OUTER JOIN "
@@ -62,10 +61,9 @@ router.get('/:islike/:u_id', async(req, res, next) => {
         rankingInfo.info += listQuery[i].region_city + " ";
         rankingInfo.info += listQuery[i].region_state;
       }
-
+      
       rankingInfo.score = listQuery[i].score;
       rankingInfo.profileimg = listQuery[i].profile_img_url;
-      rankingInfo.mainimg = listQuery[i].main_img_url;
 
       for (var j=0; j<votedQuery.length; j++)
         if (listQuery[i].id == votedQuery[j].lv_legislator_id) {
@@ -74,20 +72,8 @@ router.get('/:islike/:u_id', async(req, res, next) => {
         }
         else
           rankingInfo.voted = false;
-
+      
       result.push(rankingInfo);
-    }
-
-    for(var i=0; i<result.length; i++) {
-      if (i==0) {
-        result[i].ranking = 1;
-      } else {
-        if(result[i].score == result[i-1].score) {
-          result[i].ranking = result[i-1].ranking;
-        } else if (result[i].score < result[i-1].score) {
-          result[i].ranking = i+1;
-        }
-      }
     }
 
     res.status(200).send({

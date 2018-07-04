@@ -7,12 +7,9 @@ const router = express.Router();
 router.use('/voting', require('./voting'));
 
 // 의원계정에 들어가기 (get)
-router.use('/page', require('./legislator_page'));
-/*
-// 후원하기
-router.use('/support', require('./support'));
+router.use('/page', require('./page'));
 
-// 항의하기
-router.use('/complaint', require('./complaint'));
-*/
+// 후원하기
+// router.use('/support', require('./support'));
+
 module.exports = router;
