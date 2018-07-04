@@ -1,3 +1,5 @@
+/* KIM JI YEON */
+
 var express = require('express');
 const router = express.Router();
 
@@ -5,7 +7,7 @@ const async = require('async');
 const db = require('../../module/pool.js');
 
 /*  호감, 비호감 순 리스트  */
-/*  /ranking/list/:islike  */
+/*  /ranking/rankinglist/:islike  */
 router.get('/:islike/:u_id', async(req, res, next) => {
 
   let islike =+ req.params.islike;
@@ -76,7 +78,7 @@ router.get('/:islike/:u_id', async(req, res, next) => {
       result.push(rankingInfo);
     }
 
-    for(var i=0; i<result.length; i++){
+    for(var i=0; i<result.length; i++) {
       if (i==0) {
         result[i].ranking = 1;
       } else {
