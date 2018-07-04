@@ -60,7 +60,7 @@ router.get('/:islike/:u_id', async(req, res, next) => {
         rankingInfo.info += listQuery[i].region_city + " ";
         rankingInfo.info += listQuery[i].region_state;
       }
-      
+
       rankingInfo.score = listQuery[i].score;
       rankingInfo.profileimg = listQuery[i].profile_img_url;
       rankingInfo.mainimg = listQuery[i].main_img_url;
@@ -72,7 +72,7 @@ router.get('/:islike/:u_id', async(req, res, next) => {
         }
         else
           rankingInfo.voted = false;
-      
+
       result.push(rankingInfo);
     }
 
