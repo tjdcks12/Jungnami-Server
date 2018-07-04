@@ -51,6 +51,9 @@ router.get('/:islike/:p_name', async(req, res, next) => {
     for(var i=0; i<result_legislator.length; i++){
       var data = {};
 
+      // 의원 id
+      data.id = result_legislator[i].id;
+      
       // 이름
       data.name = result_legislator[i].name;
 
