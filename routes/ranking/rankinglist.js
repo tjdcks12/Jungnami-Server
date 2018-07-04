@@ -5,7 +5,7 @@ const async = require('async');
 const db = require('../../module/pool.js');
 
 /*  호감, 비호감 순 리스트  */
-/*  /ranking/like/:islike  */
+/*  /ranking/list/:islike  */
 router.get('/:islike', async(req, res, next) => {
 
   let islike = req.params.islike;
