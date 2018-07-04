@@ -9,12 +9,16 @@ const db = require('../../module/pool.js');
 router.post('/', async(req, res, next) => {
 
   let u_id = req.body.u_id;
-  let l_id = req.body.l_id;
-  let islike = req.body.islike;
+  let l_id =+ req.body.l_id;
+  let islike =+ req.body.islike;
 
-  let insertSql = "insert into legislatorVote (lv_legislator_id, lv_user_id, islike) values (?, ?, ?);"
-  let insertQuery = await db.queryParamCnt_Arr(insertSql,[u_id, l_id, islike]);
+  console.log(u_id, l_id, islike)
+  
+  //let insertSql = "insert into legislatorVote (lv_legislator_id, lv_user_id, islike) values (?, ?, ?);"
+  //let insertQuery = await db.queryParamCnt_Arr(insertSql,[l_id, u_id, islike]);
 
+  //console.log(insertQuery)
+/*
   if(selectQuery.length == 0){
     console.log("query not ok");
   }else{
@@ -49,9 +53,9 @@ router.post('/', async(req, res, next) => {
     
     result.push(rankingInfo);
   }
-
+*/
   res.json({
-    data : result,
+    //data : result,
     message : "data ok",
     status : 200
   });
