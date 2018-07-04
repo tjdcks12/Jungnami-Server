@@ -7,4 +7,7 @@ router.use('/partylist', require('./partylist'));
 // 정당별 호감/비호감 의원 리스트
 router.use('/legislatorlist', require('./legislatorlist'));
 
+// 지역별 호감/비호감 의원 리스트
+router.use('/region', require('./region'));
+
 module.exports = router;
