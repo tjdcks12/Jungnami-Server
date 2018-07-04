@@ -1,3 +1,6 @@
+// 컨텐츠관련 썸네일, 카드뉴스 이미지 등록 양식
+// 종찬
+
 const express = require('express');
 const router = express.Router();
 
