@@ -11,7 +11,6 @@ const db = require('../../module/pool.js');
 router.get('/:islike/:p_name', async(req, res, next) => {
   var cnt; // 의석 수
   const time = new Date();
-  const currentTime = time.getFullYear() + "년 " + time.getMonth() + "월 " + time.getDate() + "일";
   var data = []; // 응답할 데이터
 
   // 의석 수 가져오기
@@ -19,7 +18,6 @@ router.get('/:islike/:p_name', async(req, res, next) => {
   let result_partycnt = await db.queryParamCnt_Arr(select_partycnt,[req.params.p_name]);
   cnt = result_partycnt[0].cnt;
 
-  console.log(currentTime);
   //의원정보 가져오기
   let select_legislator = "SELECT name, region_city, region_state, rank FROM legislator "
   select_legislator += "INNER JOIN (SELECT @rownum:=0) AS R "
@@ -33,7 +31,6 @@ router.get('/:islike/:p_name', async(req, res, next) => {
   res.status(200).json({
     data : {
       cnt : cnt,
-      currentTime : currentTime,
       legislator : result_legislator
     },
     message : "Success",
