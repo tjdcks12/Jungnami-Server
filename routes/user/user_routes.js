@@ -4,21 +4,21 @@ const express = require('express');
 const router = express.Router();
 
 
-/*
+// 소셜로그인 하기
+router.use('/login', require('./login'));
+
+
 // mypage 
-router.use('/mypage', require('./user/mypage'));
-*/
+router.use('/mypage', require('./mypage'));
 
 
 
 // follow 하기
-router.use('/follow', require('./user/follow'));
+router.use('/follow', require('./follow'));
+
 /*
 // follower list
 router.use('/followerlist', require('./user/followerlist'));
-
-router.use('/login', require('./login'));
-
 
 // following list
 router.use('/followinglist', require('./user/followinglist'));
