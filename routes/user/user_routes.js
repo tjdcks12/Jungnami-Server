@@ -3,6 +3,7 @@
 const express = require('express');
 const router = express.Router();
 
+
 /*
 // mypage 
 router.use('/mypage', require('./user/mypage'));
@@ -15,6 +16,9 @@ router.use('/follow', require('./user/follow'));
 /*
 // follower list
 router.use('/followerlist', require('./user/followerlist'));
+
+router.use('/login', require('./login'));
+
 
 // following list
 router.use('/followinglist', require('./user/followinglist'));

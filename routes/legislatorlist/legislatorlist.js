@@ -6,9 +6,22 @@ var express = require('express');
 const router = express.Router();
 
 const async = require('async');
+
+const jwt = require('../../module/jwt.js');
 const db = require('../../module/pool.js');
 
-router.get('/:userid/:islike/:p_name', async(req, res, next) => {
+router.get('/:islike/:p_name', async(req, res, next) => {
+
+  var id; // 사용자 email
+
+  const chkToken = jwt.verify(req.headers.authorization);
+  if(chkToken == -1) {
+    id = "";
+  }
+  else{
+    id = chkToken.id;
+  }
+  console.log(id);
   var cnt; // 의석 수
   const time = new Date();
   var data = []; // 응답할 데이터
@@ -18,7 +31,7 @@ router.get('/:userid/:islike/:p_name', async(req, res, next) => {
   try{
     // 투표 여부
     let select_vote = "SELECT lv_legislator_id FROM legislatorVote WHERE islike = ? AND lv_user_id = ?";
-    let result_vote = await db.queryParamCnt_Arr(select_vote, [req.params.islike, req.params.userid]);
+    let result_vote = await db.queryParamCnt_Arr(select_vote, [req.params.islike, id]);
     votedLegislator = result_vote;
 
     // 랭킹 계산하기
@@ -64,26 +77,25 @@ router.get('/:userid/:islike/:p_name', async(req, res, next) => {
       data.name = result_legislator[i].name;
 
       // 내용 (지역, 대표)
+      data.content = "";
       if(result_legislator[i].isPpresident == 1){
-        data.content = "당 대표";
+        data.content += "당 대표";
       }
-      else if(result_legislator[i].isLpresident == 1){
-        data.content = "원내 대표";
+      if(result_legislator[i].isLpresident == 1){
+        data.content += "원내 대표";
       }
-      else if(result_legislator[i].isPPpresident == 1){
-        data.content = "비례 대표";
-      }
-      else{
-        data.content = "";
-      }
-
-      if(data.content != ""){
-        if(result_legislator[i].region_city != "" || result_legislator[i].region_state != ""){
+      if(result_legislator[i].isPPpresident == 1){
+        if(data.content != ""){
           data.content += ", ";
         }
+        data.content += "비례 대표";
       }
-      if(result_legislator[i].region_city != "" || result_legislator[i].region_state != ""){
-        data.content += result_legislator[i].region_city + " " + result_legislator[i].region_state;
+
+      if (result_legislator[i].region_city != "") {  // 지역구+선거구
+        if(data.content != "")
+          data.content += ", "
+        data.content += result_legislator[i].region_city + " ";
+        data.content += result_legislator[i].region_state;
       }
 
       // 이미지
@@ -105,6 +117,9 @@ router.get('/:userid/:islike/:p_name', async(req, res, next) => {
           data.voted = true;
         }
       }
+
+      //점수
+      data.score = result_legislator[i].score;
 
       result.push(data);
     }
