@@ -77,26 +77,25 @@ router.get('/:islike/:p_name', async(req, res, next) => {
       data.name = result_legislator[i].name;
 
       // 내용 (지역, 대표)
+      data.content = "";
       if(result_legislator[i].isPpresident == 1){
-        data.content = "당 대표";
+        data.content += "당 대표";
       }
-      else if(result_legislator[i].isLpresident == 1){
-        data.content = "원내 대표";
+      if(result_legislator[i].isLpresident == 1){
+        data.content += "원내 대표";
       }
-      else if(result_legislator[i].isPPpresident == 1){
-        data.content = "비례 대표";
-      }
-      else{
-        data.content = "";
-      }
-
-      if(data.content != ""){
-        if(result_legislator[i].region_city != "" || result_legislator[i].region_state != ""){
+      if(result_legislator[i].isPPpresident == 1){
+        if(data.content != ""){
           data.content += ", ";
         }
+        data.content += "비례 대표";
       }
-      if(result_legislator[i].region_city != "" || result_legislator[i].region_state != ""){
-        data.content += result_legislator[i].region_city + " " + result_legislator[i].region_state;
+
+      if (result_legislator[i].region_city != "") {  // 지역구+선거구
+        if(data.content != "")
+          data.content += ", "
+        data.content += result_legislator[i].region_city + " ";
+        data.content += result_legislator[i].region_state;
       }
 
       // 이미지
@@ -118,6 +117,9 @@ router.get('/:islike/:p_name', async(req, res, next) => {
           data.voted = true;
         }
       }
+
+      //점수
+      data.score = result_legislator[i].score;
 
       result.push(data);
     }
