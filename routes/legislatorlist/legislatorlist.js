@@ -6,9 +6,22 @@ var express = require('express');
 const router = express.Router();
 
 const async = require('async');
+
+const jwt = require('../../module/jwt.js');
 const db = require('../../module/pool.js');
 
-router.get('/:userid/:islike/:p_name', async(req, res, next) => {
+router.get('/:islike/:p_name', async(req, res, next) => {
+
+  var id; // 사용자 email
+
+  const chkToken = jwt.verify(req.headers.authorization);
+  if(chkToken == -1) {
+    id = "";
+  }
+  else{
+    id = chkToken.id;
+  }
+  console.log(id);
   var cnt; // 의석 수
   const time = new Date();
   var data = []; // 응답할 데이터
@@ -18,7 +31,7 @@ router.get('/:userid/:islike/:p_name', async(req, res, next) => {
   try{
     // 투표 여부
     let select_vote = "SELECT lv_legislator_id FROM legislatorVote WHERE islike = ? AND lv_user_id = ?";
-    let result_vote = await db.queryParamCnt_Arr(select_vote, [req.params.islike, req.params.userid]);
+    let result_vote = await db.queryParamCnt_Arr(select_vote, [req.params.islike, id]);
     votedLegislator = result_vote;
 
     // 랭킹 계산하기
