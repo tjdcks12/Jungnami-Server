@@ -4,8 +4,26 @@ var express = require('express');
 var router = express.Router();
 const async = require('async');
 const db = require('../../module/pool.js');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+const aws = require('aws-sdk');
 
-router.post('/', async(req, res) => {
+aws.config.loadFromPath('../config/aws_config.json');
+
+const s3 = new aws.S3();
+
+const upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: 'myrubysbucket',
+        acl: 'public-read',
+        key: function(req, file, cb) {
+            cb(null, Date.now() + '.' + file.originalname.split('.').pop());
+        }
+    })
+});
+
+router.post('/', upload.array('image'), async(req, res) => {
 	try{
 		if(!(req.body.b_user_id && req.body.content && req.body.shared)){
 			res.status(403).send({
@@ -13,7 +31,7 @@ router.post('/', async(req, res) => {
 			});
 		}else{
 			let postboardQuery = 'INSERT INTO myjungnami.board(id, b_user_id, content, img_url, shared) VALUES (null, ?, ?, ?, ?)';
-			let data = await db.queryParamCnt_Arr(postboardQuery, [req.body.b_user_id, req.body.content, req.body.img_url, req.body.shared]);
+			let data = await db.queryParamCnt_Arr(postboardQuery, [req.body.b_user_id, req.body.content, req.files[0].location, req.body.shared]);
 
 			res.status(200).send({
 				"message" : "insert posting success",

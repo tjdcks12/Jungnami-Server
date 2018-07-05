@@ -1,5 +1,4 @@
 //커뮤니티 글 작성 화면 
-
 var express = require('express');
 var router = express.Router();
 const async = require('async');

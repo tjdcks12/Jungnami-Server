@@ -31,4 +31,6 @@ router.use('/makerecomment', require('./makerecomment'));
 //10. 게시판 대댓글 좋아요 
 router.use('/likerecomment', require('./likerecomment'));
 
+
+
 module.exports = router;
