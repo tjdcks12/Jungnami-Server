@@ -9,7 +9,7 @@ const jwt = require('../../module/jwt.js');
 
 
 /*  유저의 마이 페이지  */
-/*  /user/mapage/:u_id  */
+/*  /user/mapage/:mypage_id  */
 router.get('/:mypage_id', async(req, res, next) => {
 
   const chkToken = jwt.verify(req.headers.authorization);
