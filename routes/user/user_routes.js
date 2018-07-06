@@ -8,9 +8,6 @@ const router = express.Router();
 // mypage
 router.use('/mypage', require('./mypage'));
 
-// kakao Login
-router.use('/kakaologin', require('./kakaologin'))
-
 // facebook login
 router.use('/facebooklogin', require('./facebooklogin'))
 
@@ -25,6 +22,8 @@ router.use('/followerlist', require('./followerlist'));
 
 // following list
 router.use('/followinglist', require('./followinglist'));
+
+
 
 module.exports = router;
 

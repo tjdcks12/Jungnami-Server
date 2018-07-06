@@ -27,6 +27,8 @@ router.get('/:l_id', async(req, res, next) => {
       console.log("query ok");
     }
 
+
+
     // 호감 순 줄 세우기
     var likeRresult = [];
     for(var i=0; i<likeRankingQuery.length; i++){
@@ -39,16 +41,26 @@ router.get('/:l_id', async(req, res, next) => {
     }
     // 호감 순 랭킹 뽑기
     for(var i=0; i<likeRresult.length; i++) {
-      if (i==0) {
-        likeRresult[i].ranking = 1;
+      if (likeRresult[i].score == null) {
+          likeRresult[i].ranking = "-위"
       } else {
-        if(likeRresult[i].score == likeRresult[i-1].score) {
-          likeRresult[i].ranking = likeRresult[i-1].ranking;
-        } else if (likeRresult[i].score < likeRresult[i-1].score) {
-          likeRresult[i].ranking = i+1;
+
+        if (i==0) {
+          likeRresult[i].ranking = 1;
+        } else {
+
+          if(likeRresult[i].score == likeRresult[i-1].score) {
+            likeRresult[i].ranking = likeRresult[i-1].ranking;
+            continue;
+          } else if (likeRresult[i].score < likeRresult[i-1].score) {
+            likeRresult[i].ranking = i+1;
+          }
         }
+
+        likeRresult[i].ranking = (likeRresult[i].ranking).toString() + "위";
       }
     }
+
 
     // 비호감 순 줄 세우기
     var unlikeRresult = [];
@@ -61,15 +73,24 @@ router.get('/:l_id', async(req, res, next) => {
       unlikeRresult.push(rankingInfo);
     }
     // 비호감 순 랭킹 뽑기
-    for (var i=0; i<unlikeRresult.length; i++) {
-      if (i==0) {
-        unlikeRresult[i].ranking = 1;
+    for(var i=0; i<unlikeRresult.length; i++) {
+      if (unlikeRresult[i].score == null) {
+          unlikeRresult[i].ranking = "-위"
       } else {
-        if(unlikeRresult[i].score == unlikeRresult[i-1].score) {
-          unlikeRresult[i].ranking = unlikeRresult[i-1].ranking;
-        } else if (unlikeRresult[i].score < unlikeRresult[i-1].score) {
-          unlikeRresult[i].ranking = i+1;
+
+        if (i==0) {
+          unlikeRresult[i].ranking = 1;
+        } else {
+
+          if(unlikeRresult[i].score == unlikeRresult[i-1].score) {
+            unlikeRresult[i].ranking = unlikeRresult[i-1].ranking;
+            continue;
+          } else if (unlikeRresult[i].score < unlikeRresult[i-1].score) {
+            unlikeRresult[i].ranking = i+1;
+          }
         }
+
+        unlikeRresult[i].ranking = (unlikeRresult[i].ranking).toString() + "위";
       }
     }
 
@@ -83,29 +104,9 @@ router.get('/:l_id', async(req, res, next) => {
         result.l_id = likeRresult[i].id;
         result.l_name = likeRankingQuery[i].name;
         result.party_name = likeRankingQuery[i].l_party_name;
-
-        result.info = '';
-        if (likeRankingQuery[i].isPpresident) { // 당대표
-          result.info += "당 대표"
-        }
-        if (likeRankingQuery[i].isLpresident) { // 원내대표
-          result.info += "원내 대표"
-        }
-        if (likeRankingQuery[i].isPPpresident) { // 비례대표
-          if (result.info != '')
-            result.info += ", "
-          result.info += "비례 대표"
-        }
-        if (likeRankingQuery[i].region_city != "") {  // 지역구+선거구
-          if (result.info != '')
-            result.info += ", "
-          result.info += likeRankingQuery[i].region_city + " ";
-          result.info += likeRankingQuery[i].region_state;
-        }
-
+        result.position = likeRankingQuery[i].position; 
         result.profileimg = likeRankingQuery[i].profile_img_url;
         result.like_ranking = likeRresult[i].ranking;
-        result.like_score = likeRresult[i].score;
 
         break;
       }
@@ -115,7 +116,6 @@ router.get('/:l_id', async(req, res, next) => {
       if(unlikeRresult[i].id == l_id) {
 
         result.unlike_ranking = unlikeRresult[i].ranking;
-        result.unlike_score = unlikeRresult[i].score;
 
         break;
       }

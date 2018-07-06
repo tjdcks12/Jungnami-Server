@@ -60,11 +60,16 @@ router.get('/:f_id', async(req, res, next) => {
 
         for (var j=0; j<followingSelectQuery.length; j++) {
 
-          if(followinglistQuery[i].f_following_id == followingSelectQuery[j].f_following_id) {
-            r.isMyFollowing = "팔로잉"; // 팔로잉 중이에요
+          // 내가 이 사람을 팔로잉 중이에요  
+          if(followinglistQuery[i].f_following_id == followingSelectQuery[j].f_following_id) { 
+            if (follower_id == u_id) // 나의 팔로잉 목록이라면, 팔로잉 취소할래?
+              r.isMyFollowing = "취소"; 
+            else
+              r.isMyFollowing = "팔로잉"; 
             break;
-          } else if (followinglistQuery[i].f_following_id == u_id) {
-            r.isMyFollowing = "나"; // 나다!
+          } // 나다!
+          else if (followinglistQuery[i].f_following_id == u_id) {
+            r.isMyFollowing = "나"; 
             break;
           }
         }

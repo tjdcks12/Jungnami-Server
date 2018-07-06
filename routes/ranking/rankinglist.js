@@ -6,21 +6,25 @@ const router = express.Router();
 const async = require('async');
 const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
+const addComma = require('../../module/addComma.js');
 
 
 /*  호감, 비호감 순 리스트  */
-/*  /ranking/rankinglist/:islike  */
+/*  /ranking/list/:islike  */
 router.get('/:islike', async(req, res, next) => {
 
   const chkToken = jwt.verify(req.headers.authorization);
 
+  let u_id;
+
   if(chkToken == -1) {
-      res.status(401).send({
-          message : "Access Denied"
-      });
+    u_id = null;
+  } else {
+    u_id = chkToken.id;  // 현재 토큰 있는 
   }
 
-  let u_id = chkToken.id; 
+  console.log(u_id)
+
   let islike =+ req.params.islike;
 
   try {
@@ -39,7 +43,7 @@ router.get('/:islike', async(req, res, next) => {
 
     let votedSql = "SELECT * FROM legislatorVote WHERE lv_user_id = ? AND islike = ?;"
     let votedQuery = await db.queryParamCnt_Arr(votedSql, [u_id, islike]);
-
+console.log(votedQuery)
     var result = [];
     for(var i=0; i<listQuery.length; i++){
       var rankingInfo = {};
@@ -47,30 +51,18 @@ router.get('/:islike', async(req, res, next) => {
       rankingInfo.l_id = listQuery[i].id;
       rankingInfo.l_name = listQuery[i].name;
       rankingInfo.party_name = listQuery[i].l_party_name;
+      rankingInfo.position = listQuery[i].position; 
+      rankingInfo.score = listQuery[i].score; 
 
-      rankingInfo.info = '';
-      if (listQuery[i].isPpresident) { // 당대표
-        rankingInfo.info += "당 대표"
-      }
-      if (listQuery[i].isLpresident) { // 원내대표
-        rankingInfo.info += "원내 대표"
-      }
-      if (listQuery[i].isPPpresident) { // 비례대표
-        if (rankingInfo.info != '')
-          rankingInfo.info += ", "
-        rankingInfo.info += "비례 대표"
-      }
-      if (listQuery[i].region_city != "") {  // 지역구+선거구
-        if (rankingInfo.info != '')
-          rankingInfo.info += ", "
-        rankingInfo.info += listQuery[i].region_city + " ";
-        rankingInfo.info += listQuery[i].region_state;
+      if (rankingInfo.score == null){
+        rankingInfo.scoretext = null;
+      } else {
+        rankingInfo.scoretext = addComma.addComma(rankingInfo.score);
       }
 
-      rankingInfo.score = listQuery[i].score;
       rankingInfo.profileimg = listQuery[i].profile_img_url;
       rankingInfo.mainimg = listQuery[i].main_img_url;
-
+      
       for (var j=0; j<votedQuery.length; j++)
         if (listQuery[i].id == votedQuery[j].lv_legislator_id) {
           rankingInfo.voted = true;
@@ -80,25 +72,30 @@ router.get('/:islike', async(req, res, next) => {
           rankingInfo.voted = false;
 
       result.push(rankingInfo);
-    }
+    } 
 
-    /* 숫자 , 나누기 */
-    function addComma(num) {
-      var regexp = /\B(?=(\d{3})+(?!\d))/g;
-       return num.toString().replace(regexp, ',');
-    }
-
+    // 순위 뽑기
     for(var i=0; i<result.length; i++) {
-      if (i==0) {
-        result[i].ranking = 1;
+      if (result[i].score == null) {
+          result[i].ranking = "-위"
       } else {
-        if(result[i].score == result[i-1].score) {
-          result[i].ranking = result[i-1].ranking;
-        } else if (result[i].score < result[i-1].score) {
-          result[i].ranking = i+1;
+
+        if (i==0) {
+          result[i].ranking = 1;
+        } else {
+
+          if(result[i].score == result[i-1].score) {
+            result[i].ranking = result[i-1].ranking;
+            continue;
+          } else if (result[i].score < result[i-1].score) {
+            result[i].ranking = i+1;
+          }
         }
+
+        result[i].ranking = (result[i].ranking).toString() + "위";
       }
     }
+
 
     res.status(200).send({
         message : "Select Data Success",
