@@ -10,6 +10,9 @@ router.use('/login', require('./login'));
 // mypage 
 router.use('/mypage', require('./mypage'));
 
+// 내 프로필 수정하기
+router.use('/mypage/editprofile', require('./editprofile'));
+
 
 
 // follow 하기

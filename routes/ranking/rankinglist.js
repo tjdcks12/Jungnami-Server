@@ -47,27 +47,8 @@ router.get('/:islike', async(req, res, next) => {
       rankingInfo.l_id = listQuery[i].id;
       rankingInfo.l_name = listQuery[i].name;
       rankingInfo.party_name = listQuery[i].l_party_name;
-
-      rankingInfo.info = '';
-      if (listQuery[i].isPpresident) { // 당대표
-        rankingInfo.info += "당 대표"
-      }
-      if (listQuery[i].isLpresident) { // 원내대표
-        rankingInfo.info += "원내 대표"
-      }
-      if (listQuery[i].isPPpresident) { // 비례대표
-        if (rankingInfo.info != '')
-          rankingInfo.info += ", "
-        rankingInfo.info += "비례 대표"
-      }
-      if (listQuery[i].region_city != "") {  // 지역구+선거구
-        if (rankingInfo.info != '')
-          rankingInfo.info += ", "
-        rankingInfo.info += listQuery[i].region_city + " ";
-        rankingInfo.info += listQuery[i].region_state;
-      }
-
-      rankingInfo.score = listQuery[i].score;
+      rankingInfo.position = listQuery[i].position; 
+      rankingInfo.score = listQuery[i].score; 
       rankingInfo.profileimg = listQuery[i].profile_img_url;
       rankingInfo.mainimg = listQuery[i].main_img_url;
 
@@ -80,23 +61,26 @@ router.get('/:islike', async(req, res, next) => {
           rankingInfo.voted = false;
 
       result.push(rankingInfo);
-    }
-
-    /* 숫자 , 나누기 */
-    function addComma(num) {
-      var regexp = /\B(?=(\d{3})+(?!\d))/g;
-       return num.toString().replace(regexp, ',');
-    }
+    } 
 
     for(var i=0; i<result.length; i++) {
-      if (i==0) {
-        result[i].ranking = 1;
+      if (result[i].score == null) {
+          result[i].ranking = "-위"
       } else {
-        if(result[i].score == result[i-1].score) {
-          result[i].ranking = result[i-1].ranking;
-        } else if (result[i].score < result[i-1].score) {
-          result[i].ranking = i+1;
+
+        if (i==0) {
+          result[i].ranking = 1;
+        } else {
+
+          if(result[i].score == result[i-1].score) {
+            result[i].ranking = result[i-1].ranking;
+            continue;
+          } else if (result[i].score < result[i-1].score) {
+            result[i].ranking = i+1;
+          }
         }
+
+        result[i].ranking = (result[i].ranking).toString() + "위";
       }
     }
 

@@ -6,6 +6,7 @@ const router = express.Router();
 const async = require('async');
 const db = require('../../module/pool.js');
 
+
 /*  의원에게 투표하기 버튼 눌렀을 때  */
 /*  /legislator/voting/:u_id  */
 router.get('/:u_id', async(req, res, next) => {
@@ -33,7 +34,7 @@ router.get('/:u_id', async(req, res, next) => {
 
 
 /*  의원에게 투표 완료하고 나서  */
-/*  /legislator/voting/:u_id  */
+/*  /legislator/voting  */
 router.post('/', async(req, res, next) => {
 
   try {
