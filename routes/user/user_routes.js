@@ -4,13 +4,15 @@ const express = require('express');
 const router = express.Router();
 
 
-// 소셜로그인 하기
-router.use('/login', require('./login'));
 
-// mypage 
+// mypage
 router.use('/mypage', require('./mypage'));
 
+// kakao Login
+router.use('/kakaologin', require('./kakaologin'))
 
+// facebook login
+router.use('/facebooklogin', require('./facebooklogin'))
 
 // follow 하기
 router.use('/follow', require('./follow'));
