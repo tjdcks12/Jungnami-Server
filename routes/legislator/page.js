@@ -31,7 +31,6 @@ router.get('/:l_id', async(req, res, next) => {
 
     // 호감 순 줄 세우기
     var likeRresult = [];
-    var likeRank = [];
     for(var i=0; i<likeRankingQuery.length; i++){
       var rankingInfo = {};
 
