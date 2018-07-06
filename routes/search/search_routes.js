@@ -13,4 +13,12 @@ router.use('/community', require('./community'));
 // 컨텐츠 검색
 router.use('/contents', require('./contents'));
 
+
+// 팔로워 검색
+router.use('/follower', require('./follower'));
+
+// 팔로우 검색
+router.use('/following', require('./following'));
+
+
 module.exports = router;
