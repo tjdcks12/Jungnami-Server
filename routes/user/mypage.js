@@ -36,6 +36,7 @@ router.get('/:mypage_id', async(req, res, next) => {
     }else{
       console.log("query ok");
 
+      result.mypage_id = mypage_id;
       result.nickname = selectQuery[0].nickname;
       result.img_url = selectQuery[0].img_url;
 

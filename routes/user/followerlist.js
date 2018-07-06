@@ -72,8 +72,6 @@ router.get('/:f_id', async(req, res, next) => {
       }
     }
 
-    console.log(result);
-
     res.status(200).send({
         message : "Select Data Success",
         data : result
