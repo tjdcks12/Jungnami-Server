@@ -4,12 +4,13 @@ const express = require('express');
 const router = express.Router();
 
 
+// 소셜로그인 하기
+router.use('/login', require('./login'));
 
 // mypage
 router.use('/mypage', require('./mypage'));
 
-// facebook login
-router.use('/facebooklogin', require('./facebooklogin'))
+
 
 // follow 하기
 router.use('/follow', require('./follow'));
@@ -22,8 +23,6 @@ router.use('/followerlist', require('./followerlist'));
 
 // following list
 router.use('/followinglist', require('./followinglist'));
-
-
 
 module.exports = router;
 
