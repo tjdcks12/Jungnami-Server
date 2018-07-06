@@ -5,13 +5,23 @@ const router = express.Router();
 
 const async = require('async');
 const db = require('../../module/pool.js');
+const jwt = require('../../module/jwt.js');
+
 
 /*  호감, 비호감 순 리스트  */
 /*  /ranking/rankinglist/:islike  */
-router.get('/:islike/:u_id', async(req, res, next) => {
+router.get('/:islike', async(req, res, next) => {
 
+  const chkToken = jwt.verify(req.headers.authorization);
+
+  if(chkToken == -1) {
+      res.status(401).send({
+          message : "Access Denied"
+      });
+  }
+
+  let u_id = chkToken.id; 
   let islike =+ req.params.islike;
-  let u_id = req.params.u_id;
 
   try {
     let listSql = "SELECT * FROM legislator LEFT OUTER JOIN "
@@ -29,12 +39,6 @@ router.get('/:islike/:u_id', async(req, res, next) => {
 
     let votedSql = "SELECT * FROM legislatorVote WHERE lv_user_id = ? AND islike = ?;"
     let votedQuery = await db.queryParamCnt_Arr(votedSql, [u_id, islike]);
-
-    if(listQuery.length == 0){
-      console.log("query not ok");
-    }else{
-      console.log("query ok");
-    }
 
     var result = [];
     for(var i=0; i<listQuery.length; i++){
@@ -76,6 +80,12 @@ router.get('/:islike/:u_id', async(req, res, next) => {
           rankingInfo.voted = false;
 
       result.push(rankingInfo);
+    }
+
+    /* 숫자 , 나누기 */
+    function addComma(num) {
+      var regexp = /\B(?=(\d{3})+(?!\d))/g;
+       return num.toString().replace(regexp, ',');
     }
 
     for(var i=0; i<result.length; i++) {

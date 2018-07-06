@@ -53,7 +53,7 @@ router.post('/', async(req, res, next) => {
     let v_cnt =+ selectQuery[0].voting_cnt;
     if (v_cnt > 0) {
 
-      let insertSql = "INSERT INTO legislatorVote (lv_legislator_id, lv_user_id, islike) values (?, ?, ?);"
+      let insertSql = "INSERT INTO legislatorVote (lv_legislator_id, lv_user_id, islike) VALUES (?, ?, ?);"
       let insertQuery = await db.queryParamCnt_Arr(insertSql,[l_id, u_id, islike]);
 
       v_cnt -= 1;

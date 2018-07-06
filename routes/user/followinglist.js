@@ -42,7 +42,7 @@ router.get('/:f_id', async(req, res, next) => {
 
     let followingSelectQuery = await db.queryParamCnt_Arr(followingSelectSql,[u_id]);
 
-    var result = []; // follower_id, follower_nickname, follower_img_url, isMyFollowing
+    var result = []; // following_id, following_nickname, following_img_url, isMyFollowing
 
 
     if(followingSelectQuery.length == 0) {
@@ -54,8 +54,8 @@ router.get('/:f_id', async(req, res, next) => {
         var r = {};
 
         r.following_id = followinglistQuery[i].f_following_id;
-        r.follower_nickname = followinglistQuery[i].nickname;
-        r.follower_img_url = followinglistQuery[i].img_url;
+        r.following_nickname = followinglistQuery[i].nickname;
+        r.following_img_url = followinglistQuery[i].img_url;
         r.isMyFollowing = "팔로우"; // 팔로우 하세요
 
         for (var j=0; j<followingSelectQuery.length; j++) {
@@ -71,8 +71,6 @@ router.get('/:f_id', async(req, res, next) => {
         result.push(r);
       }
     }
-
-    console.log(result);
 
     res.status(200).send({
         message : "Select Data Success",

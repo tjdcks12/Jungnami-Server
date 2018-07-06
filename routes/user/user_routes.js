@@ -15,6 +15,9 @@ router.use('/mypage', require('./mypage'));
 // follow 하기
 router.use('/follow', require('./follow'));
 
+// unfollow 하기
+router.use('/unfollow', require('./unfollow'));
+
 // follower list
 router.use('/followerlist', require('./followerlist'));
 
