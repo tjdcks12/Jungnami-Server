@@ -31,6 +31,7 @@ router.get('/:l_id', async(req, res, next) => {
 
     // 호감 순 줄 세우기
     var likeRresult = [];
+    var likeRank = [];
     for(var i=0; i<likeRankingQuery.length; i++){
       var rankingInfo = {};
 
@@ -106,7 +107,7 @@ router.get('/:l_id', async(req, res, next) => {
         result.party_name = likeRankingQuery[i].l_party_name;
         result.position = likeRankingQuery[i].position; 
         result.profileimg = likeRankingQuery[i].profile_img_url;
-        result.like_ranking = likeRresult[i].ranking;
+        result.ranking = "호감 " + likeRresult[i].ranking + " / 비호감 ";
 
         break;
       }
@@ -115,7 +116,7 @@ router.get('/:l_id', async(req, res, next) => {
     for (var i=0; i<unlikeRresult.length; i++) {
       if(unlikeRresult[i].id == l_id) {
 
-        result.unlike_ranking = unlikeRresult[i].ranking;
+        result.ranking += unlikeRresult[i].ranking;
 
         break;
       }
