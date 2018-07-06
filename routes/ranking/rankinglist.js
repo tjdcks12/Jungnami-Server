@@ -6,21 +6,25 @@ const router = express.Router();
 const async = require('async');
 const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
+const addComma = require('../../module/addComma.js');
 
 
 /*  호감, 비호감 순 리스트  */
-/*  /ranking/rankinglist/:islike  */
+/*  /ranking/list/:islike  */
 router.get('/:islike', async(req, res, next) => {
 
   const chkToken = jwt.verify(req.headers.authorization);
 
+  let u_id;
+
   if(chkToken == -1) {
-      res.status(401).send({
-          message : "Access Denied"
-      });
+    u_id = null;
+  } else {
+    u_id = chkToken.id;  // 현재 토큰 있는 
   }
 
-  let u_id = chkToken.id; 
+  console.log(u_id)
+
   let islike =+ req.params.islike;
 
   try {
@@ -39,7 +43,7 @@ router.get('/:islike', async(req, res, next) => {
 
     let votedSql = "SELECT * FROM legislatorVote WHERE lv_user_id = ? AND islike = ?;"
     let votedQuery = await db.queryParamCnt_Arr(votedSql, [u_id, islike]);
-
+console.log(votedQuery)
     var result = [];
     for(var i=0; i<listQuery.length; i++){
       var rankingInfo = {};
@@ -49,9 +53,16 @@ router.get('/:islike', async(req, res, next) => {
       rankingInfo.party_name = listQuery[i].l_party_name;
       rankingInfo.position = listQuery[i].position; 
       rankingInfo.score = listQuery[i].score; 
+
+      if (rankingInfo.score == null){
+        rankingInfo.scoretext = null;
+      } else {
+        rankingInfo.scoretext = addComma.addComma(rankingInfo.score);
+      }
+
       rankingInfo.profileimg = listQuery[i].profile_img_url;
       rankingInfo.mainimg = listQuery[i].main_img_url;
-
+      
       for (var j=0; j<votedQuery.length; j++)
         if (listQuery[i].id == votedQuery[j].lv_legislator_id) {
           rankingInfo.voted = true;
@@ -63,6 +74,7 @@ router.get('/:islike', async(req, res, next) => {
       result.push(rankingInfo);
     } 
 
+    // 순위 뽑기
     for(var i=0; i<result.length; i++) {
       if (result[i].score == null) {
           result[i].ranking = "-위"
@@ -83,6 +95,7 @@ router.get('/:islike', async(req, res, next) => {
         result[i].ranking = (result[i].ranking).toString() + "위";
       }
     }
+
 
     res.status(200).send({
         message : "Select Data Success",

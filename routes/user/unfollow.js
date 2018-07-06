@@ -8,7 +8,7 @@ const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 
 
-/*  유저가 유저를 언팔로우하기  */
+/*  내가 다른 유저를 언팔로우하기  */
 /*  /user/unfollow/  */
 router.post('/', async(req, res, next) => {
 

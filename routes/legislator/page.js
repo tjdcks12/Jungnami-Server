@@ -107,7 +107,6 @@ router.get('/:l_id', async(req, res, next) => {
         result.position = likeRankingQuery[i].position; 
         result.profileimg = likeRankingQuery[i].profile_img_url;
         result.like_ranking = likeRresult[i].ranking;
-        result.like_score = likeRresult[i].score;
 
         break;
       }
@@ -117,7 +116,6 @@ router.get('/:l_id', async(req, res, next) => {
       if(unlikeRresult[i].id == l_id) {
 
         result.unlike_ranking = unlikeRresult[i].ranking;
-        result.unlike_score = unlikeRresult[i].score;
 
         break;
       }

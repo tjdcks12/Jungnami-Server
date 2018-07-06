@@ -11,7 +11,7 @@ router.use('/login', require('./login'));
 router.use('/mypage', require('./mypage'));
 
 // 내 프로필 수정하기
-router.use('/mypage/editprofile', require('./editprofile'));
+router.use('/editprofile', require('./editprofile'));
 
 
 
@@ -26,6 +26,8 @@ router.use('/followerlist', require('./followerlist'));
 
 // following list
 router.use('/followinglist', require('./followinglist'));
+
+
 
 module.exports = router;
 

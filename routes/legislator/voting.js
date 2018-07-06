@@ -5,14 +5,22 @@ const router = express.Router();
 
 const async = require('async');
 const db = require('../../module/pool.js');
+const jwt = require('../../module/jwt.js');
 
 
 /*  의원에게 투표하기 버튼 눌렀을 때  */
-/*  /legislator/voting/:u_id  */
-router.get('/:u_id', async(req, res, next) => {
+/*  /legislator/voting/  */
+router.get('/', async(req, res, next) => {
 
-  let u_id = req.params.u_id;
+  const chkToken = jwt.verify(req.headers.authorization);
 
+  if(chkToken == -1) {
+      res.status(401).send({
+          message : "Access Denied"
+      });
+  }
+
+  let u_id = chkToken.id; 
   let selectSql = "SELECT voting_cnt FROM user WHERE id = ?;"
   let selectQuery = await db.queryParamCnt_Arr(selectSql,[u_id]);
 
@@ -38,7 +46,16 @@ router.get('/:u_id', async(req, res, next) => {
 router.post('/', async(req, res, next) => {
 
   try {
-    let u_id = req.body.u_id;
+
+    const chkToken = jwt.verify(req.headers.authorization);
+
+    if(chkToken == -1) {
+        res.status(401).send({
+            message : "Access Denied"
+        });
+    }
+
+    let u_id = chkToken.id;
     let l_id =+ req.body.l_id;
     let islike =+ req.body.islike;
 
@@ -65,7 +82,11 @@ router.post('/', async(req, res, next) => {
       res.status(201).send({
         message : "Insert Data Success"
       });
-    } 
+    } else if (v_cnt <= 0) { // 투표권이 부족해요
+      res.status(304).send({
+        message : "my voting count is zero"
+      });
+    }
 
   } catch(error) {
     res.status(500).send({
