@@ -4,11 +4,20 @@ var express = require('express');
 const router = express.Router();
 
 const async = require('async');
+const jwt = require('../../module/jwt.js');
 const db = require('../../module/pool.js');
 
 /*  국회의원 페이지  */
 /*  /legislator/page/:l_id  */
 router.get('/:l_id', async(req, res, next) => {
+
+  let u_id;
+
+  if(chkToken == -1) {
+    u_id = '';
+  } else {
+    u_id = chkToken.id;
+  }
 
   let l_id =+ req.params.l_id;
 

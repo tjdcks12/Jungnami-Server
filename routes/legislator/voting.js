@@ -80,11 +80,11 @@ router.post('/', async(req, res, next) => {
       let updateQuery = await db.queryParamCnt_Arr(updateSql,[v_cnt, u_id]);
 
       res.status(201).send({
-        message : "Insert Data Success"
+        message : "Insert and Update Data Success"
       });
     } else if (v_cnt <= 0) { // 투표권이 부족해요
       res.status(304).send({
-        message : "my voting count is zero"
+        message : "I don't have enough voting_cnt"
       });
     }
 
