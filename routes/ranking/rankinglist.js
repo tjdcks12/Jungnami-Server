@@ -18,12 +18,10 @@ router.get('/:islike', async(req, res, next) => {
   let u_id;
 
   if(chkToken == -1) {
-    u_id = null;
+    u_id = '';
   } else {
-    u_id = chkToken.id;  // 현재 토큰 있는 
+    u_id = chkToken.id;
   }
-
-  console.log(u_id)
 
   let islike =+ req.params.islike;
 
@@ -43,7 +41,7 @@ router.get('/:islike', async(req, res, next) => {
 
     let votedSql = "SELECT * FROM legislatorVote WHERE lv_user_id = ? AND islike = ?;"
     let votedQuery = await db.queryParamCnt_Arr(votedSql, [u_id, islike]);
-console.log(votedQuery)
+
     var result = [];
     for(var i=0; i<listQuery.length; i++){
       var rankingInfo = {};
@@ -57,12 +55,14 @@ console.log(votedQuery)
       if (rankingInfo.score == null){
         rankingInfo.scoretext = null;
       } else {
-        rankingInfo.scoretext = addComma.addComma(rankingInfo.score);
+        rankingInfo.scoretext = addComma.addComma(rankingInfo.score) + " 표";
       }
 
       rankingInfo.profileimg = listQuery[i].profile_img_url;
       rankingInfo.mainimg = listQuery[i].main_img_url;
-      
+
+      // 투표여부 필요없음 : 어차피 했건 안했건 동일하게 보여줌
+      /*
       for (var j=0; j<votedQuery.length; j++)
         if (listQuery[i].id == votedQuery[j].lv_legislator_id) {
           rankingInfo.voted = true;
@@ -70,22 +70,28 @@ console.log(votedQuery)
         }
         else
           rankingInfo.voted = false;
-
+      */
       result.push(rankingInfo);
     } 
 
-    // 순위 뽑기
+    // 순위 뽑기 + 막대그래프 길이
+    var w = 0; 
     for(var i=0; i<result.length; i++) {
+
       if (result[i].score == null) {
           result[i].ranking = "-위"
+          result[i].width = 0;
+
       } else {
 
         if (i==0) {
+          w = result[i].score; // 최대 득표수
           result[i].ranking = 1;
         } else {
 
           if(result[i].score == result[i-1].score) {
             result[i].ranking = result[i-1].ranking;
+            result[i].width = result[i-1].width;
             continue;
           } else if (result[i].score < result[i-1].score) {
             result[i].ranking = i+1;
@@ -93,6 +99,7 @@ console.log(votedQuery)
         }
 
         result[i].ranking = (result[i].ranking).toString() + "위";
+        result[i].width =+ (result[i].score / w).toFixed(2);
       }
     }
 
