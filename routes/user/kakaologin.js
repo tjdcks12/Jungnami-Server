@@ -1,3 +1,7 @@
+/* 카카오톡 로그인 */
+/* /user/kakaologin */
+/* 종찬 */
+
 const express = require('express');
 const router = express.Router();
 const async = require('async');
@@ -54,14 +58,14 @@ router.post('/', async(req, res, next) => {
 
     let checkidQuery =
     `
-    SELECT * FROM USER
+    SELECT * FROM user
     WHERE id = ?
     `;
 
     let insertQuery =
     `
-    INSERT INTO user (id, nickname, img_url, fcmtoken)
-    VALUES (?, ?, ?);
+    INSERT INTO user (id, nickname, img_url, fcmToken)
+    VALUES (?, ?, ?, ?);
     `;
     let updateToken =
     `
@@ -108,7 +112,7 @@ router.post('/', async(req, res, next) => {
       } else{ // 다른 기기이고 회원이 아닐때
         console.log("비회원입니다.")
 
-        let insertResult = await db.queryParamCnt_Arr(insertQuery,[id, nickname ,img_url, fcmtoken]);
+        let insertResult = await db.queryParamCnt_Arr(insertQuery,[id, nickname ,img_url, fcmToken]);
 
         token = jwt.sign(id);
 
