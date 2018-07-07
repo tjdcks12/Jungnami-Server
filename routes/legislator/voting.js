@@ -33,7 +33,7 @@ router.get('/', async(req, res, next) => {
 
     res.status(200).send({
         message : "Select Data Success",
-        data : v_cnt
+        voting_cnt : v_cnt
       });
   }
 

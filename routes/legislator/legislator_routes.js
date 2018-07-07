@@ -10,6 +10,6 @@ router.use('/voting', require('./voting'));
 router.use('/page', require('./page'));
 
 // 후원하기
-// router.use('/support', require('./support'));
+router.use('/support', require('./support'));
 
 module.exports = router;
