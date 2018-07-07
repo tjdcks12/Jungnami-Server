@@ -11,20 +11,26 @@ const async = require('async');
 const jwt = require('../../module/jwt.js');
 const addComma = require('../../module/addComma.js');
 const db = require('../../module/pool.js');
+const hangul = require('hangul-js');
 
 router.get('/:keyword', async(req, res, next) => {
 
   // 현재시간
   var currentTime = new Date();
 
+  // 자음, 모음까지 검색 되도록 하기 위해 사용
+  let searchWord = req.params.keyword;
+  let searcher = new hangul.Searcher(searchWord);
+
   try{
-    let select_content = "SELECT contents.id, title, thumbnail_url, writingtime, category FROM contents LEFT JOIN hash ON  contents.id = hash.h_contents_id WHERE contents.title like ? OR hash.l_name like ? GROUP BY contents.id ORDER BY writingtime DESC";
-    let result_content = await db.queryParamCnt_Arr(select_content, ['%' + req.params.keyword + '%', '%' + req.params.keyword + '%']);
+    let select_content = "SELECT contents.id, title, thumbnail_url, writingtime, category FROM contents LEFT JOIN hash ON contents.id = hash.h_contents_id GROUP BY contents.id ORDER BY writingtime DESC";
+    let result_content = await db.queryParamCnt_Arr(select_content);
 
     // return할 result
     var result = [];
     for(var i=0; i<result_content.length; i++){
         var data = {};
+        if(searcher.search(result_content[i].title) >= 0){
 
         // 제목
         data.title = result_content[i].title;
@@ -76,6 +82,7 @@ router.get('/:keyword', async(req, res, next) => {
         data.commentcnt = addComma.addComma(result_comment.length);
 
         result.push(data);
+      }
     }
 
     res.status(200).json({
