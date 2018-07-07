@@ -10,20 +10,27 @@ const async = require('async');
 const jwt = require('../../module/jwt.js');
 const addComma = require('../../module/addComma.js');
 const db = require('../../module/pool.js');
+const hangul = require('hangul-js');
 
 router.get('/:keyword', async(req, res, next) => {
 
   // 현재시간
   var currentTime = new Date();
 
+  // 자음, 모음까지 검색 되도록 하기 위해 사용
+  let searchWord = req.params.keyword;
+  let searcher = new hangul.Searcher(searchWord);
+
   try{
-    let select_content = "SELECT board.id as id, nickname, content, writingtime FROM board JOIN user ON board.b_user_id = user.id WHERE content like ? ORDER BY writingtime DESC";
-    let result_content = await db.queryParamCnt_Arr(select_content, '%' + req.params.keyword + '%');
+    let select_content = "SELECT board.id as id, nickname, content, writingtime FROM board JOIN user ON board.b_user_id = user.id ORDER BY writingtime DESC";
+    let result_content = await db.queryParamCnt_Arr(select_content);
+    console.log("test : " + result_content);
 
     // return할 result
     var result = [];
     for(var i=0; i<result_content.length; i++){
-        var data = {};
+      var data = {};
+      if(searcher.search(result_content[i].content) >= 0){
 
         // 닉네임
         data.nickname = result_content[i].nickname;
@@ -72,6 +79,7 @@ router.get('/:keyword', async(req, res, next) => {
         data.commentcnt = addComma.addComma(result_comment.length);
 
         result.push(data);
+      }
     }
 
     res.status(200).json({

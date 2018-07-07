@@ -15,7 +15,10 @@ const request = require('request-promise');
 
 router.post('/', async(req, res, next) => {
   console.log("===insert_userinfo.js ::: router('/')===");
+  // 카카오톡 access token
   let accessToken = req.body.accessToken;
+  // push 알람 클라이언트 토큰
+  let fcmToken = req.body.fcmToken;
 
   let option = {
     method : 'GET',
@@ -49,16 +52,20 @@ router.post('/', async(req, res, next) => {
     // console.log(chkToken);
     // console.log(jwt.verify(chkToken));
 
-    let checkEmailQuery =
+    let checkidQuery =
     `
-    select * from user
-    where id = ?
+    SELECT * FROM USER
+    WHERE id = ?
     `;
 
     let insertQuery =
     `
-    INSERT INTO user (id, nickname, img_url)
+    INSERT INTO user (id, nickname, img_url, fcmtoken)
     VALUES (?, ?, ?);
+    `;
+    let updateToken =
+    `
+    UPDATE user SET fcmToken = ? WHERE id = ?;
     `;
 
     if(chkToken != undefined){ // 토큰이 이미 있는 경우 (로그인 되어있는 경우)
@@ -84,9 +91,12 @@ router.post('/', async(req, res, next) => {
         })
       }
     } else{ // 토큰이 없는 경우
-      let checkEmail = await db.queryParamCnt_Arr(checkEmailQuery,[id]);
+      let checkid = await db.queryParamCnt_Arr(checkidQuery,[id]);
 
-      if(checkEmail.length != 0){ // 기기를 변경했을 경우
+      if(checkid.length != 0){ // 기기를 변경했을 경우
+        // fcm token update
+        let updatefcmToken = await db.queryParamCnt_Arr(updateToken, [fcmToken, id]);
+
         console.log("다른기기에서 접속했습니다");
         res.status(200).send({
           "result" : {
@@ -98,7 +108,7 @@ router.post('/', async(req, res, next) => {
       } else{ // 다른 기기이고 회원이 아닐때
         console.log("비회원입니다.")
 
-        let insertResult = await db.queryParamCnt_Arr(insertQuery,[id, nickname ,img_url]);
+        let insertResult = await db.queryParamCnt_Arr(insertQuery,[id, nickname ,img_url, fcmtoken]);
 
         token = jwt.sign(id);
 
@@ -123,3 +133,8 @@ router.post('/', async(req, res, next) => {
 });
 
 module.exports = router;
+
+
+// test kakaotalk accessToken
+// 2boHtx7R8VbqhnWNE_pcIUvFX4RLNsAKD8eQSQo8BVUAAAFkaVQVfQ
+// H2ACd2WBP9T2HiuqNQxueKIWuxsSk-idgEyhSQo8BZUAAAFkaO2ToA
