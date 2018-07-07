@@ -23,6 +23,7 @@ router.get('/', async(req, res, next) => {
         res.status(401).send({
             message : "Access Denied"
         });
+        return;
     }
 
     let u_id = chkToken.id;
@@ -38,21 +39,29 @@ router.get('/', async(req, res, next) => {
 
     if(followerlistQuery.length == 0){
       console.log("query not ok");
+
+      res.status(300).send({
+        message: "No Data"
+      });
+      return;
     }else{
       console.log("query ok");
 
     }
 
-
     let followingSelectSql = "SELECT f_following_id FROM follow WHERE f_follower_id = ?"
-
     let followingSelectQuery = await db.queryParamCnt_Arr(followingSelectSql,[u_id]);
 
     var result = []; // follower_id, follower_nickname, follower_img_url, isMyFollowing
-
-
+    
     if(followingSelectQuery.length == 0) {
       console.log("query not ok");
+
+      res.status(300).send({
+        message: "No Data"
+      });
+      return;
+
     }else{
       console.log("query ok");
 

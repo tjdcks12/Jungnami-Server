@@ -18,23 +18,35 @@ router.get('/', async(req, res, next) => {
       res.status(401).send({
           message : "Access Denied"
       });
+
+      return;
   }
+  
+  try{
+    let u_id = chkToken.id; 
+    let selectSql = "SELECT coin FROM user WHERE id = ?;"
+    let selectQuery = await db.queryParamCnt_Arr(selectSql,[u_id]);
 
-  let u_id = chkToken.id; 
-  let selectSql = "SELECT point FROM user WHERE id = ?;"
-  let selectQuery = await db.queryParamCnt_Arr(selectSql,[u_id]);
+    if(selectQuery.length == 0){
 
-  if(selectQuery.length == 0){
-    res.status(500).send({
-        message : "Internal Server Error"
-      });
-  }else{
-    let user_point = selectQuery[0].point;
+      res.status(300).send({
+          message: "No Data"
+        });
+        return;
 
-    res.status(200).send({
-        message : "Select Data Success",
-        data : user_point
-      });
+    }else{
+      let user_coin = selectQuery[0].coin;
+
+      res.status(200).send({
+          message : "Select Data Success",
+          coin : user_coin
+        });
+    }
+
+  } catch(error) {
+        res.status(500).send({
+          message : "Internal Server Error"
+        });
   }
 
 });
@@ -57,25 +69,25 @@ router.post('/', async(req, res, next) => {
 
     let u_id = chkToken.id;
     let l_id =+ req.body.l_id;
-    let point =+ req.body.point; // 몇 포인트 후원할 것인지
+    let coin =+ req.body.coin; // 몇 코인 후원할 것인지
 
-    var user_point, legislator_point;
+    var user_coin, legislator_coin;
 
 
-    // 유저의 포인트 현황
-    let userpointSql = "SELECT point FROM user WHERE id = ?;"
-    let userpointQuery = await db.queryParamCnt_Arr(userpointSql,[u_id]);
+    // 유저의 코인 현황
+    let usercoinSql = "SELECT coin FROM user WHERE id = ?;"
+    let usercoinQuery = await db.queryParamCnt_Arr(usercoinSql,[u_id]);
 
-    if(userpointQuery.length == 0){
+    if(usercoinQuery.length == 0){
       console.log("query not ok");
     }else{
       console.log("query ok");
 
-      user_point =+ userpointQuery[0].point;
+      user_coin =+ usercoinQuery[0].coin;
     }
 
-
-    // 의원의 포인트 현황
+/*
+    // 의원의 코인 현황
     let legislatorpointSql = "SELECT point FROM legislator WHERE id = ?;"
     let legislaotrpointQuery = await db.queryParamCnt_Arr(userpointSql,[l_id]);
 
@@ -86,20 +98,16 @@ router.post('/', async(req, res, next) => {
 
       legislator_point =+ legislaotrpointQuery[0].point;
     }
-
+*/
 
     // update point
-    if (user_point <= point) {
+    if (user_coin <= coin) {
 
-      legislator_point += point;
+      let supportSql = "UPDATE legislator SET coin = coin + ? WHERE id = ?;"
+      let supportQuery = await db.queryParamCnt_Arr(supportSql,[coin, l_id]);
 
-      let supportSql = "UPDATE legislator SET point = ? WHERE id = ?;"
-      let supportQuery = await db.queryParamCnt_Arr(supportSql,[legislator_point, l_id]);
-
-      user_point -= point;
-
-      let updateSql = "UPDATE user SET point = ? WHERE id = ?;"
-      let updateQuery = await db.queryParamCnt_Arr(updateSql,[user_point, u_id]);
+      let updateSql = "UPDATE user SET coin = coin - ? WHERE id = ?;"
+      let updateQuery = await db.queryParamCnt_Arr(updateSql,[coin, u_id]);
 
       res.status(201).send({
         message : "Update Data Success"

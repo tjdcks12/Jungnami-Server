@@ -31,4 +31,15 @@ router.use('/makerecomment', require('./makerecomment'));
 //10. 컨텐츠에 대댓글 좋아요 
 router.use('/likerecomment', require('./likerecomment'));
 
+// 관리자가 컨텐츠 게시할 때
+router.use('/post', require('./c_post'));
+
+// 관리자가 컨텐츠 삭제할 때
+router.use('/delete', require('./c_delete'));
+
+
+
+
+
+
 module.exports = router;
