@@ -1,23 +1,59 @@
 //커뮤니티 탭 들어오면 메인 화면 -> 페이스북 뉴스피드
-
 var express = require('express');
 var router = express.Router();
 const async = require('async');
 const db = require('../../module/pool.js');
 
-/* GET home page. */
+//board_id, b_user_id, content, imgurl writing time, shared,
+//user의 profile_url, board_id의 like_cnt, comment_cnt
+
 router.get('/', async (req, res) => {
   try{
   	let getboardlistQuery = 'SELECT * FROM myjungnami.board';
+  	let boardtableInfo = await db.queryParamCnt_Arr(getboardlistQuery);
+    console.log(boardtableInfo); 
 
-  	let data = await db.queryParamCnt_Arr(getboardlistQuery);
+    let resultArry = new Array();
+    let subresultObj = new Object();
 
+    let userinfoObj = new Object();
+    let commentCnt;
+    let boardlikeCnt;
+
+    for(var i=0; i< boardtableInfo.length ; i++){
+
+      //유저닉네임이랑 이미지 사진 
+      let getuserinfoQuery = "select nickname, img_url from myjungnami.user where id = ?";
+      userinfoObj = await db.queryParamCnt_Arr(getuserinfoQuery, [boardtableInfo[i].b_user_id]);
+      
+      //게시글 댓글 갯수 
+      let getcommentcntQuery = "select count(*) from myjungnami.boardComment where bc_board_id = ?;";
+      commentCnt = await db.queryParamCnt_Arr(getcommentcntQuery, [boardtableInfo[i].id] );
+
+      //게시글 좋아요 수 
+      let getlikecntQuery = "select count(*) from myjungnami.boardLike where bl_board_id = ?";
+      boardlikeCnt = await db.queryParamCnt_Arr(getlikecntQuery, [boardtableInfo[i].id]);
+
+      let timeset = timesetfun(boardtableInfo[i].writingtime);
+      //console.log(boardtableInfo[i].writingtime);
+      console.log(timeset);
+
+      subresultObj = boardtableInfo[i];
+      //시간 처리해서 넘겨주기 
+      subresultObj.timeset = timeset;
+      subresultObj.user_nick = userinfoObj[0].nickname;
+      subresultObj.user_img_rul = userinfoObj[0].img_url;
+      subresultObj.commentCnt = commentCnt[0];
+      subresultObj.likeCnt = boardlikeCnt[0];
+
+      resultArry.push(subresultObj);
+
+    }
+      
   	res.status(200).send({
   		"message" : "Successfully get boardlist",
-  		"data" : data
+  		"data" : resultArry
   	});
-
-  	console.log(data);
 
   }catch(err){
   	console.log(err);
@@ -27,4 +63,43 @@ router.get('/', async (req, res) => {
   }
 });
 
+var timesetfun = function(param_writingtime) {
+        // 현재시간
+        var currentTime = new Date();
+        let returnvalue;
+        var writingtime = param_writingtime;
+        
+        //--------------- 시간 계산------------------
+        //1. 작성 10분 이내
+        if(currentTime.getTime() - writingtime.getTime() < 600000){
+          returnvalue = "방금 전";
+          return returnvalue;
+        } //2. 1시간 이내
+        else if(currentTime.getTime() - writingtime.getTime() < 3600000){
+          returnvalue = Math.floor((currentTime.getTime() - writingtime.getTime())/60000) + "분 전";
+          return returnvalue;
+        }//3. 작성한지 24시간 넘음
+        else if(currentTime.getTime() - writingtime.getTime() > 86400000){
+          returnvalue = writingtime.getFullYear() + "년 " + (writingtime.getMonth()+1) +"월 " + writingtime.getDate() + "일";
+          return returnvalue;
+        } //4. 24시간 이내
+        else{
+          if(currentTime.getDate() != writingtime.getDate()){
+            returnvalue = (24 - writingtime.getHours()) + (currentTime.getHours());
+            if(returnvalue == 24){
+              returnvalue = writingtime.getFullYear() + "년 " + (writingtime.getMonth()+1) +"월 " + writingtime.getDate() + "일";
+            }
+            else{
+              returnvalue += "시간 전";
+            }
+          }
+          else{
+            returnvalue = (currentTime.getHours() - writingtime.getHours()) + "시간 전";
+          }
+          return returnvalue;
+        }
+
+}
+
 module.exports = router;
+

@@ -3,24 +3,43 @@ var express = require('express');
 var router = express.Router();
 const async = require('async');
 const db = require('../../module/pool.js');
+const jwt = require('../../module/jwt.js');
 
 router.post('/', async(req, res) => {
+	var id; // 사용자 email
+	const chkToken = jwt.verify(req.headers.authorization);
+  	
+  	if(chkToken == -1) {
+    	id = "";
+  	}
+  	else{
+    	id = chkToken.id;
+  	}
+
 	try{
-		if(!(req.body.br_boardComment_id && req.body.br_user_id && req.body.content)){
-			res.status(403).send({
-				message : "please input br_boardComment_id and br_user_id and content"
+		if(id == ""){
+				res.status(401).send({
+				message : "Access Denied"
 			});
+			return;
 		}else{
-			let postmakerecommentQuery = 'INSERT INTO myjungnami.boardRecomment(id, br_boardComment_id, br_user_id, content) VALUES (null, ?, ?, ?)';
-			let data = await db.queryParamCnt_Arr(postmakerecommentQuery, [req.body.br_boardComment_id, req.body.br_user_id, req.body.content]);
+			if(!(req.body.br_boardComment_id && req.body.br_user_id && req.body.content)){
+				res.status(403).send({
+					message : "please input br_boardComment_id and br_user_id and content"
+				});
+			}else{
+				let postmakerecommentQuery = 'INSERT INTO myjungnami.boardRecomment(id, br_boardComment_id, br_user_id, content) VALUES (null, ?, ?, ?)';
+				let data = await db.queryParamCnt_Arr(postmakerecommentQuery, [req.body.br_boardComment_id, req.body.br_user_id, req.body.content]);
 
-			res.status(200).send({
-				"message" : "insert boardRecomment success",
-				"data" : data
-			});
+				res.status(200).send({
+					"message" : "insert boardRecomment success",
+					"data" : data
+				});
 
-			console.log(data);
+				console.log(data);
+			}
 		}
+		
 	}catch(err){
 		console.log(err);
 		res.status(500).send({

@@ -1,11 +1,10 @@
-const jwt = require('jsonwebtoken');
-const secretKey = require('../config/secretKey').key;
+
 
 // module.exports = {
 //     // Issue jwt Token
 //     sign : function(id,nickname) {
 //         const options = {
-//             algorithm : "HS256",
+//             algorithm : "HS256",.
 //             expiresIn : 60 * 60 * 24 * 30 //30 days
 //         };
 //         const payload = {
@@ -32,6 +31,8 @@ const secretKey = require('../config/secretKey').key;
 //     }
 // };
 
+const jwt = require('jsonwebtoken');
+const secretKey = require('../config/secretKey').key;
 
 module.exports = {
     // Issue jwt Token

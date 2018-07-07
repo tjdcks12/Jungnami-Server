@@ -1,4 +1,4 @@
-//게시판 글에 댓글 달기 - OK
+//컨텐츠 좋아요 -ok
 var express = require('express');
 var router = express.Router();
 const async = require('async');
@@ -7,8 +7,9 @@ const jwt = require('../../module/jwt.js');
 
 router.post('/', async(req, res) => {
 	var id; // 사용자 email
-	const chkToken = jwt.verify(req.headers.authorization);
-  	
+	
+  	const chkToken = jwt.verify(req.headers.authorization);
+
   	if(chkToken == -1) {
     	id = "";
   	}
@@ -17,29 +18,31 @@ router.post('/', async(req, res) => {
   	}
 
 	try{
+		//로그인 했을 때만 할 수 있게 
 		if(id == ""){
-				res.status(401).send({
+			res.status(401).send({
 				message : "Access Denied"
 			});
-			return;
-		}else{
-			if(!(req.body.bc_board_id && req.body.bc_user_id && req.body.content)){
+		}
+		//로그인 시 좋아요 처리 
+		else{
+			if(!(req.body.cl_contents_id && req.body.cl_user_id)){
 				res.status(403).send({
-					message : "please input bc_board_id and bc_user_id and content"
+					message : "please input contents_id and user_id"
 				});
 			}else{
-				let postmakecommentQuery = 'INSERT INTO myjungnami.boardComment(id, bc_board_id, bc_user_id, content) VALUES (null, ?, ?, ?)';
-				let data = await db.queryParamCnt_Arr(postmakecommentQuery, [req.body.bc_board_id, req.body.bc_user_id, req.body.content]);
+				let postcontentslikeQuery = 'INSERT INTO myjungnami.contentsLike(id, cl_contents_id, cl_user_id) VALUES (null, ?, ?)';
+				let data = await db.queryParamCnt_Arr(postcontentslikeQuery, [req.body.cl_contents_id, req.body.cl_user_id]);
 
 				res.status(200).send({
-					"message" : "insert postmakecommentQuery success",
+					"message" : "insert contentslike success",
 					"data" : data
 				});
 
 				console.log(data);
 			}
+			
 		}
-		
 	}catch(err){
 		console.log(err);
 		res.status(500).send({
@@ -47,4 +50,5 @@ router.post('/', async(req, res) => {
 		});
 	}
 })
+
 module.exports = router;
