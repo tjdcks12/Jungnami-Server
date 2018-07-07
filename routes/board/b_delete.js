@@ -19,6 +19,7 @@ router.post('/',  async (req, res) => {
         res.status(401).send({
             message : "Access Denied"
         });
+        return;
     }
 
     let u_id = chkToken.id; 

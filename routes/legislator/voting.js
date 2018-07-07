@@ -12,28 +12,42 @@ const jwt = require('../../module/jwt.js');
 /*  /legislator/voting/  */
 router.get('/', async(req, res, next) => {
 
-  const chkToken = jwt.verify(req.headers.authorization);
+  try {
 
-  if(chkToken == -1) {
-      res.status(401).send({
-          message : "Access Denied"
+    const chkToken = jwt.verify(req.headers.authorization);
+
+    if(chkToken == -1) {
+        res.status(401).send({
+            message : "Access Denied"
+        });
+        return;
+    }
+
+    let u_id = chkToken.id; 
+    let selectSql = "SELECT voting_cnt FROM user WHERE id = ?;"
+    let selectQuery = await db.queryParamCnt_Arr(selectSql,[u_id]);
+
+    if(selectQuery.length == 0){
+
+      res.status(300).send({
+            message: "No Data"
       });
-  }
+      return;
 
-  let u_id = chkToken.id; 
-  let selectSql = "SELECT voting_cnt FROM user WHERE id = ?;"
-  let selectQuery = await db.queryParamCnt_Arr(selectSql,[u_id]);
+    }else{
+      let v_cnt = selectQuery[0].voting_cnt;
 
-  if(selectQuery.length == 0){
+      res.status(200).send({
+          message : "Select Data Success",
+          voting_cnt : v_cnt
+        });
+    }
+
+
+  } catch(error){
+
     res.status(500).send({
         message : "Internal Server Error"
-      });
-  }else{
-    let v_cnt = selectQuery[0].voting_cnt;
-
-    res.status(200).send({
-        message : "Select Data Success",
-        voting_cnt : v_cnt
       });
   }
 
@@ -53,6 +67,7 @@ router.post('/', async(req, res, next) => {
         res.status(401).send({
             message : "Access Denied"
         });
+        return;
     }
 
     let u_id = chkToken.id;
@@ -64,30 +79,36 @@ router.post('/', async(req, res, next) => {
 
     if(selectQuery.length == 0){
       console.log("query not ok");
+
+      res.status(300).send({
+            message: "No Data"
+      });
+      return;
+
     }else{
       console.log("query ok");
+
+      let v_cnt =+ selectQuery[0].voting_cnt;
+      if (v_cnt > 0) {
+
+        let insertSql = "INSERT INTO legislatorVote (lv_legislator_id, lv_user_id, islike) VALUES (?, ?, ?);"
+        let insertQuery = await db.queryParamCnt_Arr(insertSql,[l_id, u_id, islike]);
+
+        v_cnt -= 1;
+
+        let updateSql = "UPDATE user SET voting_cnt = ? WHERE id = ?;"
+        let updateQuery = await db.queryParamCnt_Arr(updateSql,[v_cnt, u_id]);
+
+        res.status(201).send({
+          message : "Insert and Update Data Success"
+        });
+      } else if (v_cnt <= 0) { // 투표권이 부족해요
+        res.status(304).send({
+          message : "I don't have enough voting_cnt"
+        });
+      }
+
     }
-
-    let v_cnt =+ selectQuery[0].voting_cnt;
-    if (v_cnt > 0) {
-
-      let insertSql = "INSERT INTO legislatorVote (lv_legislator_id, lv_user_id, islike) VALUES (?, ?, ?);"
-      let insertQuery = await db.queryParamCnt_Arr(insertSql,[l_id, u_id, islike]);
-
-      v_cnt -= 1;
-
-      let updateSql = "UPDATE user SET voting_cnt = ? WHERE id = ?;"
-      let updateQuery = await db.queryParamCnt_Arr(updateSql,[v_cnt, u_id]);
-
-      res.status(201).send({
-        message : "Insert and Update Data Success"
-      });
-    } else if (v_cnt <= 0) { // 투표권이 부족해요
-      res.status(304).send({
-        message : "I don't have enough voting_cnt"
-      });
-    }
-
   } catch(error) {
     res.status(500).send({
         message : "Internal Server Error"

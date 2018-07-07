@@ -23,6 +23,7 @@ router.get('/', async(req, res, next) => {
         res.status(401).send({
             message : "Access Denied"
         });
+        return;
     }
 
     let u_id = chkToken.id;
@@ -38,6 +39,12 @@ router.get('/', async(req, res, next) => {
 
     if(followinglistQuery.length == 0){
       console.log("query not ok");
+
+      res.status(300).send({
+        message: "No Data"
+      });
+      return;
+
     }else{
       console.log("query ok");
 
@@ -52,6 +59,12 @@ router.get('/', async(req, res, next) => {
 
     if(followingSelectQuery.length == 0) {
       console.log("query not ok");
+
+      res.status(300).send({
+        message: "No Data"
+      });
+      return;
+      
     }else{
       console.log("query ok");
 

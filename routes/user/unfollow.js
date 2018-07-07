@@ -20,6 +20,7 @@ router.post('/', async(req, res, next) => {
         res.status(401).send({
             message : "Access Denied"
         });
+        return;
     }
 
     let follower_id = chkToken.id;

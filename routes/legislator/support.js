@@ -18,23 +18,35 @@ router.get('/', async(req, res, next) => {
       res.status(401).send({
           message : "Access Denied"
       });
+
+      return;
   }
+  
+  try{
+    let u_id = chkToken.id; 
+    let selectSql = "SELECT coin FROM user WHERE id = ?;"
+    let selectQuery = await db.queryParamCnt_Arr(selectSql,[u_id]);
 
-  let u_id = chkToken.id; 
-  let selectSql = "SELECT coin FROM user WHERE id = ?;"
-  let selectQuery = await db.queryParamCnt_Arr(selectSql,[u_id]);
+    if(selectQuery.length == 0){
 
-  if(selectQuery.length == 0){
-    res.status(500).send({
-        message : "Internal Server Error"
-      });
-  }else{
-    let user_coin = selectQuery[0].coin;
+      res.status(300).send({
+          message: "No Data"
+        });
+        return;
 
-    res.status(200).send({
-        message : "Select Data Success",
-        coin : user_coin
-      });
+    }else{
+      let user_coin = selectQuery[0].coin;
+
+      res.status(200).send({
+          message : "Select Data Success",
+          coin : user_coin
+        });
+    }
+
+  } catch(error) {
+        res.status(500).send({
+          message : "Internal Server Error"
+        });
   }
 
 });

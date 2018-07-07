@@ -33,13 +33,14 @@ router.get('/:mypage_id', async(req, res, next) => {
 
   const chkToken = jwt.verify(req.headers.authorization);
 
+  let u_id;
+
   if(chkToken == -1) {
-      res.status(401).send({
-          message : "Access Denied"
-      });
+    u_id = '';
+  } else {
+    u_id = chkToken.id; 
   }
 
-  let u_id = chkToken.id; // 
   let mypage_id = req.params.mypage_id; // 해당 계정 주인
 
   try {
@@ -65,6 +66,12 @@ router.get('/:mypage_id', async(req, res, next) => {
     var result = {};
     if(selectQuery.length == 0){
       console.log("query not ok");
+
+      res.status(300).send({
+            message: "No Data"
+      });
+      return;
+      
     }else{
       console.log("query ok");
 
