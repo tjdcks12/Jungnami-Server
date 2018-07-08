@@ -18,7 +18,9 @@ router.post('/', async(req, res) => {
 
 		return;
 	}
-	
+
+	var userid = chkToken.id;
+
 	try{
 		if(!(req.body.recomment_id && req.body.user_id)){
 			res.status(403).send({
@@ -26,18 +28,18 @@ router.post('/', async(req, res) => {
 			});
 		}else{
 			let postrecommentlikeQuery = 'INSERT INTO myjungnami.boardRecommentLike(id, brl_boardRecomment_id, brl_user_id) VALUES (null, ?, ?)';
-			let data = await db.queryParamCnt_Arr(postrecommentlikeQuery, [req.body.recomment_id, req.body.user_id]);
+			let data = await db.queryParamCnt_Arr(postrecommentlikeQuery, [req.body.recomment_id, userid]);
 
 			res.status(201).send({
 				"message" : "Successfully insert boardRecommentlike"
 			});
 
-			var pushmsg = (req.body.user_id = '님이 회원님의 댓글을 좋아합니다.');
+			var pushmsg = (userid = '님이 회원님의 댓글을 좋아합니다.');
 
 			console.log(data);
 		}
 
-		
+
 	}catch(err){
 		console.log(err);
 		res.status(500).send({
@@ -47,4 +49,3 @@ router.post('/', async(req, res) => {
 })
 
 module.exports = router;
-

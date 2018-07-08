@@ -7,7 +7,7 @@ const jwt = require('../../module/jwt.js');
 
 router.post('/', async(req, res) => {
 	var id; // 사용자 email
-	
+
 	const chkToken = jwt.verify(req.headers.authorization);
 
 	if(chkToken == -1) {
@@ -18,8 +18,10 @@ router.post('/', async(req, res) => {
 		return;
 	}
 
+	var userid = chkToken.id;
+
 	try{ ////로그인 시 좋아요 처리
-		if(!(req.body.cl_contents_id && req.body.cl_user_id)){
+		if(!(req.body.cl_contents_id && userid)){
 			res.status(403).send({
 				message : "please input contents' id and user id"
 			});
@@ -34,8 +36,8 @@ router.post('/', async(req, res) => {
 
 			console.log(data);
 		}
-		
-		
+
+
 	}catch(err){
 		console.log(err);
 		res.status(500).send({

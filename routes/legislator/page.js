@@ -50,8 +50,6 @@ router.get('/:l_id', async(req, res, next) => {
 
   let u_id;
 
-  const chkToken = jwt.verify(req.headers.authorization);
-
   if(chkToken == -1) {
     u_id = '';
   } else {
