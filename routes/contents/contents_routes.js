@@ -28,6 +28,8 @@ router.use('/makerecomment', require('./makerecomment'));
 //10. 컨텐츠에 대댓글 좋아요
 router.use('/likerecomment', require('./likerecomment'));
 
+//11. 컨텐츠 스크랩
+router.use('/scrap', require('./scrap'));
 
 
 module.exports = router;
