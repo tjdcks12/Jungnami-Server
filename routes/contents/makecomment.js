@@ -22,7 +22,7 @@ router.post('/', async(req, res) => {
 
 	try{
 
-		if(!(req.body.contents_id && req.body.user_id && req.body.content)){
+		if(!(req.body.contents_id && userid && req.body.content)){
 			res.status(403).send({
 				message : "please input contents id & use rid & content"
 			});

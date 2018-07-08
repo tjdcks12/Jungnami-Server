@@ -11,7 +11,7 @@ const checktime = require('../../module/checktime.js');
 //user의 profile_url, board_id의 like_cnt, comment_cnt
 
 router.get('/', async (req, res) => {
-      
+
     const chkToken = jwt.verify(req.headers.authorization);
     var id = chkToken.id;
 
@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
 
       let getboardlistQuery = 'SELECT * FROM myjungnami.board';
       let boardtableInfo = await db.queryParamCnt_Arr(getboardlistQuery);
-      console.log(boardtableInfo); 
+      console.log(boardtableInfo);
 
       let resultArray = new Array();
       let subresultObj = new Object();
@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
       let boardlikeCnt;
       let alarmCnt;
 
-      // 로그인 되어었으면 알람 수 명시 
+      // 로그인 되어었으면 알람 수 명시
       if(chkToken !== -1){
           let getalarmcntQuery = "select count(*) as cnt from myjungnami.push where (p_user_id = ? and ischecked = 0)"
           alarmCnt= await db.queryParamCnt_Arr(getalarmcntQuery, id);
@@ -39,7 +39,7 @@ router.get('/', async (req, res) => {
       }
 
 /* 지연 */
-      // if (u_id == mypage_id) {  // 내가 내 계정에 들어온거라면 
+      // if (u_id == mypage_id) {  // 내가 내 계정에 들어온거라면
 
       //   let pushcntSql = "SELECT count(*) as pushcnt FROM push WHERE p_user_id = ? AND ischecked = false"
       //   let pushcntQuery = await db.queryParamCnt_Arr(pushcntSql,[mypage_id]);
@@ -73,15 +73,15 @@ router.get('/', async (req, res) => {
 
       for(var i=0; i<resultArray.length; i++){
 
-        //유저닉네임이랑 이미지 사진 
+        //유저닉네임이랑 이미지 사진
         let getuserinfoQuery = "select nickname, img_url from myjungnami.user where id = ?";
         userinfoObj = await db.queryParamCnt_Arr(getuserinfoQuery, [boardtableInfo[i].b_user_id]);
-      
-        //게시글 댓글 갯수 
+
+        //게시글 댓글 갯수
         let getcommentcntQuery = "select count(*) from myjungnami.boardComment where bc_board_id = ?;";
         commentCnt = await db.queryParamCnt_Arr(getcommentcntQuery, [boardtableInfo[i].id] );
 
-        //게시글 좋아요 수 
+        //게시글 좋아요 수
         let getlikecntQuery = "select count(*) from myjungnami.boardLike where bl_board_id = ?";
         boardlikeCnt = await db.queryParamCnt_Arr(getlikecntQuery, [boardtableInfo[i].id]);
 
@@ -90,7 +90,7 @@ router.get('/', async (req, res) => {
         let timeset = checktime.checktime(boardtableInfo[i].writingtime);
 
         subresultObj = boardtableInfo[i];
-        //시간 처리해서 넘겨주기 
+        //시간 처리해서 넘겨주기
         subresultObj.timeset = timeset;
         subresultObj.user_nick = userinfoObj[0].nickname;
         subresultObj.user_img_rul = userinfoObj[0].img_url;
@@ -100,7 +100,7 @@ router.get('/', async (req, res) => {
         resultArry.push(subresultObj);
 
       }
-      
+
       res.status(200).send({
         "message" : "Successfully get boardlist",
         "data" : resultArry
@@ -121,7 +121,7 @@ router.get('/', async (req, res) => {
 //         var currentTime = new Date();
 //         let returnvalue;
 //         var writingtime = param_writingtime;
-        
+
 //         //--------------- 시간 계산------------------
 //         //1. 작성 10분 이내
 //         if(currentTime.getTime() - writingtime.getTime() < 600000){
@@ -155,4 +155,3 @@ router.get('/', async (req, res) => {
 // }
 
 module.exports = router;
-

@@ -40,7 +40,7 @@ router.post('/', async(req, res) => {
 			}
 
 
-			// 게시글 작성자 데이터 가져오기
+			// 작성자 데이터 가져오기
 			let select_find = 'SELECT * FROM boardComment WHERE id = ?'
 			let result_find = await db.queryParamCnt_Arr(select_find, [req.body.comment_id] );
 			if(result_find.length == 0){
@@ -75,7 +75,6 @@ router.post('/', async(req, res) => {
 				var fcm = new FCM(serverKey);
 
 				fcm.send(push_data, function(err, response) {
-					console.log(push_data);
 					if (err) {
 						console.error('Push메시지 발송에 실패했습니다.');
 						console.error(err);
