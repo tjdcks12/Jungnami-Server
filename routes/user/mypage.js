@@ -64,6 +64,7 @@ router.get('/:mypage_id', async(req, res, next) => {
       result.followercnt = followerQuery[0].followercnt;
       result.followingcnt = followingQuery[0].followingcnt;
 
+
       if (u_id == mypage_id) {  // 내가 내 계정에 들어온거라면 
 
         let pushcntSql = "SELECT count(*) as pushcnt FROM push WHERE p_user_id = ? AND ischecked = false"
@@ -82,6 +83,10 @@ router.get('/:mypage_id', async(req, res, next) => {
         result.point = selectQuery[0].point;
         result.voting_cnt = selectQuery[0].voting_cnt;
 
+      } else {
+        result.push_cnt = 0;
+        result.point = 0;
+        result.voting_cnt = 0;
       }
 
 
