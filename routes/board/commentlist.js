@@ -26,17 +26,17 @@ router.get('/:bc_board_id', async(req, res) => {
 
     		for(var i=0; i< commenttableInfo.length; i++){
 
-    			let timeset = timesetfun(commenttableInfo[i].writingtime);
+    			  let timeset = timesetfun(commenttableInfo[i].writingtime);
    	  			console.log(timeset);
 
 
 	      		//유저닉네임이랑 이미지 사진 
-    	 	 	let getuserinfoQuery = "select user.nickname, user.img_url from myjungnami.user where id = ?";
-     	 		userinfoObj = await db.queryParamCnt_Arr(getuserinfoQuery, [commenttableInfo[i].bc_user_id]);
+    	 	 	  let getuserinfoQuery = "select user.nickname, user.img_url from myjungnami.user where id = ?";
+     	 		  userinfoObj = await db.queryParamCnt_Arr(getuserinfoQuery, [commenttableInfo[i].bc_user_id]);
       
-     	 		//게시글 대댓글 갯수 
+     	 		  //게시글 대댓글 갯수 
       			let getrecommentcntQuery = "select count(*) from myjungnami.boardRecomment where br_boardComment_id = ?;";
-     			commentCnt = await db.queryParamCnt_Arr(getrecommentcntQuery, [commenttableInfo[i].id] );
+     			  recommentCnt = await db.queryParamCnt_Arr(getrecommentcntQuery, [commenttableInfo[i].id] );
 
       			//댓글 좋아요 수 
       			let getlikecntQuery = "select count(*) from myjungnami.boardCommentLike where bcl_boardComment_id = ?";
@@ -46,8 +46,8 @@ router.get('/:bc_board_id', async(req, res) => {
       			subresultObj.timeset = timeset;
       			subresultObj.user_nick = userinfoObj[0].nickname;
       			subresultObj.user_img_rul = userinfoObj[0].img_url;
-      			subresultObj.recommentCnt = commentCnt[0];
-      			subresultObj.commentlikeCnt = commentCnt[0];
+      			subresultObj.recommentCnt = recommentCnt[0];
+      			subresultObj.commentlikeCnt = commentlikeCnt[0];
 
       			resultArry.push(subresultObj);
 
