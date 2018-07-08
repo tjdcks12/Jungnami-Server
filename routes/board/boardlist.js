@@ -2,32 +2,15 @@
 var express = require('express');
 var router = express.Router();
 const async = require('async');
+
 const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
+const checktime = require('../../module/checktime.js');
 
 //board_id, b_user_id, content, imgurl writing time, shared,
 //user의 profile_url, board_id의 like_cnt, comment_cnt
 
 router.get('/', async (req, res) => {
-  
-  try{
-  	let getboardlistQuery = 'SELECT * FROM myjungnami.board';
-  	let boardtableInfo = await db.queryParamCnt_Arr(getboardlistQuery);
-    console.log(boardtableInfo); 
-
-    let resultArry = new Array();
-    let subresultObj = new Object();
-
-    let userinfoObj = new Object();
-    let commentCnt;
-    let boardlikeCnt;
-
-    for(var i=0; i< boardtableInfo.length ; i++){
-
-      //유저닉네임이랑 이미지 사진 
-      let getuserinfoQuery = "select nickname, img_url from myjungnami.user where id = ?";
-      userinfoObj = await db.queryParamCnt_Arr(getuserinfoQuery, [boardtableInfo[i].b_user_id]);
-
       
     const chkToken = jwt.verify(req.headers.authorization);
     var id = chkToken.id;
@@ -38,30 +21,57 @@ router.get('/', async (req, res) => {
       let boardtableInfo = await db.queryParamCnt_Arr(getboardlistQuery);
       console.log(boardtableInfo); 
 
-      let resultArry = new Array();
+      let resultArray = new Array();
       let subresultObj = new Object();
 
       let userinfoObj = new Object();
       let commentCnt;
       let boardlikeCnt;
       let alarmCnt;
-      let islogined;
 
-      //로그인 되어었으면 알람 수 명시 
+      // 로그인 되어었으면 알람 수 명시 
       if(chkToken !== -1){
           let getalarmcntQuery = "select count(*) as cnt from myjungnami.push where (p_user_id = ? and ischecked = 0)"
           alarmCnt= await db.queryParamCnt_Arr(getalarmcntQuery, id);
-          islogined = 1;
+
       }else{
           alarmCnt = 0;
-          islogined = 0;
       }
 
-      resultArry.push("islogined : " + islogined);
-      resultArry.push("alarmCnt : " );
-      resultArry.push(alarmCnt[0]);
+/* 지연 */
+      // if (u_id == mypage_id) {  // 내가 내 계정에 들어온거라면 
 
-      for(var i=0; i< 3 ; i++){
+      //   let pushcntSql = "SELECT count(*) as pushcnt FROM push WHERE p_user_id = ? AND ischecked = false"
+      //   let pushcntQuery = await db.queryParamCnt_Arr(pushcntSql,[mypage_id]);
+
+      //   if(pushcntQuery.length == 0){
+      //     console.log("query not ok");
+
+      //     res.status(300).send({
+      //           message: "Select push count Error"
+      //     });
+      //     return;
+      //   }
+
+      //   result.push_cnt = pushcntQuery[0].pushcnt;
+      //   result.point = selectQuery[0].point;
+      //   result.voting_cnt = selectQuery[0].voting_cnt;
+
+      // } else {
+      //   result.push_cnt = 0;
+      //   result.point = 0;
+      //   result.voting_cnt = 0;
+      // }
+/* 지연 */
+
+
+
+
+      resultArray.push("islogined : " + islogined);
+      resultArray.push("alarmCnt : " );
+      resultArray.push(alarmCnt[0]);
+
+      for(var i=0; i<resultArray.length; i++){
 
         //유저닉네임이랑 이미지 사진 
         let getuserinfoQuery = "select nickname, img_url from myjungnami.user where id = ?";
@@ -77,7 +87,7 @@ router.get('/', async (req, res) => {
 
         let getalarmcntQuery = "select count(*) from myjungnami.push where p_user_id = ?;"
 
-        let timeset = timesetfun(boardtableInfo[i].writingtime);
+        let timeset = checktime.checktime(boardtableInfo[i].writingtime);
 
         subresultObj = boardtableInfo[i];
         //시간 처리해서 넘겨주기 
@@ -106,43 +116,43 @@ router.get('/', async (req, res) => {
 
 
 //-----------------------------시간계산 함수------------------------------------
-var timesetfun = function(param_writingtime) {
-        // 현재시간
-        var currentTime = new Date();
-        let returnvalue;
-        var writingtime = param_writingtime;
+// var timesetfun = function(param_writingtime) {
+//         // 현재시간
+//         var currentTime = new Date();
+//         let returnvalue;
+//         var writingtime = param_writingtime;
         
-        //--------------- 시간 계산------------------
-        //1. 작성 10분 이내
-        if(currentTime.getTime() - writingtime.getTime() < 600000){
-          returnvalue = "방금 전";
-          return returnvalue;
-        } //2. 1시간 이내
-        else if(currentTime.getTime() - writingtime.getTime() < 3600000){
-          returnvalue = Math.floor((currentTime.getTime() - writingtime.getTime())/60000) + "분 전";
-          return returnvalue;
-        }//3. 작성한지 24시간 넘음
-        else if(currentTime.getTime() - writingtime.getTime() > 86400000){
-          returnvalue = writingtime.getFullYear() + "년 " + (writingtime.getMonth()+1) +"월 " + writingtime.getDate() + "일";
-          return returnvalue;
-        } //4. 24시간 이내
-        else{
-          if(currentTime.getDate() != writingtime.getDate()){
-            returnvalue = (24 - writingtime.getHours()) + (currentTime.getHours());
-            if(returnvalue == 24){
-              returnvalue = writingtime.getFullYear() + "년 " + (writingtime.getMonth()+1) +"월 " + writingtime.getDate() + "일";
-            }
-            else{
-              returnvalue += "시간 전";
-            }
-          }
-          else{
-            returnvalue = (currentTime.getHours() - writingtime.getHours()) + "시간 전";
-          }
-          return returnvalue;
-        }
+//         //--------------- 시간 계산------------------
+//         //1. 작성 10분 이내
+//         if(currentTime.getTime() - writingtime.getTime() < 600000){
+//           returnvalue = "방금 전";
+//           return returnvalue;
+//         } //2. 1시간 이내
+//         else if(currentTime.getTime() - writingtime.getTime() < 3600000){
+//           returnvalue = Math.floor((currentTime.getTime() - writingtime.getTime())/60000) + "분 전";
+//           return returnvalue;
+//         }//3. 작성한지 24시간 넘음
+//         else if(currentTime.getTime() - writingtime.getTime() > 86400000){
+//           returnvalue = writingtime.getFullYear() + "년 " + (writingtime.getMonth()+1) +"월 " + writingtime.getDate() + "일";
+//           return returnvalue;
+//         } //4. 24시간 이내
+//         else{
+//           if(currentTime.getDate() != writingtime.getDate()){
+//             returnvalue = (24 - writingtime.getHours()) + (currentTime.getHours());
+//             if(returnvalue == 24){
+//               returnvalue = writingtime.getFullYear() + "년 " + (writingtime.getMonth()+1) +"월 " + writingtime.getDate() + "일";
+//             }
+//             else{
+//               returnvalue += "시간 전";
+//             }
+//           }
+//           else{
+//             returnvalue = (currentTime.getHours() - writingtime.getHours()) + "시간 전";
+//           }
+//           return returnvalue;
+//         }
 
-}
+// }
 
 module.exports = router;
 

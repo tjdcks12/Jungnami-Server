@@ -31,6 +31,14 @@ router.post('/', async(req, res, next) => {
     let pushSql = "INSERT INTO push (p_follower_id, p_user_id) VALUES (?, ?);"
     let pushQuery = await db.queryParamCnt_Arr(pushSql,[follower_id, following_id]);
 
+    let selectfollowerSql = "SELECT nickname FROM user WHERE id = ?;"
+    let selectfollowerQuery = await db.queryParamCnt_Arr(selectuserSql,[follower_id]);
+
+
+    
+    p_text = selectfollowerQuery[0].nickname + "님이 팔로우 했습니다.";
+    p_user_id = following_id;
+
     res.status(201).send({
       message : "Insert Data Success"
     });
