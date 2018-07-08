@@ -9,20 +9,17 @@ const jwt = require('../../module/jwt.js');
 router.post('/', async(req, res) => {
 	var id; // 사용자 email
 	const chkToken = jwt.verify(req.headers.authorization);
-  	if(chkToken == -1) {
-    	id = "";
-  	}
-  	else{
-    	id = chkToken.id;
-  	}
+
+			if(chkToken == -1) {
+				res.status(401).send({
+					message : "Access Denied"
+				});
+
+				return;
+			}
 
 	try{
-		if(id == ""){ //로그인 안되어 있을 때 access deny
-			res.status(401).send({
-				message : "Access Denied"
-			});
-			return;
-		}else{ //로그인 되었을 때 
+		//로그인 되었을 때 
 			if(!(req.body.bcl_boardComment_id && req.body.bcl_user_id)){
 				res.status(403).send({
 					message : "please input board_id and user_id"
@@ -36,9 +33,11 @@ router.post('/', async(req, res) => {
 					"data" : data
 				});
 
+				var pushmsg = (req.body.bcl_user_id = '님이 회원님의 댓글을 좋아합니다.');
+
 				console.log(data);
 			}
-		}
+	
 	}catch(err){
 		console.log(err);
 		res.status(500).send({

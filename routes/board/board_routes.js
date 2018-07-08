@@ -11,7 +11,7 @@ router.use('/post', require('./post'));
 router.use('/postcomplete', require('./postcomplete'));
 
 //4. 게시판 글에 좋아요  
-router.use('/like', require('./likeboard'));
+router.use('/likeboard', require('./likeboard'));
 
 //5. 게시글에 댓글 달기 
 router.use('/makecomment', require('./makecomment'));
