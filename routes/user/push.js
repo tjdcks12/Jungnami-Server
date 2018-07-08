@@ -10,7 +10,7 @@ const checktime = require('../../module/checktime.js');
 
 
 /*  푸시알림 목록보기  */
-/*  /user/push  */   
+/*  /user/push  */
 router.get('/', async(req, res, next) => {
 
   const chkToken = jwt.verify(req.headers.authorization);
@@ -58,7 +58,7 @@ router.get('/', async(req, res, next) => {
       var r = {};
 
       try {
-        r.button = ""; 
+        r.button = "";
 
         // 팔로우 관련
         if(pushdata[i].p_follower_id != null) {
