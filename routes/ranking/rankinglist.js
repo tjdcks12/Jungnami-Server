@@ -54,10 +54,11 @@ router.get('/:islike', async(req, res, next) => {
         rankingInfo.l_id = listQuery[i].id;
         rankingInfo.l_name = listQuery[i].name;
         rankingInfo.party_name = listQuery[i].l_party_name;
-        rankingInfo.position = listQuery[i].position;
+        rankingInfo.position = listQuery[i].position; 
+        rankingInfo.score = listQuery[i].score; 
 
         if (rankingInfo.score == null){
-          rankingInfo.scoretext = "0 표";
+          rankingInfo.scoretext = null;
         } else {
           rankingInfo.scoretext = addComma.addComma(rankingInfo.score) + " 표";
         }
