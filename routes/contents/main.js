@@ -6,95 +6,61 @@ const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 const checktime = require('../../module/checktime.js');
 
-router.get('/:categoy', async (req, res) => {
+router.get('/', async (req, res) => {
 
   const chkToken = jwt.verify(req.headers.authorization);
 
+  var userid;
+  if(chkToken == -1){
+    userid = "";
+  }
+  else{
+    userid = chkToken.id;
+  }
 
   try{
-  	if(!req.params.categoy) {
-  		res.status(403).send({
-  			"message" : "input contents category"
-  		});
-  	}
-  	else{
-  		let getcontentsmainQuery = 'SELECT * FROM myjungnami.contents WHERE category = ?';
-      let data = await db.queryParamCnt_Arr(getcontentsmainQuery, [req.params.categoy]);
 
-      let alarm;
-      let islogined;
+    // 컨텐츠 다가져오기 ( score desc )
+    var select_contents = 'SELECT * FROM contents ORDER BY score DESC';
+    var result_contents = await db.queryParamCnt_Arr(select_contents);
+    if(result_contents.length == 0){
+      res.status(300).send({
+        "message" : "NO data"
+      });
 
-     //로그인 되어었으면 알람 수 명시
-      if(chkToken !== -1){
-          let getalarmcntQuery = "select count(*) from myjungnami.push where (p_user_id = ? and ischecked = 0)";
-          alarmCnt = await db.queryParamCnt_Arr(getalarmcntQuery, id);
-          alarm = alarmCnt;
-          islogined = 1;
-      }else{
-          alarmCnt = 0;
-          islogined = 0;
-      }
-
-      data.push("timeset : "+ checktime.checktime(data.writingtime));
-      data.push("islogined : " + islogined);
-      data.push("alarm : "+ alarm);
-
-
-      res.status(200).send({
-       "message" : "Successfully get contents list",
-       "data" : data
-     });
-
-      console.log(data);
+      return;
     }
+
+    var result = [];
+    for(var i=0; i<result_contents.length; i++){
+      var data = {};
+
+      // title
+      data.title = result_contents[i].title;
+
+      // thumbnail
+      data.thumbnail = result_contents[i].thumbnail_url;
+
+      // 카테고리 + 시간
+      data.text = result_contents[i].category + " * " + checktime.checktime(result_contents[i].writingtime);
+
+      // 동영상 체크
+      data.type = result_contents[i].contents_type; // 0: cardnews, 1:youtube_url
+
+      result.push(data);
+    }
+
+    res.status(200).send({
+      "message" : "Successfully get posting view",
+      "data" : result
+    });
+
   }catch(err){
-  	console.log(err);
-  	res.status(500).send({
-  		"message" : "Server error"
-  	});
+    console.log(err);
+    res.status(500).send({
+      "message" : "Server error"
+    });
   }
 });
-
-
-// 모듈 추가했음 지워도 됨 _ from jiyeon
-/*
-var timesetfun = function(param_writingtime) {
-        // 현재시간
-        var currentTime = new Date();
-        let returnvalue;
-        var writingtime = param_writingtime;
-
-        //--------------- 시간 계산------------------
-        //1. 작성 10분 이내
-        if(currentTime.getTime() - writingtime.getTime() < 600000){
-          returnvalue = "방금 전";
-          return returnvalue;
-        } //2. 1시간 이내
-        else if(currentTime.getTime() - writingtime.getTime() < 3600000){
-          returnvalue = Math.floor((currentTime.getTime() - writingtime.getTime())/60000) + "분 전";
-          return returnvalue;
-        }//3. 작성한지 24시간 넘음
-        else if(currentTime.getTime() - writingtime.getTime() > 86400000){
-          returnvalue = writingtime.getFullYear() + "년 " + (writingtime.getMonth()+1) +"월 " + writingtime.getDate() + "일";
-          return returnvalue;
-        } //4. 24시간 이내
-        else{
-          if(currentTime.getDate() != writingtime.getDate()){
-            returnvalue = (24 - writingtime.getHours()) + (currentTime.getHours());
-            if(returnvalue == 24){
-              returnvalue = writingtime.getFullYear() + "년 " + (writingtime.getMonth()+1) +"월 " + writingtime.getDate() + "일";
-            }
-            else{
-              returnvalue += "시간 전";
-            }
-          }
-          else{
-            returnvalue = (currentTime.getHours() - writingtime.getHours()) + "시간 전";
-          }
-          return returnvalue;
-        }
-
-}*/
-
 
 module.exports = router;
