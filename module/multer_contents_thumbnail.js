@@ -15,8 +15,7 @@ const upload = multer({
         bucket: 'myrubysbucket',
         acl: 'public-read',
         key: function(req, file, cb) {
-            cb(null, file.fieldname + "/" + file.originalname);
-            // fieldname을 이용
+            cb(null, "contents/thumbnail/" + file.originalname);
         }
     })
 });

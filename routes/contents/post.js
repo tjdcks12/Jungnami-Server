@@ -5,7 +5,7 @@ const router = express.Router();
 
 const async = require('async');
 const db = require('../../module/pool.js');
-const upload = require('../../module/multer_contents.js');
+const upload = require('../../module/multer_contents_thumbnail.js');
 
 
 /*  관리자가 컨텐츠 글을 게시하는 페이지  */
@@ -43,49 +43,75 @@ router.get('/', async(req, res, next) => {
 
 
 
-/*  컨첸츠 게시 완료  */
+/*  컨텐츠 게시 완료  */
 /*  /contents/post  */
-router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'cardnews', maxCount : 20}]), async(req, res) => {
+router.post('/', upload.array('thumbnail'), async(req, res) => {
 
   let title = req.body.title;
+  let subtitle = req.body.subtitle;
+  let contents_type = req.body.contents_type;
   let category = req.body.category;
-  let thumbnail = req.files.thumbnail[0].location;
-  let cardnews = eq.files.cardnews; // array
+  let thumbnail = req.files[0].location;
+  let l_id = req.body.l_id;
 
   try{
     // content table에 thumbnail 저장
-    var postSql = "INSERT INTO contents (title, thumbnail_url, category) VALUES (?, ?, ?);";
-    var postResult = await db.queryParamCnt_Arr(postSql,[title, thumbnail, category]);
+    var postSql = "INSERT INTO contents (title, subtitle, thumbnail_url, category, contents_type) VALUES (?, ?, ?, ?, ?);";
+    var postResult = await db.queryParamCnt_Arr(postSql,[title, subtitle, thumbnail, category, contents_type]);
+
+    if(postResult != undefined){
+      res.status(204).send({
+        "message" : "fail insert"
+      });
+
+      return;
+    }
+
 
     // content id가져오기
     testsql = "SELECT id FROM contents WHERE title = ? AND category = ?;";
     queryResult = await db.queryParamCnt_Arr(testsql,[title, category]);
 
-    if(queryResult.length == 0){
-      console.log("query not ok");
+    let c_id = queryResult[0].id;
 
-      res.status(300).send({
-        message: "No Data"
+    // hash table에 c_id, l_id 저장
+    var hashSql = "INSERT INTO hash (h_contents_id, h_legislator_id) VALUES (?, ?);";
+    var hashQuery = await db.queryParamCnt_Arr(hashSql,[c_id,l_id]);
+
+    if(postResult != undefined){
+      res.status(204).send({
+        "message" : "fail insert"
       });
-      return;
-      
-    }else{
-      console.log("query ok");
 
-      let contentsId = queryResult[0].id; // 가져온 contents id
+      return;
+    }
+
+
+    // if(queryResult.length == 0){
+    //   console.log("query not ok");
+
+    //   res.status(300).send({
+    //     message: "No Data"
+    //   });
+    //   return;
+      
+    // }else{
+    //   console.log("query ok");
+
+    //   let contentsId = queryResult[0].id; // 가져온 contents id
 
 
       // contentImg table에 cardnews 저장
-      testsql = "INSERT INTO contentsImg (ci_contents_id, img_url) VALUES (?, ?);";
-      for(var i=0; i<cardnews.length; i++){
-        queryResult = await db.queryParamCnt_Arr(testsql,[contentsId, cardnews[i].location]);
-      }
+      // testsql = "INSERT INTO contentsImg (ci_contents_id, img_url) VALUES (?, ?);";
+      // for(var i=0; i<cardnews.length; i++){
+      //   queryResult = await db.queryParamCnt_Arr(testsql,[contentsId, cardnews[i].location]);
+      // }
 
       res.status(201).send({
         message : "Successfully posting contents"
       });
       
-    }
+    
 
 
   } catch (error) {
