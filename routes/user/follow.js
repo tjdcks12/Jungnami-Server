@@ -13,7 +13,6 @@ const jwt = require('../../module/jwt.js');
 router.post('/', async(req, res, next) => {
 
   try {
-
     const chkToken = jwt.verify(req.headers.authorization);
 
     if(chkToken == -1) {
@@ -26,8 +25,11 @@ router.post('/', async(req, res, next) => {
     let follower_id = chkToken.id;
     let following_id = req.body.following_id;
 
-    let insertSql = "INSERT INTO follow (f_follower_id, f_following_id) VALUES (?, ?);"
-    let insertQuery = await db.queryParamCnt_Arr(insertSql,[follower_id, following_id]);
+    let insertfollowSql = "INSERT INTO follow (f_follower_id, f_following_id) VALUES (?, ?);"
+    let insertfollowQuery = await db.queryParamCnt_Arr(insertfollowSql,[follower_id, following_id]);
+
+    let pushSql = "INSERT INTO push (p_follower_id, p_user_id) VALUES (?, ?);"
+    let pushQuery = await db.queryParamCnt_Arr(pushSql,[follower_id, following_id]);
 
     res.status(201).send({
       message : "Insert Data Success"

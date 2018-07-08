@@ -8,6 +8,7 @@ const db = require('../../module/pool.js');
 //user의 profile_url, board_id의 like_cnt, comment_cnt
 
 router.get('/', async (req, res) => {
+  
   try{
   	let getboardlistQuery = 'SELECT * FROM myjungnami.board';
   	let boardtableInfo = await db.queryParamCnt_Arr(getboardlistQuery);
