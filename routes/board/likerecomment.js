@@ -29,6 +29,13 @@ router.post('/', async(req, res) => {
 		}else{
 			let postrecommentlikeQuery = 'INSERT INTO myjungnami.boardRecommentLike(id, brl_boardRecomment_id, brl_user_id) VALUES (null, ?, ?)';
 			let data = await db.queryParamCnt_Arr(postrecommentlikeQuery, [req.body.recomment_id, userid]);
+			if(data == undefined){
+				res.status(204).send({
+					"message" : "fail insert"
+				});
+
+				return;
+			}
 
 			res.status(201).send({
 				"message" : "Successfully insert boardRecommentlike"

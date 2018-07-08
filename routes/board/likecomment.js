@@ -28,6 +28,13 @@ router.post('/', async(req, res) => {
 		}else{
 			let postcommentlikeQuery = 'INSERT INTO myjungnami.boardCommentLike(id, bcl_boardComment_id, bcl_user_id) VALUES (null, ?, ?)';
 			let data = await db.queryParamCnt_Arr(postcommentlikeQuery, [req.body.comment_id, user_id]);
+			if(data == undefined){
+				res.status(204).send({
+					"message" : "fail insert"
+				});
+
+				return;
+			}
 
 			res.status(201).send({
 				"message" : "Successfully insert boardcommentlike"

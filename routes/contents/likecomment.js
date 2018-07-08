@@ -6,7 +6,6 @@ const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 
 router.post('/', async(req, res) => {
-	var id; // 사용자 email
 
 	const chkToken = jwt.verify(req.headers.authorization);
 
@@ -28,6 +27,13 @@ router.post('/', async(req, res) => {
 		}else{
 			let contentscommentlikeQuery = 'INSERT INTO myjungnami.contentsCommentLike(id, ccl_contentsComment_id, ccl_user_id) VALUES (null, ?, ?)';
 			let data = await db.queryParamCnt_Arr(contentscommentlikeQuery, [req.body.comment_id, userid]);
+			if(data == undefined){
+				res.status(204).send({
+					"message" : "fail insert"
+				});
+
+				return;
+			}
 
 			res.status(201).send({
 				"message" : "Successfully insert contents' comment like",
