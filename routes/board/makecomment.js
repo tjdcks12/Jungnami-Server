@@ -19,7 +19,6 @@ router.post('/', async(req, res) => {
 	var userid = chkToken.id;
 
 	try{
-
 		if(!(req.body.board_id && req.body.user_id && req.body.content)){
 			res.status(403).send({
 				message : "please input board id & user id & content"
