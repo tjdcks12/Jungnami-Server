@@ -46,6 +46,8 @@ const db = require('../../module/pool.js');
 /*  /legislator/page/:l_id  */
 router.get('/:l_id', async(req, res, next) => {
 
+  const chkToken = jwt.verify(req.headers.authorization);
+
   let u_id;
 
   const chkToken = jwt.verify(req.headers.authorization);

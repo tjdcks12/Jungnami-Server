@@ -9,6 +9,25 @@ const jwt = require('../../module/jwt.js');
 //user의 profile_url, board_id의 like_cnt, comment_cnt
 
 router.get('/', async (req, res) => {
+  
+  try{
+  	let getboardlistQuery = 'SELECT * FROM myjungnami.board';
+  	let boardtableInfo = await db.queryParamCnt_Arr(getboardlistQuery);
+    console.log(boardtableInfo); 
+
+    let resultArry = new Array();
+    let subresultObj = new Object();
+
+    let userinfoObj = new Object();
+    let commentCnt;
+    let boardlikeCnt;
+
+    for(var i=0; i< boardtableInfo.length ; i++){
+
+      //유저닉네임이랑 이미지 사진 
+      let getuserinfoQuery = "select nickname, img_url from myjungnami.user where id = ?";
+      userinfoObj = await db.queryParamCnt_Arr(getuserinfoQuery, [boardtableInfo[i].b_user_id]);
+
       
     const chkToken = jwt.verify(req.headers.authorization);
     var id = chkToken.id;

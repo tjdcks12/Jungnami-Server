@@ -7,6 +7,10 @@ const router = express.Router();
 // mypage
 router.use('/mypage', require('./mypage'));
 
+// mypage 수정하기
+router.use('/editprofile', require('./editprofile'));
+
+
 // kakao login
 router.use('/kakaologin', require('./kakaologin'))
 
@@ -36,6 +40,11 @@ router.use('/addcoin', require('./addcoin'));
 
 // 투표권 충전 하기
 router.use('/addvote', require('./addvote'));
+
+// 푸시 알림창 띄우기
+router.use('/push', require('./push'));
+
+
 
 module.exports = router;
 
