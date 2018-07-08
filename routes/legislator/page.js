@@ -1,5 +1,40 @@
 /* KIM JI YEON */
 
+// 경과 시간 계산 함수
+function checktime (time) {
+
+  let currentTime = new Date();
+  let writingtime = time; // result_content[i].writingtime;
+  var data; // 리턴할 값
+
+  // 작성 10분 이내
+  if(currentTime.getTime() - writingtime.getTime() < 600000){
+    data = "방금 전";
+  } // 1시간 이내
+  else if(currentTime.getTime() - writingtime.getTime() < 3600000){
+    data = Math.floor((currentTime.getTime() - writingtime.getTime())/60000) + "분 전";
+  }// 작성한지 24시간 넘음
+  else if(currentTime.getTime() - writingtime.getTime() > 86400000){
+    data = writingtime.getFullYear() + "년 " + (writingtime.getMonth()+1) +"월 " + writingtime.getDate() + "일";
+  } // 24시간 이내
+  else{
+    if(currentTime.getDate() != writingtime.getDate()){
+      data = (24 - writingtime.getHours()) + (currentTime.getHours());
+      if(data == 24){
+        data = writingtime.getFullYear() + "년 " + (writingtime.getMonth()+1) +"월 " + writingtime.getDate() + "일";
+      }
+      else{
+        data += "시간 전";
+      }
+    }
+    else{
+      data = (currentTime.getHours() - writingtime.getHours()) + "시간 전";
+    }
+  }
+
+  return data;
+}
+
 var express = require('express');
 const router = express.Router();
 
@@ -14,6 +49,8 @@ router.get('/:l_id', async(req, res, next) => {
   const chkToken = jwt.verify(req.headers.authorization);
 
   let u_id;
+
+  const chkToken = jwt.verify(req.headers.authorization);
 
   if(chkToken == -1) {
     u_id = '';
@@ -39,7 +76,7 @@ router.get('/:l_id', async(req, res, next) => {
         message: "No Data"
       });
       return;
-      
+
     }else{
       console.log("query ok");
     }
@@ -86,7 +123,7 @@ router.get('/:l_id', async(req, res, next) => {
 
       rankingInfo.id = unlikeRankingQuery[i].id;
       rankingInfo.score = unlikeRankingQuery[i].score;
-      
+
       unlikeRresult.push(rankingInfo);
     }
     // 비호감 순 랭킹 뽑기
@@ -117,11 +154,10 @@ router.get('/:l_id', async(req, res, next) => {
 
     for (var i=0; i<likeRresult.length; i++) {
       if(likeRresult[i].id == l_id) {
-
         result.l_id = likeRresult[i].id;
         result.l_name = likeRankingQuery[i].name;
         result.party_name = likeRankingQuery[i].l_party_name;
-        result.position = likeRankingQuery[i].position; 
+        result.position = likeRankingQuery[i].position;
         result.profileimg = likeRankingQuery[i].profile_img_url;
         result.ranking = "호감 " + likeRresult[i].ranking + " / 비호감 ";
 
@@ -131,12 +167,30 @@ router.get('/:l_id', async(req, res, next) => {
 
     for (var i=0; i<unlikeRresult.length; i++) {
       if(unlikeRresult[i].id == l_id) {
-
         result.ranking += unlikeRresult[i].ranking;
 
         break;
       }
     }
+
+    // 의원 관련 컨텐츠 가져오기
+    // 컨텐츠id, 썸네일, 타이틀, 카테고리, 타임
+    let select_contents = 'SELECT contents.id as id, thumbnail_url, title, category, writingtime FROM contents LEFT JOIN hash ON contents.id = hash.h_contents_id WHERE hash.h_legislator_id = ?';
+    let result_contents = await db.queryParamCnt_Arr(select_contents,[l_id]);
+
+    var contents = [];
+    for(var i=0; i<result_contents.length; i++){
+      var data = {};
+
+      data.id = result_contents[i].id;
+      data.thumbnail_url = result_contents[i].thumbnail_url;
+      data.title = result_contents[i].title;
+      data.category = result_contents[i].category;
+      data.writingtime = checktime(result_contents[i].writingtime);
+
+      contents.push(data);
+    }
+    result.contents = contents;
 
     res.status(200).send({
         message : "Select Data Success",

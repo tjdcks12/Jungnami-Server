@@ -81,7 +81,7 @@ router.post('/', async(req, res, next) => {
       console.log("토큰이 있습니다");
       if(chkToken.id == id){
         console.log("성공적으로 로그인 되었습니다");
-        res.status(200).send({
+        res.status(201).send({
           result : {
             message : "success",
             token : req.headers.authorization,
@@ -91,7 +91,7 @@ router.post('/', async(req, res, next) => {
       } else { // 토큰이 만료된 경우 재발급
         console.log("기간이 만료되었습니다. 재발급 합니다");
         token = jwt.sign(id);
-        res.status(200).send({
+        res.status(201).send({
           "result" : {
             message : "your token ended and reissue new token",
             token : token ,
@@ -106,7 +106,7 @@ router.post('/', async(req, res, next) => {
         // fcm token update
         let updatefcmToken = await db.queryParamCnt_Arr(updateToken, [fcmToken, id]);
         console.log("다른기기에서 접속했습니다");
-        res.status(200).send({
+        res.status(201).send({
           "result" : {
             message : "new device login",
             token : jwt.sign(id),
@@ -120,7 +120,7 @@ router.post('/', async(req, res, next) => {
 
         token = jwt.sign(id);
 
-        res.status(200).send({
+        res.status(201).send({
           "result" : {
             message : "sign up success",
             token : token,
