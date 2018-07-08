@@ -1,5 +1,3 @@
-
-
 // module.exports = {
 //     // Issue jwt Token
 //     sign : function(id,nickname) {

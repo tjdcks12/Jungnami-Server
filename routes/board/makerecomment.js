@@ -8,42 +8,39 @@ const jwt = require('../../module/jwt.js');
 router.post('/', async(req, res) => {
 	var id; // 사용자 email
 	const chkToken = jwt.verify(req.headers.authorization);
-  	
-  	if(chkToken == -1) {
-    	id = "";
-  	}
-  	else{
-    	id = chkToken.id;
-  	}
+
+	if(chkToken == -1) {
+		res.status(401).send({
+			message : "Access Denied"
+		});
+
+		return;
+	}
 
 	try{
-		if(id == ""){
-				res.status(401).send({
-				message : "Access Denied"
+		
+		if(!(req.body.comment_id && req.body.user_id && req.body.content)){
+			res.status(403).send({
+				message : "please input board comment id & user id & content"
 			});
-			return;
 		}else{
-			if(!(req.body.br_boardComment_id && req.body.br_user_id && req.body.content)){
-				res.status(403).send({
-					message : "please input br_boardComment_id and br_user_id and content"
-				});
-			}else{
-				let postmakerecommentQuery = 'INSERT INTO myjungnami.boardRecomment(id, br_boardComment_id, br_user_id, content) VALUES (null, ?, ?, ?)';
-				let data = await db.queryParamCnt_Arr(postmakerecommentQuery, [req.body.br_boardComment_id, req.body.br_user_id, req.body.content]);
+			let postmakerecommentQuery = 'INSERT INTO myjungnami.boardRecomment(id, br_boardComment_id, br_user_id, content) VALUES (null, ?, ?, ?)';
+			let data = await db.queryParamCnt_Arr(postmakerecommentQuery, [req.body.comment_id, req.body.user_id, req.body.content]);
 
-				res.status(200).send({
-					"message" : "insert boardRecomment success",
-					"data" : data
-				});
+			res.status(201).send({
+				"message" : "Successfully insert boardRecomment"
+			});
 
-				console.log(data);
-			}
+			var pushmsg = (req.body.user_id + '님이 회원님의 글에 댓글을 남겼습니다.');
+
+			console.log(data);
 		}
+
 		
 	}catch(err){
 		console.log(err);
 		res.status(500).send({
-			"message" : "syntax error"
+			"message" : "Server error"
 		});
 	}
 })

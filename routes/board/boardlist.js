@@ -3,6 +3,7 @@ var express = require('express');
 var router = express.Router();
 const async = require('async');
 const db = require('../../module/pool.js');
+const jwt = require('../../module/jwt.js');
 
 //board_id, b_user_id, content, imgurl writing time, shared,
 //user의 profile_url, board_id의 like_cnt, comment_cnt
@@ -26,44 +27,85 @@ router.get('/', async (req, res) => {
       //유저닉네임이랑 이미지 사진 
       let getuserinfoQuery = "select nickname, img_url from myjungnami.user where id = ?";
       userinfoObj = await db.queryParamCnt_Arr(getuserinfoQuery, [boardtableInfo[i].b_user_id]);
+
       
-      //게시글 댓글 갯수 
-      let getcommentcntQuery = "select count(*) from myjungnami.boardComment where bc_board_id = ?;";
-      commentCnt = await db.queryParamCnt_Arr(getcommentcntQuery, [boardtableInfo[i].id] );
+    const chkToken = jwt.verify(req.headers.authorization);
+    var id = chkToken.id;
 
-      //게시글 좋아요 수 
-      let getlikecntQuery = "select count(*) from myjungnami.boardLike where bl_board_id = ?";
-      boardlikeCnt = await db.queryParamCnt_Arr(getlikecntQuery, [boardtableInfo[i].id]);
+    try{
 
-      let timeset = timesetfun(boardtableInfo[i].writingtime);
-      //console.log(boardtableInfo[i].writingtime);
-      console.log(timeset);
+      let getboardlistQuery = 'SELECT * FROM myjungnami.board';
+      let boardtableInfo = await db.queryParamCnt_Arr(getboardlistQuery);
+      console.log(boardtableInfo); 
 
-      subresultObj = boardtableInfo[i];
-      //시간 처리해서 넘겨주기 
-      subresultObj.timeset = timeset;
-      subresultObj.user_nick = userinfoObj[0].nickname;
-      subresultObj.user_img_rul = userinfoObj[0].img_url;
-      subresultObj.commentCnt = commentCnt[0];
-      subresultObj.likeCnt = boardlikeCnt[0];
+      let resultArry = new Array();
+      let subresultObj = new Object();
 
-      resultArry.push(subresultObj);
+      let userinfoObj = new Object();
+      let commentCnt;
+      let boardlikeCnt;
+      let alarmCnt;
+      let islogined;
 
-    }
+      //로그인 되어었으면 알람 수 명시 
+      if(chkToken !== -1){
+          let getalarmcntQuery = "select count(*) as cnt from myjungnami.push where (p_user_id = ? and ischecked = 0)"
+          alarmCnt= await db.queryParamCnt_Arr(getalarmcntQuery, id);
+          islogined = 1;
+      }else{
+          alarmCnt = 0;
+          islogined = 0;
+      }
+
+      resultArry.push("islogined : " + islogined);
+      resultArry.push("alarmCnt : " );
+      resultArry.push(alarmCnt[0]);
+
+      for(var i=0; i< 3 ; i++){
+
+        //유저닉네임이랑 이미지 사진 
+        let getuserinfoQuery = "select nickname, img_url from myjungnami.user where id = ?";
+        userinfoObj = await db.queryParamCnt_Arr(getuserinfoQuery, [boardtableInfo[i].b_user_id]);
       
-  	res.status(200).send({
-  		"message" : "Successfully get boardlist",
-  		"data" : resultArry
-  	});
+        //게시글 댓글 갯수 
+        let getcommentcntQuery = "select count(*) from myjungnami.boardComment where bc_board_id = ?;";
+        commentCnt = await db.queryParamCnt_Arr(getcommentcntQuery, [boardtableInfo[i].id] );
+
+        //게시글 좋아요 수 
+        let getlikecntQuery = "select count(*) from myjungnami.boardLike where bl_board_id = ?";
+        boardlikeCnt = await db.queryParamCnt_Arr(getlikecntQuery, [boardtableInfo[i].id]);
+
+        let getalarmcntQuery = "select count(*) from myjungnami.push where p_user_id = ?;"
+
+        let timeset = timesetfun(boardtableInfo[i].writingtime);
+
+        subresultObj = boardtableInfo[i];
+        //시간 처리해서 넘겨주기 
+        subresultObj.timeset = timeset;
+        subresultObj.user_nick = userinfoObj[0].nickname;
+        subresultObj.user_img_rul = userinfoObj[0].img_url;
+        subresultObj.commentCnt = commentCnt[0];
+        subresultObj.likeCnt = boardlikeCnt[0];
+
+        resultArry.push(subresultObj);
+
+      }
+      
+      res.status(200).send({
+        "message" : "Successfully get boardlist",
+        "data" : resultArry
+      });
 
   }catch(err){
   	console.log(err);
   	res.status(500).send({
-  		"message" : "Syntax error"
+  		"message" : "Server error"
   	});
   }
 });
 
+
+//-----------------------------시간계산 함수------------------------------------
 var timesetfun = function(param_writingtime) {
         // 현재시간
         var currentTime = new Date();

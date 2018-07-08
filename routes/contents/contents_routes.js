@@ -1,17 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-//1. 컨텐츠 탭 메인화면 
+//1. 컨텐츠 탭 메인화면 - ok
 router.use('/main', require('./main'));
 
-//2. 컨텐츠 검색 화면 -> 보류 
-//router.use('/searchcontents', require('./searchcontents'));
-
-//3. 컨텐츠 하나 클릭시에 카드뉴스 뿌려주기 
+//3. 컨텐츠 하나 클릭시에 카드뉴스 뿌려주기  - ok 
 router.use('/cardnews', require('./cardnews'));
 
 //4. 컨텐츠 좋아요 
-router.use('/like', require('./like'));
+router.use('/like', require('./like')); 
 
 //5. 컨텐츠에 달린 댓글리스트 보여주기 
 router.use('/commentlist', require('./commentlist'));
@@ -31,14 +28,11 @@ router.use('/makerecomment', require('./makerecomment'));
 //10. 컨텐츠에 대댓글 좋아요 
 router.use('/likerecomment', require('./likerecomment'));
 
-// 관리자가 컨텐츠 게시할 때
+//11. 관리자가 컨텐츠 게시할 때
 router.use('/post', require('./c_post'));
 
-// 관리자가 컨텐츠 삭제할 때
+//12. 관리자가 컨텐츠 삭제할 때
 router.use('/delete', require('./c_delete'));
-
-
-
 
 
 
