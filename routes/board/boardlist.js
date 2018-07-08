@@ -12,7 +12,6 @@ router.get('/', async (req, res) => {
       
     const chkToken = jwt.verify(req.headers.authorization);
     var id = chkToken.id;
-    console.log(id);
 
     try{
 
@@ -31,9 +30,8 @@ router.get('/', async (req, res) => {
 
       //로그인 되어었으면 알람 수 명시 
       if(chkToken !== -1){
-          let getalarmcntQuery = "select count(*) from myjungnami.push where (p_user_id = ? and ischecked = 0)"
-          alarmCnt = await db.queryParamCnt_Arr(getalarmcntQuery, id);
-          subresultObj.alarmCnt = alarmCnt;
+          let getalarmcntQuery = "select count(*) as cnt from myjungnami.push where (p_user_id = ? and ischecked = 0)"
+          alarmCnt= await db.queryParamCnt_Arr(getalarmcntQuery, id);
           islogined = 1;
       }else{
           alarmCnt = 0;
@@ -41,9 +39,10 @@ router.get('/', async (req, res) => {
       }
 
       resultArry.push("islogined : " + islogined);
+      resultArry.push("alarmCnt : " );
+      resultArry.push(alarmCnt[0]);
 
-
-      for(var i=0; i< boardtableInfo.length ; i++){
+      for(var i=0; i< 3 ; i++){
 
         //유저닉네임이랑 이미지 사진 
         let getuserinfoQuery = "select nickname, img_url from myjungnami.user where id = ?";
@@ -60,7 +59,6 @@ router.get('/', async (req, res) => {
         let getalarmcntQuery = "select count(*) from myjungnami.push where p_user_id = ?;"
 
         let timeset = timesetfun(boardtableInfo[i].writingtime);
-        console.log(timeset);
 
         subresultObj = boardtableInfo[i];
         //시간 처리해서 넘겨주기 
@@ -82,7 +80,7 @@ router.get('/', async (req, res) => {
   }catch(err){
   	console.log(err);
   	res.status(500).send({
-  		"message" : "Syntax error"
+  		"message" : "Server error"
   	});
   }
 });

@@ -4,16 +4,16 @@ var router = express.Router();
 const async = require('async');
 const db = require('../../module/pool.js');
 
-router.get('/:cc_contents_id', async(req, res) => {
+router.get('/:contents_id', async(req, res) => {
 	try{
-		if(!(req.params.cc_contents_id)){
+		if(!(req.params.contents_id)){
 			res.status(403).send({
-				message : "please input contents id"
+				message : "please input contents' id"
 			});
 		}else{
 			//유저 닉, 이미지, 시간, 컨텐츠, 좋아요, 대댓 수 출력 
 			let getcommentlistQuery = 'select * from myjungnami.contentsComment where cc_contents_id = ? ';  
-			let commenttableInfo = await db.queryParamCnt_Arr(getcommentlistQuery, [req.params.cc_contents_id]);
+			let commenttableInfo = await db.queryParamCnt_Arr(getcommentlistQuery, [req.params.contents_id]);
 			console.log(commenttableInfo);
 			//댓글 테이블에서 댓글 목록 받아와서 
 
@@ -61,7 +61,7 @@ router.get('/:cc_contents_id', async(req, res) => {
 	}catch(err){
 		console.log(err);
 		res.status(500).send({
-			"message" : "syntax error"
+			"message" : "Server error"
 		});
 	}
 })

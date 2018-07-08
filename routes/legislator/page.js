@@ -31,7 +31,13 @@ router.get('/:l_id', async(req, res, next) => {
     let unlikeRankingQuery = await db.queryParamCnt_Arr(rankingSql,[0]);
 
     if(likeRankingQuery.length == 0 || unlikeRankingQuery.length == 0){
-      console.log("query not ok");
+      console.log("query not ok")
+
+      res.status(300).send({
+        message: "No Data"
+      });
+      return;
+      
     }else{
       console.log("query ok");
     }

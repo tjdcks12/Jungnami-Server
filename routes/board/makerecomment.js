@@ -19,21 +19,20 @@ router.post('/', async(req, res) => {
 
 	try{
 		
-		if(!(req.body.br_boardComment_id && req.body.br_user_id && req.body.content)){
+		if(!(req.body.comment_id && req.body.user_id && req.body.content)){
 			res.status(403).send({
-				message : "please input br_boardComment_id and br_user_id and content"
+				message : "please input board comment id & user id & content"
 			});
 		}else{
 			let postmakerecommentQuery = 'INSERT INTO myjungnami.boardRecomment(id, br_boardComment_id, br_user_id, content) VALUES (null, ?, ?, ?)';
-			let data = await db.queryParamCnt_Arr(postmakerecommentQuery, [req.body.br_boardComment_id, req.body.br_user_id, req.body.content]);
+			let data = await db.queryParamCnt_Arr(postmakerecommentQuery, [req.body.comment_id, req.body.user_id, req.body.content]);
 
-			res.status(200).send({
-				"message" : "insert boardRecomment success",
-				"data" : data
+			res.status(201).send({
+				"message" : "Successfully insert boardRecomment"
 			});
 
-			var pushmsg = (req.body.br_user_id + '님이 회원님의 글에 댓글을 남겼습니다.');
-			
+			var pushmsg = (req.body.user_id + '님이 회원님의 글에 댓글을 남겼습니다.');
+
 			console.log(data);
 		}
 
@@ -41,7 +40,7 @@ router.post('/', async(req, res) => {
 	}catch(err){
 		console.log(err);
 		res.status(500).send({
-			"message" : "syntax error"
+			"message" : "Server error"
 		});
 	}
 })

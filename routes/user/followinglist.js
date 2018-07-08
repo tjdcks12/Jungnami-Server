@@ -16,13 +16,14 @@ router.get('/:f_id', async(req, res, next) => {
 
     const chkToken = jwt.verify(req.headers.authorization);
 
-    if(chkToken == -1) {
-        res.status(401).send({
-            message : "Access Denied"
-        });
-    }
+    let u_id;
 
-    let u_id = chkToken.id;
+    if(chkToken == -1) {
+      u_id = '';
+    } else {
+      u_id = chkToken.id; 
+    }
+  
     let follower_id = req.params.f_id;
 
     let followinglistSql = "SELECT f_following_id, nickname, img_url FROM follow, user "
@@ -32,6 +33,12 @@ router.get('/:f_id', async(req, res, next) => {
 
     if(followinglistQuery.length == 0){
       console.log("query not ok");
+
+      res.status(300).send({
+            message: "No Data"
+      });
+      return;
+
     }else{
       console.log("query ok");
 
@@ -39,7 +46,6 @@ router.get('/:f_id', async(req, res, next) => {
 
 
     let followingSelectSql = "SELECT f_following_id FROM follow WHERE f_follower_id = ?"
-
     let followingSelectQuery = await db.queryParamCnt_Arr(followingSelectSql,[u_id]);
 
     var result = []; // following_id, following_nickname, following_img_url, isMyFollowing
@@ -47,6 +53,12 @@ router.get('/:f_id', async(req, res, next) => {
 
     if(followingSelectQuery.length == 0) {
       console.log("query not ok");
+
+      res.status(300).send({
+            message: "No Data"
+      });
+      return;
+      
     }else{
       console.log("query ok");
 

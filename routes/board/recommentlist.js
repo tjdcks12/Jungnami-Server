@@ -5,15 +5,15 @@ var router = express.Router();
 const async = require('async');
 const db = require('../../module/pool.js');
 
-router.get('/:c_id', async(req, res) => {
+router.get('/:comment_id', async(req, res) => {
 	try{
 		if(!(req.params.c_id)){
 			res.status(403).send({
-				message : "please input comment_id"
+				message : "please input comment id"
 			});
 		}else{
 			let getrecommentlistQuery = 'select * from myjungnami.boardRecomment where br_boardComment_id = ? ';
-			let recommenttableInfo = await db.queryParamCnt_Arr(getrecommentlistQuery, [req.params.c_id]);
+			let recommenttableInfo = await db.queryParamCnt_Arr(getrecommentlistQuery, [req.params.comment_id]);
 
 			console.log(recommenttableInfo);
 
@@ -57,7 +57,7 @@ router.get('/:c_id', async(req, res) => {
 	}catch(err){
 		console.log(err);
 		res.status(500).send({
-			"message" : "syntax error"
+			"message" : "Server error"
 		});
 	}
 })
