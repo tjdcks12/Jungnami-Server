@@ -10,7 +10,7 @@ const db = require('../../module/pool.js');
 
 /*  커뮤니티 게시글 삭제하기  */
 /*  /board/b_delete  */
-router.post('/',  async (req, res) => {
+router.delete('/:boardid',  async (req, res) => {
   try{
 
     const chkToken = jwt.verify(req.headers.authorization);
@@ -22,8 +22,8 @@ router.post('/',  async (req, res) => {
         return;
     }
 
-    let u_id = chkToken.id; 
-    let b_id = req.body.board_id;
+    let u_id = chkToken.id;
+    let b_id = req.params.boardid;
 
     let boardSql = 'SELECT b_user_id FROM board WHERE id = ?';
     let boardQuery = await db.queryParamCnt_Arr(boardSql, [b_id]);
@@ -32,13 +32,25 @@ router.post('/',  async (req, res) => {
 
       let deleteboardSql = 'DELETE FROM board WHERE id = ?';
       let deleteboardQuery = await db.queryParamCnt_Arr(deleteboardSql, [b_id]);
+      if(deleteboardQuery <= 0){
+        res.status(204).send({
+          "message" : "No data"
+        });
+
+        return;
+      }
 
       // 해당 글을 공유한 글도 함께 삭제
       let deleteboardsharedSql = 'DELETE FROM board WHERE shared = ?';
       let deleteboardsharedQuery = await db.queryParamCnt_Arr(deleteboardsharedSql, [b_id]);
     }
+    else{
+      res.status(401).send({
+        "message" : "Different User"
+      });
+    }
 
-		res.status(201).send({
+		res.status(200).send({
 			"message" : "Successfully delete board posting"
 	 	});
 
@@ -56,9 +68,3 @@ module.exports = router;
 
 // routes 에 추가해야 함
 // router.use('/b_delete', require('./b_delete'));
-
-
-
-
-
-

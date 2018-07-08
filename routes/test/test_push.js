@@ -25,10 +25,10 @@ router.get('/', async (req, res, next) => {
     message : "test"
   };
 
-  //var fcmToken = 'c_LgGFeTozc:APA91bHJtuxQsIAoD3IEf_8_pDiQ-9Ef-LX0L6JfhTIE-Yl8gCrdPZHIeKiz1J-skvFLR_crrVO45y0e1WXn_NQWoDpSCnoU7ZOkmKsvJ6hDVFJAyygEnnhj6tItI0lGOre9dzhsLE98v80n5TnClqNACqsyYZ8Lwg';
-  var fcmToken = null;
+  var fcmToken = 'c_LgGFeTozc:APA91bHJtuxQsIAoD3IEf_8_pDiQ-9Ef-LX0L6JfhTIE-Yl8gCrdPZHIeKiz1J-skvFLR_crrVO45y0e1WXn_NQWoDpSCnoU7ZOkmKsvJ6hDVFJAyygEnnhj6tItI0lGOre9dzhsLE98v80n5TnClqNACqsyYZ8Lwg';
+  //var fcmToken = null;
   if(fcmToken != null){
-    var push_data = await get_pushdata.get_pushdata(fcmToken, data);
+    var push_data = await get_pushdata.get_pushdata(fcmToken, "내용");
 
     console.log(push_data);
 

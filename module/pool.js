@@ -16,6 +16,7 @@ module.exports = {
     catch(err) {
       console.log("mysql error! err log =>" + err);
       next(err);
+      return;
     }
     finally {
       pool.releaseConnection(connection);
