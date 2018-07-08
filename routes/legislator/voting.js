@@ -94,6 +94,14 @@ router.post('/', async(req, res, next) => {
         let insertSql = "INSERT INTO legislatorVote (lv_legislator_id, lv_user_id, islike) VALUES (?, ?, ?);"
         let insertQuery = await db.queryParamCnt_Arr(insertSql,[l_id, u_id, islike]);
 
+          if(insertQuery == undefined){
+            res.status(204).send({
+              "message" : "fail insert"
+            });
+
+            return;
+          }
+
         v_cnt -= 1;
 
         let updateSql = "UPDATE user SET voting_cnt = ? WHERE id = ?;"

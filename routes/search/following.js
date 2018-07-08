@@ -13,8 +13,8 @@ const hangul = require('hangul-js');
 
 /*  팔로잉 검색하기  */
 /*  /search/following  */   
-router.get('/', async(req, res, next) => {
-            // f_id, nickname
+router.get('/:f_id/:nickname', async(req, res, next) => {
+
   try {
 
     const chkToken = jwt.verify(req.headers.authorization);
@@ -27,9 +27,9 @@ router.get('/', async(req, res, next) => {
     }
 
     let u_id = chkToken.id;
-    let follower_id = req.query.f_id;
+    let follower_id = req.param.f_id;
 
-    let searchFollowing = req.query.nickname;
+    let searchFollowing = req.param.nickname;
     let searcher = new hangul.Searcher(searchFollowing);
 
     let followinglistSql = "SELECT f_following_id, nickname, img_url FROM follow, user "
