@@ -1,4 +1,4 @@
-//컨텐츠 대댓글 달기 
+//컨텐츠 대댓글 달기
 var express = require('express');
 var router = express.Router();
 const async = require('async');
@@ -7,7 +7,7 @@ const jwt = require('../../module/jwt.js');
 
 router.post('/', async(req, res) => {
 	var id; // 사용자 email
-	
+
 	const chkToken = jwt.verify(req.headers.authorization);
 
 	if(chkToken == -1) {
@@ -18,6 +18,8 @@ router.post('/', async(req, res) => {
 		return;
 	}
 
+	var userid = chkToken.id;
+
 	try{
 		if(!(req.body.comment_id && req.body.user_id && req.body.content)){
 			res.status(403).send({
@@ -25,7 +27,14 @@ router.post('/', async(req, res) => {
 			});
 		}else{
 			let contentsmakerecommentQuery = 'INSERT INTO myjungnami.contentsRecomment(id, cr_contentsComment_id, cr_user_id, content) VALUES (null, ?, ?, ?)';
-			let data = await db.queryParamCnt_Arr(contentsmakerecommentQuery, [req.body.comment_id, req.body.user_id, req.body.content]);
+			let data = await db.queryParamCnt_Arr(contentsmakerecommentQuery, [req.body.comment_id, userid, req.body.content]);
+			if(data == undefined){
+				res.status(204).send({
+					"message" : "fail insert"
+				});
+
+				return;
+			}
 
 			res.status(201).send({
 				"message" : "Successfully insert contents' recomment",
@@ -34,8 +43,8 @@ router.post('/', async(req, res) => {
 
 			console.log(data);
 		}
-		
-		
+
+
 	}catch(err){
 		console.log(err);
 		res.status(500).send({

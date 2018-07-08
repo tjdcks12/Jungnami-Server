@@ -1,8 +1,9 @@
-//컨텐츠에 달린 댓글 보여주기 
+//컨텐츠에 달린 댓글 보여주기
 var express = require('express');
 var router = express.Router();
 const async = require('async');
 const db = require('../../module/pool.js');
+const checktime = require('../../module/checktime.js');
 
 router.get('/:contents_id', async(req, res) => {
 	try{
@@ -11,11 +12,11 @@ router.get('/:contents_id', async(req, res) => {
 				message : "please input contents' id"
 			});
 		}else{
-			//유저 닉, 이미지, 시간, 컨텐츠, 좋아요, 대댓 수 출력 
-			let getcommentlistQuery = 'select * from myjungnami.contentsComment where cc_contents_id = ? ';  
+			//유저 닉, 이미지, 시간, 컨텐츠, 좋아요, 대댓 수 출력
+			let getcommentlistQuery = 'select * from myjungnami.contentsComment where cc_contents_id = ? ';
 			let commenttableInfo = await db.queryParamCnt_Arr(getcommentlistQuery, [req.params.contents_id]);
 			console.log(commenttableInfo);
-			//댓글 테이블에서 댓글 목록 받아와서 
+			//댓글 테이블에서 댓글 목록 받아와서
 
   			let resultArry = new Array();
     		let subresultObj = new Object();
@@ -26,21 +27,21 @@ router.get('/:contents_id', async(req, res) => {
 
     		for(var i=0; i< commenttableInfo.length; i++){
 
-    			let timeset = timesetfun(commenttableInfo[i].writingtime);
-   	  			console.log(timeset);
+    			let timeset = checktime.checktime(commenttableInfo[i].writingtime);
+   	  		console.log(timeset);
 
-	      		//유저닉네임이랑 이미지 사진 
+	      		//유저닉네임이랑 이미지 사진
     	 	 	let getuserinfoQuery = "select user.nickname, user.img_url from myjungnami.user where id = ?";
      	 		userinfoObj = await db.queryParamCnt_Arr(getuserinfoQuery, [commenttableInfo[i].cc_user_id]);
-      
-     	 		//게시글 대댓글 갯수 
+
+     	 		//게시글 대댓글 갯수
       			let getrecommentcntQuery = "select count(*) from myjungnami.contentsRecomment where cr_contentsComment_id = ?";
      			recommentCnt = await db.queryParamCnt_Arr(getrecommentcntQuery, [commenttableInfo[i].id] );
 
-      			//댓글 좋아요 수 
+      			//댓글 좋아요 수
       			let getlikecntQuery = "select count(*) from myjungnami.contentsCommentLike where ccl_contentsComment_id = ?";
       			commentlikeCnt = await db.queryParamCnt_Arr(getlikecntQuery, [commenttableInfo[i].id]);
-      
+
       			subresultObj = commenttableInfo[i];
       			subresultObj.timeset = timeset;
       			subresultObj.user_nick = userinfoObj[0].nickname;
@@ -66,12 +67,16 @@ router.get('/:contents_id', async(req, res) => {
 	}
 })
 
+
+
+// 모듈 추가했음 지워도 됨 _ from jiyeon
+/*
 var timesetfun = function(param_writingtime) {
         // 현재시간
         var currentTime = new Date();
         let returnvalue;
         var writingtime = param_writingtime;
-        
+
         //--------------- 시간 계산------------------
         //1. 작성 10분 이내
         if(currentTime.getTime() - writingtime.getTime() < 600000){
@@ -102,6 +107,6 @@ var timesetfun = function(param_writingtime) {
           return returnvalue;
         }
 
-}
+}*/
 
-module.exports = router; 
+module.exports = router;

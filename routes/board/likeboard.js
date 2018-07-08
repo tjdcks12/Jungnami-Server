@@ -8,8 +8,6 @@ const jwt = require('../../module/jwt.js');
 
 
 router.post('/', async(req, res) => {
-	var id; // 사용자 email
-	
 	const chkToken = jwt.verify(req.headers.authorization);
 	console.log(chkToken);
 
@@ -18,27 +16,30 @@ router.post('/', async(req, res) => {
 			message : "Access Denied"
 		});
 
-		return;
-	}
-
+	var userid = chkToken.id;
 
 	try{
-		if(!(req.body.board_id && req.body.user_id)){
+		if(!(req.body.board_id && userid)){
 			res.status(403).send({
 				message : "please input board_id and user_id"
 			});
 
 		}else{
 			let postboardlikeQuery = 'INSERT INTO myjungnami.boardLike(id, bl_board_id, bl_user_id) VALUES (null, ?, ?)';
-			let data = await db.queryParamCnt_Arr(postboardlikeQuery, [req.body.board_id, req.body.user_id]);
+			let data = await db.queryParamCnt_Arr(postboardlikeQuery, [req.body.board_id, userid]);
+			if(data == undefined){
+				res.status(204).send({
+					"message" : "fail insert"
+				});
 
+				return;
+			}
 
 			res.status(201).send({
 				"message" : "Successfully insert boardlike "
 			});
 
-			var pushmsg = (req.body.bl_user_id = '님이 회원님의 글을 좋아합니다.');
-			//
+			var pushmsg = (userid += '님이 회원님의 글을 좋아합니다.');
 
 		}
 

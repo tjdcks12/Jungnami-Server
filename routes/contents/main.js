@@ -4,11 +4,11 @@ var router = express.Router();
 const async = require('async');
 const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
+const checktime = require('../../module/checktime.js');
 
 router.get('/:categoy', async (req, res) => {
 
   const chkToken = jwt.verify(req.headers.authorization);
-  var id = chkToken.id;
 
 
   try{
@@ -24,7 +24,7 @@ router.get('/:categoy', async (req, res) => {
       let alarm;
       let islogined;
 
-     //로그인 되어었으면 알람 수 명시 
+     //로그인 되어었으면 알람 수 명시
       if(chkToken !== -1){
           let getalarmcntQuery = "select count(*) from myjungnami.push where (p_user_id = ? and ischecked = 0)";
           alarmCnt = await db.queryParamCnt_Arr(getalarmcntQuery, id);
@@ -35,7 +35,7 @@ router.get('/:categoy', async (req, res) => {
           islogined = 0;
       }
 
-      data.push("timeset : "+ timesetfun(data.writingtime));
+      data.push("timeset : "+ checktime.checktime(data.writingtime));
       data.push("islogined : " + islogined);
       data.push("alarm : "+ alarm);
 
@@ -55,12 +55,15 @@ router.get('/:categoy', async (req, res) => {
   }
 });
 
+
+// 모듈 추가했음 지워도 됨 _ from jiyeon
+/*
 var timesetfun = function(param_writingtime) {
         // 현재시간
         var currentTime = new Date();
         let returnvalue;
         var writingtime = param_writingtime;
-        
+
         //--------------- 시간 계산------------------
         //1. 작성 10분 이내
         if(currentTime.getTime() - writingtime.getTime() < 600000){
@@ -91,7 +94,7 @@ var timesetfun = function(param_writingtime) {
           return returnvalue;
         }
 
-}
+}*/
 
 
 module.exports = router;

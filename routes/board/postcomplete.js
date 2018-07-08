@@ -1,4 +1,4 @@
-//커뮤니티 글 작성 완료 버튼 눌렀을 때 작성 완료 - OK 
+//커뮤니티 글 작성 완료 버튼 눌렀을 때 작성 완료 - OK
 var express = require('express');
 var router = express.Router();
 const async = require('async');
@@ -12,42 +12,47 @@ aws.config.loadFromPath('./config/aws_config.json');
 const s3 = new aws.S3();
 
 const upload = multer({
-    storage: multerS3({
-        s3: s3,
-        bucket: 'myrubysbucket',
-        acl: 'public-read',
-        key: function(req, file, cb) {
-            cb(null, "board/" + file.originalname);
-        }
-    })
+  storage: multerS3({
+    s3: s3,
+    bucket: 'myrubysbucket',
+    acl: 'public-read',
+    key: function(req, file, cb) {
+      cb(null, "board/" + file.originalname);
+    }
+  })
 });
 
 router.post('/', upload.array('image'), async(req, res) => {
-	try{
-		if(!(req.body.user_id && req.body.content && req.body.shared)){
-			res.status(403).send({
-				message : "please input user id & content & shared"
-			});
-		}else{
+  try{
+    if(chkToken == -1) {
+      res.status(401).send({
+        message : "Access Denied"
+      });
 
-			let postboardQuery = 'INSERT INTO myjungnami.board( b_user_id, content, img_url, shared) VALUES ( ?, ?, ?, ?)';
-			let data = await db.queryParamCnt_Arr(postboardQuery, [req.body.user_id, req.body.content, req.body.img_url, req.body.shared]);
+      return;
+    }
 
-			//req.files[0].location
+    var userid = chkToken.id;
 
-			res.status(201).send({
-				"message" : "Successfully insert posting",
-				//"data" : data
-			});
+    let postboardQuery = 'INSERT INTO myjungnami.board( b_user_id, content, img_url, shared) VALUES ( ?, ?, ?, ?)';
+    let data = await db.queryParamCnt_Arr(postboardQuery, [userid, req.body.content, req.body.img_url, req.body.shared]);
+    if(data == undefined){
+      res.status(204).send({
+        "message" : "fail insert"
+      });
 
-			console.log(data);
-		}
-	}catch(err){
-		console.log(err);
-		res.status(500).send({
-			"message" : "Server error"
-		});
-	}
+      return;
+    }
+    
+    res.status(201).send({
+      "message" : "Successfully insert posting",
+    });
+  }catch(err){
+    console.log(err);
+    res.status(500).send({
+      "message" : "Server error"
+    });
+  }
 })
 
 module.exports = router;

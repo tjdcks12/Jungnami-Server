@@ -6,7 +6,6 @@ const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 
 router.post('/', async(req, res) => {
-	var id; // 사용자 email
 	const chkToken = jwt.verify(req.headers.authorization);
 
 	if(chkToken == -1) {
@@ -17,26 +16,34 @@ router.post('/', async(req, res) => {
 		return;
 	}
 
+	var userid = chkToken.id;
+
 	try{
-		
 		if(!(req.body.board_id && req.body.user_id && req.body.content)){
 			res.status(403).send({
 				message : "please input board id & user id & content"
 			});
 		}else{
 			let postmakecommentQuery = 'INSERT INTO myjungnami.boardComment(id, bc_board_id, bc_user_id, content) VALUES (null, ?, ?, ?)';
-			let data = await db.queryParamCnt_Arr(postmakecommentQuery, [req.body.board_id, req.body.user_id, req.body.content]);
+			let data = await db.queryParamCnt_Arr(postmakecommentQuery, [req.body.board_id, userid, req.body.content]);
+			if(data == undefined){
+				res.status(204).send({
+					"message" : "fail insert"
+				});
+
+				return;
+			}
 
 			res.status(201).send({
 				"message" : "Successfully insert postmakecommentQuery"
 			});
 
-			var pushmsg = (req.body.user_id + '님이 회원님의 글에 댓글을 남겼습니다.');
+			var pushmsg = (userid + '님이 회원님의 글에 댓글을 남겼습니다.');
 
 			console.log(data);
 		}
-		
-		
+
+
 	}catch(err){
 		console.log(err);
 		res.status(500).send({

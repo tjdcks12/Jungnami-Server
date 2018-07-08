@@ -26,11 +26,14 @@ router.post('/',  async (req, res) => {
 
     let insert_scrap = 'INSERT INTO scrap (s_contents_id, s_user_id) VALUES (?,?)';
     let result_scrap = await db.queryParamCnt_Arr(insert_scrap,[req.body.contentsid, userid]);
+    console.log(result_scrap);
 
-    if(result_scrap != undefined){
+    if(result_scrap == undefined){
       res.status(204).send({
   			"message" : "fail insert"
   	 	});
+
+      return;
     }
 
 		res.status(200).send({
@@ -47,7 +50,3 @@ router.post('/',  async (req, res) => {
 });
 
 module.exports = router;
-
-
-// routes 에 추가해야 함
-// router.use('/b_delete', require('./b_delete'));
