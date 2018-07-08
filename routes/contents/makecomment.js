@@ -20,15 +20,15 @@ router.post('/', async(req, res) => {
 
 	try{
 		
-		if(!(req.body.cc_contents_id && req.body.cc_user_id && req.body.content)){
+		if(!(req.body.contents_id && req.body.user_id && req.body.content)){
 			res.status(403).send({
 				message : "please input contents id & use rid & content"
 			});
 		}else{
 			let contentsmakecommentQuery = 'INSERT INTO myjungnami.contentsComment(id, cc_contents_id, cc_user_id, content) VALUES (null, ?, ?, ?)';
-			let data = await db.queryParamCnt_Arr(contentsmakecommentQuery, [req.body.cc_contents_id, req.body.cc_user_id, req.body.content]);
+			let data = await db.queryParamCnt_Arr(contentsmakecommentQuery, [req.body.contents_id, req.body.user_id, req.body.content]);
 
-			res.status(200).send({
+			res.status(201).send({
 				"message" : "insert contents' comment success",
 				"data" : data
 			});
@@ -38,7 +38,7 @@ router.post('/', async(req, res) => {
 	}catch(err){
 		console.log(err);
 		res.status(500).send({
-			"message" : "syntax error"
+			"message" : "Server error"
 		});
 	}
 })

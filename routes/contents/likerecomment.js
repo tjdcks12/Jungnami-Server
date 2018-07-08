@@ -19,20 +19,19 @@ router.post('/', async(req, res) => {
 	}
 
 	try{
-		if(!(req.body.crl_contentsRecomment_id && req.body.crl_user_id)){
+		if(!(req.body.recomment_id && req.body.user_id)){
 			res.status(403).send({
 				message : "please input recomment id and user id"
 			});
 		}else{
 			let contentsRecommentlikeQuery = 'INSERT INTO myjungnami.contentsRecommentLike(id, crl_contentsRecomment_id, crl_user_id) VALUES (null, ?, ?)';
-			let data = await db.queryParamCnt_Arr(contentsRecommentlikeQuery, [req.body.crl_contentsRecomment_id, req.body.crl_user_id]);
+			let data = await db.queryParamCnt_Arr(contentsRecommentlikeQuery, [req.body.recomment_id, req.body.user_id]);
 
-			res.status(200).send({
-				"message" : "insert contents' comment like success",
-				"data" : data
+			res.status(201).send({
+				"message" : "Successfully insert contents' comment like"
 			});
 
-			var pushmsg = (req.body.crl_user_id = '님이 회원님의 댓글을 좋아합니다.');
+			var pushmsg = (req.body.user_id = '님이 회원님의 댓글을 좋아합니다.');
 
 			console.log(data);
 		}
@@ -40,7 +39,7 @@ router.post('/', async(req, res) => {
 	}catch(err){
 		console.log(err);
 		res.status(500).send({
-			"message" : "syntax error"
+			"message" : "Server error"
 		});
 	}
 })

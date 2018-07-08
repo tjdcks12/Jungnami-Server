@@ -9,7 +9,7 @@ router.get('/:user_id',  async (req, res) => {
   try{
       if(!(req.params.user_id)){
         res.status(403).send({
-        "message" : "please input user_id"  
+        "message" : "please input user id"  
         });
       }else{
         let getpostingviewQuery = 'SELECT img_url FROM myjungnami.user where id = ?';
@@ -25,7 +25,7 @@ router.get('/:user_id',  async (req, res) => {
   }catch(err){
   	console.log(err);
   	res.status(500).send({
-  		"message" : "Syntax error"
+  		"message" : "Server error"
   	});
   }
 });

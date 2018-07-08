@@ -7,9 +7,9 @@ const db = require('../../module/pool.js');
 //contents에서 받아오는 id 로  title좋아요 수 , 댓글 수, 시간, cate
 //contents_id로 contentsimg 테이블에서 사진 20개 받아오기 
 
-router.get('/:c_id',  async (req, res) => {
+router.get('/:contents_id',  async (req, res) => {
   try{
-      if(!(req.params.c_id)){
+      if(!(req.params.contents_id)){
         res.status(403).send({
         "message" : "please input contents' id"  
         });
@@ -18,22 +18,22 @@ router.get('/:c_id',  async (req, res) => {
 
       	 //컨텐츠물 작성시간, 카테고리 
         let getcontentinfoQuery = 'select title, writingtime, category from myjungnami.contents where id = ?';
-        let contentsinfo = await db.queryParamCnt_Arr(getcontentinfoQuery, [req.params.c_id]);
+        let contentsinfo = await db.queryParamCnt_Arr(getcontentinfoQuery, [req.params.contents_id]);
         console.log(contentsinfo);
 
       	//카드뉴스 이미지 배열 
         let getcardnewsQuery = 'select * from myjungnami.contentsImg where ci_contents_id = ?';
-        let imageArry = await db.queryParamCnt_Arr(getcardnewsQuery, [req.params.c_id]);
+        let imageArry = await db.queryParamCnt_Arr(getcardnewsQuery, [req.params.contents_id]);
         console.log(imageArry);	
 
         //컨텐츠물 좋아요 개수
         let getlikecntQuery = 'select count(*) from myjungnami.contentsLike where cl_contents_id = ?';
-        let contentslikeCnt = await db.queryParamCnt_Arr(getlikecntQuery, [req.params.c_id]);
+        let contentslikeCnt = await db.queryParamCnt_Arr(getlikecntQuery, [req.params.contents_id]);
         console.log(contentslikeCnt);
 
         //컨텐츠물 댓글 갯수 
         let getcommentcntQuery = 'select count(*) from myjungnami.contentsComment where cc_contents_id = ?';
-        let contentscommentCnt = await db.queryParamCnt_Arr(getcommentcntQuery, [req.params.c_id]);
+        let contentscommentCnt = await db.queryParamCnt_Arr(getcommentcntQuery, [req.params.contents_id]);
         console.log(contentscommentCnt);
 
         resultdata.info = contentsinfo;
@@ -51,9 +51,10 @@ router.get('/:c_id',  async (req, res) => {
       }
   	
   }catch(err){
+
   	console.log(err);
   	res.status(500).send({
-  		"message" : "Syntax error"
+  		"message" : "Server error"
   	});
   }
 });

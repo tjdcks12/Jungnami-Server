@@ -11,6 +11,7 @@
 			var id; // 사용자 email
 			
 			const chkToken = jwt.verify(req.headers.authorization);
+			console.log(chkToken);
 
 			if(chkToken == -1) {
 				res.status(401).send({
@@ -22,22 +23,22 @@
 
 
 			try{
-				if(!(req.body.bl_board_id && req.body.bl_user_id)){
+				if(!(req.body.board_id && req.body.user_id)){
 					res.status(403).send({
 						message : "please input board_id and user_id"
 					});
 
 				}else{
 					let postboardlikeQuery = 'INSERT INTO myjungnami.boardLike(id, bl_board_id, bl_user_id) VALUES (null, ?, ?)';
-					let data = await db.queryParamCnt_Arr(postboardlikeQuery, [req.body.bl_board_id, req.body.bl_user_id]);
+					let data = await db.queryParamCnt_Arr(postboardlikeQuery, [req.body.board_id, req.body.user_id]);
 
 
-					res.status(200).send({
-						"message" : "insert boardlike success",
-						"data" : data
+					res.status(201).send({
+						"message" : "Successfully insert boardlike "
 					});
 
 					var pushmsg = (req.body.bl_user_id = '님이 회원님의 글을 좋아합니다.');
+					//
 
 				}
 
