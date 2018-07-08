@@ -27,7 +27,7 @@ router.get('/', async(req, res, next) => {
     let select_point = "SELECT voting_cnt FROM user WHERE id = ?";
     let result_point = await db.queryParamCnt_Arr(select_point,[id]);
 
-    res.status(201).send({
+    res.status(200).send({
       voting_cnt : result_point[0].voting_cnt,
       message : "Success"
     });

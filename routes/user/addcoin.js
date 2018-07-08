@@ -12,7 +12,7 @@ const jwt = require('../../module/jwt.js');
 router.post('/', async(req, res, next) => {
   try {
     const chkToken = jwt.verify(req.headers.authorization);
-
+    console.log(chkToken);
     if(chkToken == -1) {
         res.status(401).send({
             message : "Access Denied"

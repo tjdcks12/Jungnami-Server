@@ -23,6 +23,9 @@ router.use('/user', require('./user/user_routes'));
 // Legislator
 router.use('/legislator', require('./legislator/legislator_routes'));
 
+// DELETE
+router.use('/delete', require('./delete/delete_routes'));
+
 // Test
 router.use('/test', require('./test/test_routes'));
 

@@ -82,6 +82,14 @@ router.get('/:keyword', async(req, res, next) => {
       }
     }
 
+    if(result.length == 0){
+      res.status(300).json({
+        message : "No data",
+        status : 300
+      });
+      return;
+    }
+
     res.status(200).json({
       data : result,
       message : "Success",
