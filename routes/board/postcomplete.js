@@ -24,19 +24,20 @@ const upload = multer({
 
 router.post('/', upload.array('image'), async(req, res) => {
 	try{
-		if(!(req.body.b_user_id && req.body.content && req.body.shared)){
+		if(!(req.body.user_id && req.body.content && req.body.shared)){
 			res.status(403).send({
-				message : "please input b_user_id and content and shared"
+				message : "please input user id & content & shared"
 			});
 		}else{
 
 			let postboardQuery = 'INSERT INTO myjungnami.board( b_user_id, content, img_url, shared) VALUES ( ?, ?, ?, ?)';
-			let data = await db.queryParamCnt_Arr(postboardQuery, [req.body.b_user_id, req.body.content, req.files[0].location, req.body.shared]);
+			let data = await db.queryParamCnt_Arr(postboardQuery, [req.body.user_id, req.body.content, req.body.img_url, req.body.shared]);
 
+			//req.files[0].location
 
-			res.status(200).send({
-				"message" : "insert posting success",
-				"data" : data
+			res.status(201).send({
+				"message" : "Successfully insert posting",
+				//"data" : data
 			});
 
 			console.log(data);
@@ -44,7 +45,7 @@ router.post('/', upload.array('image'), async(req, res) => {
 	}catch(err){
 		console.log(err);
 		res.status(500).send({
-			"message" : "syntax error"
+			"message" : "Server error"
 		});
 	}
 })

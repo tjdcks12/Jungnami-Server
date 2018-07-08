@@ -19,16 +19,16 @@ router.post('/', async(req, res) => {
 	}
 
 	try{
-		if(!(req.body.cr_contentsComment_id && req.body.cr_user_id && req.body.content)){
+		if(!(req.body.comment_id && req.body.user_id && req.body.content)){
 			res.status(403).send({
 				message : "please input contents' comment id & user id & content"
 			});
 		}else{
 			let contentsmakerecommentQuery = 'INSERT INTO myjungnami.contentsRecomment(id, cr_contentsComment_id, cr_user_id, content) VALUES (null, ?, ?, ?)';
-			let data = await db.queryParamCnt_Arr(contentsmakerecommentQuery, [req.body.cr_contentsComment_id, req.body.cr_user_id, req.body.content]);
+			let data = await db.queryParamCnt_Arr(contentsmakerecommentQuery, [req.body.comment_id, req.body.user_id, req.body.content]);
 
-			res.status(200).send({
-				"message" : "insert contents' recomment success",
+			res.status(201).send({
+				"message" : "Successfully insert contents' recomment",
 				"data" : data
 			});
 
@@ -39,7 +39,7 @@ router.post('/', async(req, res) => {
 	}catch(err){
 		console.log(err);
 		res.status(500).send({
-			"message" : "syntax error"
+			"message" : "Server error"
 		});
 	}
 })
