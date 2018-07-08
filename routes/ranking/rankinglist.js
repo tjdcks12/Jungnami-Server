@@ -54,11 +54,10 @@ router.get('/:islike', async(req, res, next) => {
         rankingInfo.l_id = listQuery[i].id;
         rankingInfo.l_name = listQuery[i].name;
         rankingInfo.party_name = listQuery[i].l_party_name;
-        rankingInfo.position = listQuery[i].position; 
-        rankingInfo.score = listQuery[i].score; 
+        rankingInfo.position = listQuery[i].position;
 
         if (rankingInfo.score == null){
-          rankingInfo.scoretext = null;
+          rankingInfo.scoretext = "0 표";
         } else {
           rankingInfo.scoretext = addComma.addComma(rankingInfo.score) + " 표";
         }
@@ -84,7 +83,7 @@ router.get('/:islike', async(req, res, next) => {
       for(var i=0; i<result.length; i++) {
 
         if (result[i].score == null) {
-            result[i].ranking = "-위"
+            result[i].ranking = "-"
             result[i].width = 0;
 
         } else {
@@ -103,7 +102,7 @@ router.get('/:islike', async(req, res, next) => {
             }
           }
 
-          result[i].ranking = (result[i].ranking).toString() + "위";
+          result[i].ranking = (result[i].ranking).toString();
           result[i].width =+ (result[i].score / w).toFixed(2);
         }
       }
