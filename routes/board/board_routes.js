@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 //1. 게시판 글 목록 (뉴스피드)
-//router.use('/boardlist', require('./boardlist'));
+router.use('/boardlist', require('./boardlist'));
 
 //2. 게시판 글 작성 화면
 router.use('/post', require('./post'));

@@ -7,7 +7,6 @@ const db = require('../../module/pool.js');
 /* GET home page. */
 router.get('/',  async (req, res) => {
   try{
-
     if(chkToken == -1) {
       res.status(401).send({
         message : "Access Denied"

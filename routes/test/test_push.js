@@ -4,10 +4,12 @@ const express = require('express');
 const router = express.Router();
 
 var FCM = require('fcm-node');
-const async = require('async');
-
 const get_pushdata = require('../../module/pushdata.js');
 const serverKey = require('../../config/fcmKey.js').key;
+
+const async = require('async');
+
+
 
 
 router.get('/', async (req, res, next) => {
