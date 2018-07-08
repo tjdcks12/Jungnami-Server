@@ -1,12 +1,16 @@
 //커뮤니티 글 작성 화면
 var express = require('express');
 var router = express.Router();
+
 const async = require('async');
 const db = require('../../module/pool.js');
+const jwt = require('../../module/jwt.js');
 
 /* GET home page. */
 router.get('/',  async (req, res) => {
   try{
+
+    const chkToken = jwt.verify(req.headers.authorization);
     if(chkToken == -1) {
       res.status(401).send({
         message : "Access Denied"
@@ -23,7 +27,7 @@ router.get('/',  async (req, res) => {
 
     res.status(200).send({
       "message" : "Successfully get posting view",
-      "data" : data
+      "data" : data[0].img_url
     });
 
     console.log(data);
