@@ -58,7 +58,7 @@ router.get('/:islike', async(req, res, next) => {
         rankingInfo.score = listQuery[i].score; 
 
         if (rankingInfo.score == null){
-          rankingInfo.scoretext = null;
+          rankingInfo.scoretext = "0 표";
         } else {
           rankingInfo.scoretext = addComma.addComma(rankingInfo.score) + " 표";
         }
@@ -84,6 +84,7 @@ router.get('/:islike', async(req, res, next) => {
       for(var i=0; i<result.length; i++) {
 
         if (result[i].score == null) {
+            result[i].score = 0;
             result[i].ranking = "-"
             result[i].width = 0;
 
