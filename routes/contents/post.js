@@ -51,8 +51,15 @@ router.post('/', upload.array('thumbnail'), async(req, res) => {
   let subtitle = req.body.subtitle;
   let contents_type = req.body.contents_type;
   let category = req.body.category;
-  let thumbnail = req.files[0].location;
   let l_id = req.body.l_id; // array
+  
+  let thumbnail;
+
+  if (req.files[0],location){
+    thumbnail = req.files[0].location;
+  } else {
+    thumbnail = null;
+  }
 
   try{
 
