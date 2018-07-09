@@ -29,7 +29,7 @@ router.get('/:contents_id',  async (req, res) => {
       }
 
       //카드뉴스 이미지 배열
-      let getcardnewsQuery = 'select img_url, ord from myjungnami.contentsImg where ci_contents_id = ? ORDER BY ord';
+      let getcardnewsQuery = 'select img_url from myjungnami.contentsImg where ci_contents_id = ?';
       let imageArry = await db.queryParamCnt_Arr(getcardnewsQuery, [req.params.contents_id]);
 
       //컨텐츠물 좋아요 개수
