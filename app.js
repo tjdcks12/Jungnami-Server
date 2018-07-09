@@ -22,6 +22,9 @@ var j = schedule.scheduleJob('30 59 23 * * *', function(){
 });
 
 var app = express();
+var bodyParser = require('body-parser');
+app.use(bodyParser.json({limit: "50mb"}));
+app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
