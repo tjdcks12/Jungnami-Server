@@ -160,7 +160,7 @@ router.get('/:p_name/:l_name', async(req, res, next) => {
         result.push(data);
       }
     }
-    
+
     if(result.length == 0){
       res.status(300).json({
         message : "No data",
@@ -170,9 +170,7 @@ router.get('/:p_name/:l_name', async(req, res, next) => {
     }
 
     res.status(200).json({
-      data : {
-        legislator : result
-      },
+      data : result,
       message : "Success",
       status : 200
     });

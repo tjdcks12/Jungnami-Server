@@ -60,7 +60,7 @@ router.post('/', async(req, res, next) => {
     }
 
     // console.log()
-    // console.log(chkToken);
+    console.log(chkToken);
     // console.log(jwt.verify(chkToken));
 
     let checkidQuery =
