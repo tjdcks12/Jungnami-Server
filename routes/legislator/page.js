@@ -1,46 +1,12 @@
 /* KIM JI YEON */
 
-// 경과 시간 계산 함수
-function checktime (time) {
-
-  let currentTime = new Date();
-  let writingtime = time; // result_content[i].writingtime;
-  var data; // 리턴할 값
-
-  // 작성 10분 이내
-  if(currentTime.getTime() - writingtime.getTime() < 600000){
-    data = "방금 전";
-  } // 1시간 이내
-  else if(currentTime.getTime() - writingtime.getTime() < 3600000){
-    data = Math.floor((currentTime.getTime() - writingtime.getTime())/60000) + "분 전";
-  }// 작성한지 24시간 넘음
-  else if(currentTime.getTime() - writingtime.getTime() > 86400000){
-    data = writingtime.getFullYear() + "년 " + (writingtime.getMonth()+1) +"월 " + writingtime.getDate() + "일";
-  } // 24시간 이내
-  else{
-    if(currentTime.getDate() != writingtime.getDate()){
-      data = (24 - writingtime.getHours()) + (currentTime.getHours());
-      if(data == 24){
-        data = writingtime.getFullYear() + "년 " + (writingtime.getMonth()+1) +"월 " + writingtime.getDate() + "일";
-      }
-      else{
-        data += "시간 전";
-      }
-    }
-    else{
-      data = (currentTime.getHours() - writingtime.getHours()) + "시간 전";
-    }
-  }
-
-  return data;
-}
-
 var express = require('express');
 const router = express.Router();
 
 const async = require('async');
 const jwt = require('../../module/jwt.js');
 const db = require('../../module/pool.js');
+const checktime = require('../../module/checktime.js');
 
 /*  국회의원 페이지  */
 /*  /legislator/page/:l_id  */
@@ -109,7 +75,7 @@ router.get('/:l_id', async(req, res, next) => {
           }
         }
 
-        likeRresult[i].ranking = (likeRresult[i].ranking).toString() + "위";
+        likeRresult[i].ranking = (likeRresult[i].ranking).toString();
       }
     }
 
@@ -127,7 +93,7 @@ router.get('/:l_id', async(req, res, next) => {
     // 비호감 순 랭킹 뽑기
     for(var i=0; i<unlikeRresult.length; i++) {
       if (unlikeRresult[i].score == null) {
-          unlikeRresult[i].ranking = "-위"
+          unlikeRresult[i].ranking = "-"
       } else {
 
         if (i==0) {
@@ -142,7 +108,7 @@ router.get('/:l_id', async(req, res, next) => {
           }
         }
 
-        unlikeRresult[i].ranking = (unlikeRresult[i].ranking).toString() + "위";
+        unlikeRresult[i].ranking = (unlikeRresult[i].ranking).toString();
       }
     }
 
@@ -157,7 +123,7 @@ router.get('/:l_id', async(req, res, next) => {
         result.party_name = likeRankingQuery[i].l_party_name;
         result.position = likeRankingQuery[i].position;
         result.profileimg = likeRankingQuery[i].profile_img_url;
-        result.ranking = "호감 " + likeRresult[i].ranking + " / 비호감 ";
+        result.likerank = likeRresult[i].ranking;
 
         break;
       }
@@ -165,7 +131,7 @@ router.get('/:l_id', async(req, res, next) => {
 
     for (var i=0; i<unlikeRresult.length; i++) {
       if(unlikeRresult[i].id == l_id) {
-        result.ranking += unlikeRresult[i].ranking;
+        result.unlikerank = unlikeRresult[i].ranking;
 
         break;
       }
@@ -184,7 +150,7 @@ router.get('/:l_id', async(req, res, next) => {
       data.thumbnail_url = result_contents[i].thumbnail_url;
       data.title = result_contents[i].title;
       data.category = result_contents[i].category;
-      data.writingtime = checktime(result_contents[i].writingtime);
+      data.writingtime = checktime.checktime(result_contents[i].writingtime);
 
       contents.push(data);
     }
