@@ -99,7 +99,7 @@ router.post('/', async(req, res, next) => {
             id : id,
             token : token
           },
-          message : "your token ended and reissue new token"
+          message : "success"
         })
       }
     } else{ // 토큰이 없는 경우
@@ -116,7 +116,7 @@ router.post('/', async(req, res, next) => {
             id : id,
             token : token
           },
-          message : "new device login"
+          message : "success"
         });
       } else{ // 다른 기기이고 회원이 아닐때
         console.log("비회원입니다.")
@@ -130,7 +130,7 @@ router.post('/', async(req, res, next) => {
             id : id,
             token : token
           },
-          message : "sign up success"
+          message : "success"
         })
       }
     }
