@@ -30,7 +30,7 @@ router.get('/', async(req, res, next) => {
       message : "Select Data Success",
       data : legislatorQuery
     });
-    
+
 
   } catch(error) {
     res.status(500).send({
@@ -44,24 +44,22 @@ router.get('/', async(req, res, next) => {
 /*  컨텐츠 게시 완료  */
 /*  /contents/post  */
 router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'cardnews', maxCount : 20}]), async(req, res) => {
-
-  let title = req.body.title;
-  let subtitle = req.body.subtitle;
-  let contents_type = req.body.contents_type;
-  let category = req.body.category;
-  let l_id = req.body.l_id; // array
-
-  let thumbnail, cardnews, youtubelink;
-
   try{
+    let title = req.body.title;
+    let subtitle = req.body.subtitle;
+    let contents_type = req.body.contents_type;
+    let category = req.body.category;
+    let l_id = req.body.l_id; // array
+
+    console.log(req.body);
+
+    let thumbnail, cardnews, youtubelink;
 
     if (req.files.thumbnail[0].location){
       thumbnail = req.files.thumbnail[0].location;
     } else {
       thumbnail = null;
     }
-
-
 
     if(l_id.length < 1) { // wrong input
       res.status(403).send({
@@ -70,7 +68,6 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
       return;
 
     }
-
 
     // content table에 thumbnail 저장
     var postSql = "INSERT INTO contents (title, subtitle, thumbnail_url, category, contents_type) VALUES (?, ?, ?, ?, ?);";
@@ -92,7 +89,7 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     if (req.files.cardnews){
 
       console.log("after if ::: " + req.files.cardnews);
-      cardnews = req.files.cardnews; 
+      cardnews = req.files.cardnews;
 
       let insertcardnewsSql = "INSERT INTO contentsImg (ci_contents_id, img_url) VALUES (?,?)";
       for(var i=0; i<cardnews.length; i++){
@@ -107,7 +104,7 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
         }
       }
 
-    } 
+    }
 
     // content table에 youtubelink 삽입
     if (req.body.youtubelink){
@@ -115,7 +112,7 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
 
       let insertyoutubelinkSql = "UPDATE contents SET youtubelink = ? WHERE id = ?;"
       let insertyoutubelinkQuery = await db.queryParamCnt_Arr(insertyoutubelinkSql,[youtubelink, c_id]);
-      
+
       if (updatedata.affectedRows == 0){
         res.status(204).send({
           message : "Update youtubelink error"
@@ -123,7 +120,7 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
         return;
       }
 
-    } 
+    }
 
     // hash table에 c_id, l_id 저장
     for (var i=0; i<l_id.length; i++) {
