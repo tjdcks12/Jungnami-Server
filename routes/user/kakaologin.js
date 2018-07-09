@@ -55,7 +55,7 @@ router.post('/', async(req, res, next) => {
     var token;
 
     var chkToken;
-    if(req.headers.authorization != undefined){
+    if(req.headers.authorization != -1){
       chkToken = jwt.verify(req.headers.authorization);
     }
 
