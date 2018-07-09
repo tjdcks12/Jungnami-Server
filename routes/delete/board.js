@@ -32,9 +32,10 @@ router.delete('/:boardid',  async (req, res) => {
 
       let deleteboardSql = 'DELETE FROM board WHERE id = ?';
       let deleteboardQuery = await db.queryParamCnt_Arr(deleteboardSql, [b_id]);
+
       if(deleteboardQuery <= 0){
         res.status(204).send({
-          "message" : "No data"
+          "message" : "delete error"
         });
 
         return;
