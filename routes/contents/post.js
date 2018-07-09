@@ -51,8 +51,16 @@ router.post('/', upload.array('thumbnail'), async(req, res) => {
   let subtitle = req.body.subtitle;
   let contents_type = req.body.contents_type;
   let category = req.body.category;
-  let thumbnail = req.files[0].location;
   let l_id = req.body.l_id; // array
+
+  let thumbnail;
+  // console.log("성찬이 : " + req.files[0]);
+
+  if (req.files[0].location){
+    thumbnail = req.files[0].location;
+  } else {
+    thumbnail = null;
+  }
 
   try{
 
@@ -106,7 +114,7 @@ router.post('/', upload.array('thumbnail'), async(req, res) => {
     //     message: "No Data"
     //   });
     //   return;
-      
+
     // }else{
     //   console.log("query ok");
 
@@ -122,8 +130,8 @@ router.post('/', upload.array('thumbnail'), async(req, res) => {
       res.status(201).send({
         message : "Successfully posting contents"
       });
-      
-    
+
+
 
 
   } catch (error) {
@@ -137,4 +145,3 @@ router.post('/', upload.array('thumbnail'), async(req, res) => {
 
 
 module.exports = router;
-

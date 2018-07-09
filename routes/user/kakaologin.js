@@ -21,6 +21,13 @@ router.post('/', async(req, res, next) => {
   console.log("===insert_userinfo.js ::: router('/')===");
   // 카카오톡 access token
   let accessToken = req.body.accessToken;
+  if(!accessToken){
+    res.status(401).send({
+        message : "Access Denied"
+    });
+
+    return;
+  }
   // push 알람 클라이언트 토큰
   let fcmToken = req.body.fcmToken;
 
@@ -76,22 +83,23 @@ router.post('/', async(req, res, next) => {
       console.log("토큰이 있습니다");
       if(chkToken.id == id){
         console.log("성공적으로 로그인 되었습니다");
+        token = jwt.sign(id);
         res.status(201).send({
-          result : {
-            message : "success",
-            token : req.headers.authorization,
-            user : result
-          }
+          data : {
+            id : id,
+            token : token
+          },
+          message : "success"
         });
       } else { // 토큰이 만료된 경우 재발급
         console.log("기간이 만료되었습니다. 재발급 합니다");
         token = jwt.sign(id);
         res.status(201).send({
-          "result" : {
-            message : "your token ended and reissue new token",
-            token : token ,
-            user : result
-          }
+          data : {
+            id : id,
+            token : token
+          },
+          message : "success"
         })
       }
     } else{ // 토큰이 없는 경우
@@ -102,12 +110,13 @@ router.post('/', async(req, res, next) => {
         let updatefcmToken = await db.queryParamCnt_Arr(updateToken, [fcmToken, id]);
 
         console.log("다른기기에서 접속했습니다");
+        token = jwt.sign(id);
         res.status(201).send({
-          "result" : {
-            message : "new device login",
-            token : jwt.sign(id),
-            user : result
-          }
+          data : {
+            id : id,
+            token : token
+          },
+          message : "success"
         });
       } else{ // 다른 기기이고 회원이 아닐때
         console.log("비회원입니다.")
@@ -117,11 +126,11 @@ router.post('/', async(req, res, next) => {
         token = jwt.sign(id);
 
         res.status(201).send({
-          "result" : {
-            message : "sign up success",
-            token : token,
-            user : result
-          }
+          data : {
+            id : id,
+            token : token
+          },
+          message : "success"
         })
       }
     }

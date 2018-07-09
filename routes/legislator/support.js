@@ -39,7 +39,7 @@ router.get('/', async(req, res, next) => {
 
       res.status(200).send({
           message : "Select Data Success",
-          coin : user_coin
+          data : user_coin
         });
     }
 

@@ -51,7 +51,7 @@ router.get('/:f_id', async(req, res, next) => {
     var result = []; // following_id, following_nickname, following_img_url, isMyFollowing
 
 
-    if(followingSelectQuery.length == 0) {
+    if(u_id != '' && followingSelectQuery == undefined) { // 로그인이 되어있는데 팔로우정보도 못가져오면
       console.log("query not ok");
 
       res.status(300).send({
@@ -68,23 +68,29 @@ router.get('/:f_id', async(req, res, next) => {
         r.following_id = followinglistQuery[i].f_following_id;
         r.following_nickname = followinglistQuery[i].nickname;
         r.following_img_url = followinglistQuery[i].img_url;
-        r.isMyFollowing = "팔로우"; // 팔로우 하세요
+        r.isMyFollowing = ''; // 로그인 안 되어 있을때 -> button 안만들어줘도 됨
 
-        for (var j=0; j<followingSelectQuery.length; j++) {
+        if (u_id != '') { // 로그인 되어있을 때에는?
 
-          // 내가 이 사람을 팔로잉 중이에요  
-          if(followinglistQuery[i].f_following_id == followingSelectQuery[j].f_following_id) { 
-            if (follower_id == u_id) // 나의 팔로잉 목록이라면, 팔로잉 취소할래?
-              r.isMyFollowing = "취소"; 
-            else
-              r.isMyFollowing = "팔로잉"; 
-            break;
-          } // 나다!
-          else if (followinglistQuery[i].f_following_id == u_id) {
-            r.isMyFollowing = "나"; 
-            break;
+          r.isMyFollowing = "팔로우"; // 팔로우 하세요
+
+          for (var j=0; j<followingSelectQuery.length; j++) {
+
+            // 내가 이 사람을 팔로잉 중이에요  
+            if(followinglistQuery[i].f_following_id == followingSelectQuery[j].f_following_id) { 
+              if (follower_id == u_id) // 나의 팔로잉 목록이라면, 팔로잉 취소할래?
+                r.isMyFollowing = "취소"; 
+              else
+                r.isMyFollowing = "팔로잉"; 
+              break;
+            } // 나다!
+            else if (followinglistQuery[i].f_following_id == u_id) {
+              r.isMyFollowing = "나"; 
+              break;
+            }
           }
         }
+
         result.push(r);
       }
     }
