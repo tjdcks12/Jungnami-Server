@@ -35,11 +35,13 @@ router.get('/', async(req, res, next) => {
         return;
 
     }else{
-      let user_coin = selectQuery[0].coin;
+
+      let data = {};
+      data.user_coin = selectQuery[0].coin;
 
       res.status(200).send({
           message : "Select Data Success",
-          data : user_coin
+          data : data
         });
     }
 

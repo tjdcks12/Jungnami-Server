@@ -61,17 +61,7 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
       thumbnail = null;
     }
 
-    if (req.files.cardnews){
-      cardnews = req.files.cardnews;
-    } else {
-      cardnews = null;
-    }
 
-    if (req.body.youtubelink){
-      youtubelink = req.body.youtubelink;
-    } else {
-      youtubelink = null;
-    }
 
     if(l_id.length < 1) { // wrong input
       res.status(403).send({
@@ -97,32 +87,41 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     let c_id = postResult.insertId;
 
 
+
     // contentImg table에 cardnews 저장
-    let insertcardnewsSql = "INSERT INTO contentsImg (ci_contents_id, img_url) VALUES (?,?)";
-    for(var i=0; i<cardnews.length; i++){
-      let insertcardnewsQuery = await db.queryParamCnt_Arr(insertcardnewsSql,[c_id, cardnews[i].location]);
+    if (req.files.cardnews){
+      cardnews = req.files.cardnews; 
 
-      if(insertcardnewsQuery == undefined){
-        res.status(204).send({
-          "message" : "Insert cardnews error"
-        });
+      let insertcardnewsSql = "INSERT INTO contentsImg (ci_contents_id, img_url) VALUES (?,?)";
+      for(var i=0; i<cardnews.length; i++){
+        let insertcardnewsQuery = await db.queryParamCnt_Arr(insertcardnewsSql,[c_id, cardnews[i].location]);
 
-        return;
+        if(insertcardnewsQuery == undefined){
+          res.status(204).send({
+            "message" : "Insert cardnews error"
+          });
+
+          return;
+        }
       }
-    }
 
+    } 
 
     // content table에 youtubelink 삽입
-    let insertyoutubelinkSql = "UPDATE contents SET youtubelink = ? WHERE id = ?;"
-    let insertyoutubelinkQuery = await db.queryParamCnt_Arr(insertyoutubelinkSql,[youtubelink, c_id]);
-    
-    if (updatedata.affectedRows == 0){
-      res.status(204).send({
-        message : "Update youtubelink error"
-      });
-      return;
-    }
+    if (req.body.youtubelink){
+      youtubelink = req.body.youtubelink;
 
+      let insertyoutubelinkSql = "UPDATE contents SET youtubelink = ? WHERE id = ?;"
+      let insertyoutubelinkQuery = await db.queryParamCnt_Arr(insertyoutubelinkSql,[youtubelink, c_id]);
+      
+      if (updatedata.affectedRows == 0){
+        res.status(204).send({
+          message : "Update youtubelink error"
+        });
+        return;
+      }
+
+    } 
 
     // hash table에 c_id, l_id 저장
     for (var i=0; i<l_id.length; i++) {
@@ -146,6 +145,7 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     });
 
   } catch (error) {
+    console.log(error);
     res.status(500).send({
         message : "Internal Server Error"
       });
