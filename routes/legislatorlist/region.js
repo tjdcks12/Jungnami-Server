@@ -72,6 +72,7 @@ router.get('/:islike/:city', async(req, res, next) => {
 
     // return할 result
     let result = [];
+    var prev_rank;
     for(var i=0; i<result_legislator.length; i++){
       var data = {};
 
@@ -82,42 +83,41 @@ router.get('/:islike/:city', async(req, res, next) => {
       data.name = result_legislator[i].name;
 
       // 내용 (지역, 대표)
-      data.content = result_legislator[i].position;
-      // if(result_legislator[i].isPpresident == 1){
-      //   data.content += "당 대표";
-      // }
-      // if(result_legislator[i].isLpresident == 1){
-      //   data.content += "원내 대표";
-      // }
-      // if(result_legislator[i].isPPpresident == 1){
-      //   if(data.content != ""){
-      //     data.content += ", ";
-      //   }
-      //   data.content += "비례 대표";
-      // }
-      //
-      // if (result_legislator[i].region_city != "") {  // 지역구+선거구
-      //   if(data.content != "")
-      //     data.content += ", "
-      //   data.content += result_legislator[i].region_city + " ";
-      //   data.content += result_legislator[i].region_state;
-      // }
+      data.position = result_legislator[i].position;
 
       // 이미지
       data.imgurl = result_legislator[i].profile_img_url;
 
-      // 랭킹
+      // 정당이름
+      data.party_name = result_legislator[0].l_party_name;
+
+      // 지역 내 랭킹
+      if(i == 0){
+        data.rank = 1;
+        prev_rank = data.rank;
+      }
+      else{
+        if(result_legislator[i-1].score == result_legislator[i].score){
+          data.rank = prev_rank;
+          prev_rank = prev_rank + 1;
+        }
+        else{
+          data.rank = prev_rank + 1;
+        }
+      }
+
+      // 전체 랭킹
       // 위원별 랭킹 저장해논 값을 찾아 랭킹 매핑
       for(var j=0; j<rank.length; j++){
         if(result_legislator[i].id == rank[j].id){
-          data.rank = rank[j].r;
+          data.rankInAll = rank[j].r;
         }
       }
       if(result_legislator[i].score){
-        data.rank += "위";
+        data.rankInAll += "위";
       }
       else{
-        data.rank = "-위";
+        data.rankInAll = "-위";
       }
 
       // 투표 여부
