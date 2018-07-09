@@ -55,12 +55,12 @@ router.post('/', async(req, res, next) => {
     var token;
 
     var chkToken;
-    if(req.headers.authorization != -1){
+    if(req.headers.authorization != undefined){
       chkToken = jwt.verify(req.headers.authorization);
     }
 
     // console.log()
-    console.log(chkToken);
+    // console.log(chkToken);
     // console.log(jwt.verify(chkToken));
 
     let checkidQuery =
