@@ -34,12 +34,6 @@ router.use('/scrap', require('./scrap'));
 //11. 컨텐츠 작성
 router.use('/post', require('./post'));
 
-//12. 컨텐츠에 카드뉴스 등록 (contents_type == 0)
-router.use('/postcardnews', require('./postcardnews'));
-
-//13. 컨텐츠에 영상 링크 등록 (contents_type == 1)
-router.use('/postyoutubelink', require('./postyoutubelink'));
-
 
 
 module.exports = router;
