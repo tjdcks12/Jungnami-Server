@@ -23,7 +23,6 @@ router.get('/:islike/:p_name', async(req, res, next) => {
   }
 
   var data = []; // 응답할 데이터
-  var votedLegislator = []; // 유저에 해당하는 투표한 의원 id
   var rank = []; // 의원별 랭킹 정보 저장
 
   try{
