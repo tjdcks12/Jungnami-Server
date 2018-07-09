@@ -71,6 +71,8 @@ router.post('/', async(req, res, next) => {
         return;
     }
 
+    console.log(chkToken);
+
     let u_id = chkToken.id;
     let l_id =+ req.body.l_id;
     let islike =+ req.body.islike;
@@ -115,16 +117,17 @@ router.post('/', async(req, res, next) => {
           return;
         }
 
-        res.status(201).send({
-          message : "Insert and Update Data Success"
-        });
-
       } else if (v_cnt <= 0) { // 투표권이 부족해요
         res.status(304).send({
           message : "I don't have enough voting_cnt"
         });
+        return;
       }
 
+
+        res.status(201).send({
+          message : "Insert and Update Data Success"
+        });
     }
   } catch(error) {
     res.status(500).send({
