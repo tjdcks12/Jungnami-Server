@@ -87,9 +87,11 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     let c_id = postResult.insertId;
 
 
-
+    console.log("before if ::: " + req.files.cardnews);
     // contentImg table에 cardnews 저장
     if (req.files.cardnews){
+
+      console.log("after if ::: " + req.files.cardnews);
       cardnews = req.files.cardnews; 
 
       let insertcardnewsSql = "INSERT INTO contentsImg (ci_contents_id, img_url) VALUES (?,?)";
