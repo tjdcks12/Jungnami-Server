@@ -27,7 +27,9 @@ router.get('/',  async (req, res) => {
 
     res.status(200).send({
       "message" : "Successfully get posting view",
-      "data" : data[0].img_url
+      "data" : {
+        img_url : data[0].img_url
+      }
     });
 
     console.log(data);

@@ -22,6 +22,11 @@ router.get('/', async (req, res) => {
   }
 
   try{
+    // 푸쉬알람 카운트 가져오기
+    let pushcntSql = "SELECT count(*) as pushcnt FROM push WHERE p_user_id = ? AND ischecked = false"
+    let pushcntQuery = await db.queryParamCnt_Arr(pushcntSql,[userid]);
+
+
     // 게시글 불러오기 ( 공유뺴고, 시간순)
     var select_board = 'SELECT * FROM board WHERE shared = 0 ORDER BY writingtime DESC'
     var result_board = await db.queryParamCnt_Arr(select_board);
@@ -36,13 +41,6 @@ router.get('/', async (req, res) => {
     // 좋아요한 글 가져오기
     var select_like = 'SELECT bl_board_id FROM boardLike WHERE bl_user_id = ?'
     var result_like = await db.queryParamCnt_Arr(select_like, [userid]);
-    if(result_like == 0){
-      res.status(300).send({
-        "message" : "NO data"
-      });
-
-      return;
-    }
 
     var result = [];
     for(var i=0; i<result_board.length; i++){
@@ -82,32 +80,21 @@ router.get('/', async (req, res) => {
       var cnt_like = 'SELECT count(*) AS cnt FROM boardLike WHERE bl_board_id = ?';
       var result_likecnt = await db.queryParamCnt_Arr(cnt_like, [result_board[i].id]);
       data.likecnt = result_likecnt[0].cnt;
-      if(result_likecnt == 0){
-        res.status(300).send({
-          "message" : "NO data"
-        });
-
-        return;
-      }
 
       // 댓글 카운트
       var cnt_comment = 'SELECT count(*) AS cnt FROM boardComment WHERE bc_board_id = ?';
       var result_cntcomment = await db.queryParamCnt_Arr(cnt_comment, [result_board[i].id]);
       data.commentcnt = result_cntcomment[0].cnt;
-      if(result_cntcomment == 0){
-        res.status(300).send({
-          "message" : "NO data"
-        });
-
-        return;
-      }
 
       result.push(data);
     }
 
     res.status(200).send({
       "message" : "Successfully get boardlist",
-      "data" : result
+      "data" : {
+        content : result,
+        alarmcnt : pushcntQuery[0].pushcnt
+      }
     });
 
   }catch(err){

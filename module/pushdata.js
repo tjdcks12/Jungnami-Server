@@ -11,7 +11,6 @@ module.exports = {
             sound: "default",
             click_action: "FCM_PLUGIN_ACTIVITY",
             icon: "fcm_push_icon"
-            //icon: https://myrubysbucket.s3.ap-northeast-2.amazonaws.com/user_img/toy-story-aliens-three-eyes.jpg
         },
         // 메시지 중요도
         priority: "high",

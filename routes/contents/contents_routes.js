@@ -34,6 +34,9 @@ router.use('/scrap', require('./scrap'));
 //11. 컨텐츠 작성
 router.use('/post', require('./post'));
 
+//12. 컨텐츠 리스트 메인화면 추천탭
+router.use('/recommend', require('./recommend'));
+
 
 
 module.exports = router;
