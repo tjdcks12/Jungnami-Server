@@ -1,6 +1,5 @@
 /* KIM JI YEON */
 /* contents/post */
-/* 사용안함 */
 
 const multer = require('multer');
 const multerS3 = require('multer-s3');
@@ -16,7 +15,7 @@ const upload = multer({
         bucket: 'myrubysbucket',
         acl: 'public-read',
         key: function(req, file, cb) {
-            cb(null, "contents/thumbnail/" + file.originalname);
+            cb(null, "contents/" + file.fieldname + "/" + file.originalname);
         }
     })
 });

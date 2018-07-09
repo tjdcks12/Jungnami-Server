@@ -26,6 +26,7 @@ module.exports = {
   queryParamCnt_Arr : async (...args) => {
     const query = args[0];
     const data = args[1];
+    // console.log("datatatata :::" + data);
     let result;
     try {
       var connection = await pool.getConnection();

@@ -5,7 +5,7 @@ const router = express.Router();
 
 const async = require('async');
 const db = require('../../module/pool.js');
-const upload = require('../../module/multer_contents_thumbnail.js');
+const upload = require('../../module/multer_contents_img.js');
 
 
 /*  관리자가 컨텐츠 글을 게시하는 페이지  */
@@ -18,21 +18,19 @@ router.get('/', async(req, res, next) => {
     let legislatorQuery = await db.queryParamCnt_Arr(legislatorSql,[]);
 
     if(legislatorQuery.length == 0){
-      console.log("query not ok");
 
       res.status(300).send({
-        message: "No Data"
+        message: "select legislator data error"
       });
       return;
 
-    }else{
-      console.log("query ok");
-
-      res.status(200).send({
-        message : "Select Data Success",
-        data : legislatorQuery
-      });
     }
+
+    res.status(200).send({
+      message : "Select Data Success",
+      data : legislatorQuery
+    });
+    
 
   } catch(error) {
     res.status(500).send({
@@ -45,7 +43,7 @@ router.get('/', async(req, res, next) => {
 
 /*  컨텐츠 게시 완료  */
 /*  /contents/post  */
-router.post('/', upload.array('thumbnail'), async(req, res) => {
+router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'cardnews', maxCount : 20}]), async(req, res) => {
 
   let title = req.body.title;
   let subtitle = req.body.subtitle;
@@ -53,53 +51,60 @@ router.post('/', upload.array('thumbnail'), async(req, res) => {
   let category = req.body.category;
   let l_id = req.body.l_id; // array
 
-  let thumbnail;
-  // console.log("성찬이 : " + req.files[0]);
-
-  if (req.files[0].location){
-    thumbnail = req.files[0].location;
-  } else {
-    thumbnail = null;
-  }
+  let thumbnail, cardnews, youtubelink;
 
   try{
 
+    if (req.files.thumbnail[0].location){
+      thumbnail = req.files.thumbnail[0].location;
+    } else {
+      thumbnail = null;
+    }
+
+    if (req.files.cardnews){
+      cardnews = req.files.cardnews;
+    } else {
+      cardnews = null;
+    }
+
+    if (req.body.youtubelink){
+      youtubelink = req.body.youtubelink;
+    } else {
+      youtubelink = null;
+    }
+
     if(l_id.length < 1) { // wrong input
       res.status(403).send({
-            "message" : "wrong l_id input (l_id is array)"
+            "message" : "Wrong l_id input! (l_id is array)"
         });
       return;
 
     }
 
+
     // content table에 thumbnail 저장
     var postSql = "INSERT INTO contents (title, subtitle, thumbnail_url, category, contents_type) VALUES (?, ?, ?, ?, ?);";
     var postResult = await db.queryParamCnt_Arr(postSql,[title, subtitle, thumbnail, category, contents_type]);
 
-    if(postResult != undefined){
+    if(postResult == undefined){
       res.status(204).send({
-        "message" : "fail insert"
+        "message" : "Insert contents thumbnail error"
       });
 
       return;
     }
 
-    // content id 가져오기
-    testsql = "SELECT id FROM contents WHERE title = ? AND category = ?;";
-    queryResult = await db.queryParamCnt_Arr(testsql,[title, category]);
-
-    let c_id = queryResult[0].id;
+    let c_id = postResult.insertId;
 
 
-    // hash table에 c_id, l_id 저장
-    for (var i=0; i<l_id.length; i++) {
+    // contentImg table에 cardnews 저장
+    let insertcardnewsSql = "INSERT INTO contentsImg (ci_contents_id, img_url) VALUES (?,?)";
+    for(var i=0; i<cardnews.length; i++){
+      let insertcardnewsQuery = await db.queryParamCnt_Arr(insertcardnewsSql,[c_id, cardnews[i].location]);
 
-      var hashSql = "INSERT INTO hash (h_contents_id, h_legislator_id) VALUES (?, ?);";
-      var hashQuery = await db.queryParamCnt_Arr(hashSql, [c_id, l_id[i]]);
-
-      if(hashQuery == undefined) {
+      if(insertcardnewsQuery == undefined){
         res.status(204).send({
-          "message" : "insert hash error"
+          "message" : "Insert cardnews error"
         });
 
         return;
@@ -107,32 +112,38 @@ router.post('/', upload.array('thumbnail'), async(req, res) => {
     }
 
 
-    // if(queryResult.length == 0){
-    //   console.log("query not ok");
-
-    //   res.status(300).send({
-    //     message: "No Data"
-    //   });
-    //   return;
-
-    // }else{
-    //   console.log("query ok");
-
-    //   let contentsId = queryResult[0].id; // 가져온 contents id
-
-
-      // contentImg table에 cardnews 저장
-      // testsql = "INSERT INTO contentsImg (ci_contents_id, img_url) VALUES (?, ?);";
-      // for(var i=0; i<cardnews.length; i++){
-      //   queryResult = await db.queryParamCnt_Arr(testsql,[contentsId, cardnews[i].location]);
-      // }
-
-      res.status(201).send({
-        message : "Successfully posting contents"
+    // content table에 youtubelink 삽입
+    let insertyoutubelinkSql = "UPDATE contents SET youtubelink = ? WHERE id = ?;"
+    let insertyoutubelinkQuery = await db.queryParamCnt_Arr(insertyoutubelinkSql,[youtubelink, c_id]);
+    
+    if (updatedata.affectedRows == 0){
+      res.status(204).send({
+        message : "Update youtubelink error"
       });
+      return;
+    }
 
 
+    // hash table에 c_id, l_id 저장
+    for (var i=0; i<l_id.length; i++) {
 
+      console.log(l_id[i]);
+
+      var hashSql = "INSERT INTO hash (h_contents_id, h_legislator_id) VALUES (?, ?);";
+      var hashQuery = await db.queryParamCnt_Arr(hashSql, [c_id, l_id[i]]);
+
+      if(hashQuery == undefined) {
+        res.status(204).send({
+          "message" : "Insert hash error"
+        });
+
+        return;
+      }
+    }
+
+    res.status(201).send({
+      message : "Successfully posting contents"
+    });
 
   } catch (error) {
     res.status(500).send({
