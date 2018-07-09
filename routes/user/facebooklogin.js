@@ -22,6 +22,13 @@ router.post('/', async(req, res, next) => {
 
   // facebook access token
   let accessToken = req.body.accessToken;
+  if(!accessToken){
+    res.status(401).send({
+        message : "Access Denied"
+    });
+
+    return;
+  }
   //let accessToken = 'EAAOrNfcR65ABANc1JsTRhLRO1PAP0SHucq9zrPtZAmEwAXgGhdvB2dGhswrq9vkA6ePJw8da2mb7DZBi7n2bWMMCuEuWDbhZAW6WU2OEW8ZArJf78bGZCFocApmgvcPnUqPqWbJ9JP7uBketGU38ZCUTztduGUejZBivgOCD3cau8aInxDdpFAQeiF0v5TovQ9oDCqh1mWIEYbPrZA1uSOFNQ1bd7MRH458ZD';
   // push 알람 클라이언트 토큰
   let fcmToken = req.body.fcmToken;
@@ -81,22 +88,23 @@ router.post('/', async(req, res, next) => {
       console.log("토큰이 있습니다");
       if(chkToken.id == id){
         console.log("성공적으로 로그인 되었습니다");
+        token = jwt.sign(id);
         res.status(201).send({
-          result : {
-            message : "success",
-            token : req.headers.authorization,
-            user : result
-          }
+          data : {
+            id : id,
+            token : token,
+          },
+          message : "success"
         });
       } else { // 토큰이 만료된 경우 재발급
         console.log("기간이 만료되었습니다. 재발급 합니다");
         token = jwt.sign(id);
         res.status(201).send({
-          "result" : {
-            message : "your token ended and reissue new token",
-            token : token ,
-            user : result
-          }
+          data : {
+            id : id,
+            token : token
+          },
+          message : "your token ended and reissue new token"
         })
       }
     } else{ // 토큰이 없는 경우
@@ -105,13 +113,14 @@ router.post('/', async(req, res, next) => {
       if(checkid.length != 0){ // 기기를 변경했을 경우
         // fcm token update
         let updatefcmToken = await db.queryParamCnt_Arr(updateToken, [fcmToken, id]);
+        token = jwt.sign(id);
         console.log("다른기기에서 접속했습니다");
         res.status(201).send({
-          "result" : {
-            message : "new device login",
-            token : jwt.sign(id),
-            user : result
-          }
+          data : {
+            id : id,
+            token : token
+          },
+          message : "new device login"
         });
       } else{ // 다른 기기이고 회원이 아닐때
         console.log("비회원입니다.")
@@ -121,11 +130,11 @@ router.post('/', async(req, res, next) => {
         token = jwt.sign(id);
 
         res.status(201).send({
-          "result" : {
-            message : "sign up success",
-            token : token,
-            user : result
-          }
+          data : {
+            id : id,
+            token : token
+          },
+          message : "sign up success"
         })
       }
     }

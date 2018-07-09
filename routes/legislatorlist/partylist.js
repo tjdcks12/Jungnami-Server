@@ -18,16 +18,15 @@ router.get('/', async(req, res, next) => {
 
     if(result.length == 0){
       res.status(300).json({
-        message : "No data",
-        status : 300
+        message : "No data"
       });
+      
       return;
     }
 
     res.json({
       data : result,
-      message : "Success",
-      status : 200
+      message : "Success"
     });
   } catch(error) {
     res.status(500).send({
