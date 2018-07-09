@@ -64,15 +64,6 @@ router.post('/', async(req, res, next) => {
 
     const chkToken = jwt.verify(req.headers.authorization);
 
-    if(chkToken == -1) {
-        res.status(401).send({
-            message : "Access Denied"
-        });
-        return;
-    }
-
-    console.log(chkToken);
-
     let u_id = chkToken.id;
     let l_id =+ req.body.l_id;
     let islike =+ req.body.islike;
@@ -91,7 +82,7 @@ router.post('/', async(req, res, next) => {
     }else{
       console.log("query ok");
 
-      let v_cnt =+ selectQuery[0].voting_cnt;
+      let v_cnt = selectQuery[0].voting_cnt;
       if (v_cnt > 0) {
 
         let insertSql = "INSERT INTO legislatorVote (lv_legislator_id, lv_user_id, islike) VALUES (?, ?, ?);"
@@ -118,7 +109,8 @@ router.post('/', async(req, res, next) => {
         }
 
       } else if (v_cnt <= 0) { // 투표권이 부족해요
-        res.status(304).send({
+
+        res.status(401).send({
           message : "I don't have enough voting_cnt"
         });
         return;
