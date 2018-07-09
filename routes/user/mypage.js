@@ -80,13 +80,13 @@ router.get('/:mypage_id', async(req, res, next) => {
         }
 
         result.push_cnt = pushcntQuery[0].pushcnt;
-        result.point = selectQuery[0].point;
+        result.coin = selectQuery[0].coin;
         result.voting_cnt = selectQuery[0].voting_cnt;
 
       } else {
-        result.push_cnt = 0;
-        result.point = 0;
-        result.voting_cnt = 0;
+        result.push_cnt = -1;
+        result.coin = -1;
+        result.voting_cnt = -1;
       }
 
 
@@ -135,8 +135,6 @@ router.get('/:mypage_id', async(req, res, next) => {
       let selectboardSql = "SELECT * FROM board WHERE b_user_id = ?"
       let selectboardQuery = await db.queryParamCnt_Arr(selectboardSql,[mypage_id]);
 
-      console.log(selectboardQuery)
-
       if(selectboardQuery.length == 0){
         res.status(300).send({
               message: "Select user Error"
@@ -149,8 +147,6 @@ router.get('/:mypage_id', async(req, res, next) => {
         var board = {};
 
         board.b_id = selectboardQuery[i].id;
-
-        console.log(board.b_id)
 
         let selectuserSql = "SELECT * FROM user WHERE id = ?"
         let selectuserQuery = await db.queryParamCnt_Arr(selectuserSql,[mypage_id]);

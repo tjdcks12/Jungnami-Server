@@ -10,4 +10,9 @@ router.use('/imageupload_contents_test', require('./imageupload_contents_test'))
 router.use('/test', require('./test'));
 
 
+// 국회의원 이미지 삽입
+router.use('/insert_legislator_img', require('./insert_legislator_img'));
+
+
+
 module.exports = router;

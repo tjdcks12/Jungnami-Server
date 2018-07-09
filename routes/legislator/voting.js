@@ -39,7 +39,7 @@ router.get('/', async(req, res, next) => {
 
       res.status(200).send({
           message : "Select Data Success",
-          voting_cnt : v_cnt
+          data : v_cnt
         });
     }
 
@@ -96,20 +96,28 @@ router.post('/', async(req, res, next) => {
 
           if(insertQuery == undefined){
             res.status(204).send({
-              "message" : "fail insert"
+              "message" : "insert error"
             });
 
             return;
           }
 
-        v_cnt -= 1;
 
-        let updateSql = "UPDATE user SET voting_cnt = ? WHERE id = ?;"
-        let updateQuery = await db.queryParamCnt_Arr(updateSql,[v_cnt, u_id]);
+        let updateSql = "UPDATE user SET voting_cnt = voting_cnt - 1 WHERE id = ?;"
+        let updateQuery = await db.queryParamCnt_Arr(updateSql,[u_id]);
+
+        if(updateQuery <= 0){
+          res.status(204).send({
+            "message" : "updata data error"
+          });
+
+          return;
+        }
 
         res.status(201).send({
           message : "Insert and Update Data Success"
         });
+
       } else if (v_cnt <= 0) { // 투표권이 부족해요
         res.status(304).send({
           message : "I don't have enough voting_cnt"
