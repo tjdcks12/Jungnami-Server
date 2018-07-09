@@ -35,19 +35,19 @@ router.get('/:contents_id', async(req, res) => {
      	 		userinfoObj = await db.queryParamCnt_Arr(getuserinfoQuery, [commenttableInfo[i].cc_user_id]);
 
      	 		//게시글 대댓글 갯수
-      			let getrecommentcntQuery = "select count(*) from myjungnami.contentsRecomment where cr_contentsComment_id = ?";
+      			let getrecommentcntQuery = "select count(*) as recommentCnt from myjungnami.contentsRecomment where cr_contentsComment_id = ?";
      			recommentCnt = await db.queryParamCnt_Arr(getrecommentcntQuery, [commenttableInfo[i].id] );
 
       			//댓글 좋아요 수
-      			let getlikecntQuery = "select count(*) from myjungnami.contentsCommentLike where ccl_contentsComment_id = ?";
+      			let getlikecntQuery = "select count(*) as commentlikeCnt from myjungnami.contentsCommentLike where ccl_contentsComment_id = ?";
       			commentlikeCnt = await db.queryParamCnt_Arr(getlikecntQuery, [commenttableInfo[i].id]);
 
       			subresultObj = commenttableInfo[i];
       			subresultObj.timeset = timeset;
       			subresultObj.user_nick = userinfoObj[0].nickname;
       			subresultObj.user_img_rul = userinfoObj[0].img_url;
-      			subresultObj.recommentCnt = recommentCnt[0];
-      			subresultObj.commentlikeCnt = commentlikeCnt[0];
+      			subresultObj.recommentCnt = recommentCnt[0].recommentCnt;
+      			subresultObj.commentlikeCnt = commentlikeCnt[0].commentlikeCnt;
 
       			resultArry.push(subresultObj);
 

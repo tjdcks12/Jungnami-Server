@@ -170,9 +170,7 @@ router.get('/:city/:l_name', async(req, res, next) => {
     }
 
     res.status(200).json({
-      data : {
-        legislator : result
-      },
+      data : result,
       message : "Success",
       status : 200
     });
