@@ -23,6 +23,25 @@ router.get('/:keyword', async(req, res, next) => {
   let searcher = new hangul.Searcher(searchWord);
 
   try{
+    // 의원 인덱스 찾기
+    let findlegislatorSql = "SELECT id, name FROM legislator"
+    let findlegislatorQuery = await db.queryParamCnt_Arr(findlegislatorSql, [name]);
+    if(findlegislatorQuery.length == 0){
+      console.log("query not ok");
+
+      res.status(300).send({
+        message: "No Data"
+      });
+      return;
+    }
+
+    var legislator_id = [];
+    for(var i=0; i<findlegislatorQuery.length; i++){
+      if(searcher.search(findlegislatorQuery[i].name) >= 0){
+        legislator_id.push(findlegislatorQuery[i].id);
+      }
+    }
+
     let select_content = "SELECT contents.id, title, thumbnail_url, writingtime, category FROM contents LEFT JOIN hash ON contents.id = hash.h_contents_id GROUP BY contents.id ORDER BY writingtime DESC";
     let result_content = await db.queryParamCnt_Arr(select_content);
 

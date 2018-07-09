@@ -55,8 +55,8 @@ router.post('/', upload.array('thumbnail'), async(req, res) => {
 
   let thumbnail;
   console.log("성찬이 : " + req.files);
-  if (req.files.thumbnail){
-    thumbnail = req.files.thumbnail;
+  if (req.files){
+    thumbnail = req.files;
   } else {
     thumbnail = null;
   }
