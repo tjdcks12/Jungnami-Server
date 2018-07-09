@@ -22,7 +22,6 @@ router.get('/:islike/:p_name', async(req, res, next) => {
     id = chkToken.id;
   }
 
-  var cnt; // 의석 수
   var data = []; // 응답할 데이터
   var votedLegislator = []; // 유저에 해당하는 투표한 의원 id
   var rank = []; // 의원별 랭킹 정보 저장
@@ -50,14 +49,9 @@ router.get('/:islike/:p_name', async(req, res, next) => {
         }
       );
     }
-
-    // 의석 수 가져오기
-    let select_legislatorcnt = "SELECT count(*) as cnt FROM legislator where l_party_name = ?";
-    let result_legislatorcnt = await db.queryParamCnt_Arr(select_legislatorcnt,[req.params.p_name]);
-    cnt = result_legislatorcnt[0].cnt;
-
+    
     //의원정보 가져오기
-    let select_legislator = "SELECT id, name, region_city, region_state, profile_img_url, isPpresident, isLpresident, isPPpresident, score, position FROM legislator ";
+    let select_legislator = "SELECT id, name, l_party_name, region_city, region_state, profile_img_url, isPpresident, isLpresident, isPPpresident, score, position FROM legislator ";
     select_legislator += "LEFT JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote ";
     select_legislator += "WHERE islike = ? GROUP BY lv_legislator_id) as lv ";
     select_legislator += "ON legislator.id = lv.lv_legislator_id where legislator.l_party_name = ? ORDER BY score DESC";
@@ -76,7 +70,7 @@ router.get('/:islike/:p_name', async(req, res, next) => {
       data.name = result_legislator[i].name;
 
       // 내용 (지역, 대표)
-      data.content = result_legislator[i].position;
+      data.position = result_legislator[i].position;
       // if(result_legislator[i].isPpresident == 1){
       //   data.content += "당 대표";
       // }
@@ -100,18 +94,37 @@ router.get('/:islike/:p_name', async(req, res, next) => {
       // 이미지
       data.imgurl = result_legislator[i].profile_img_url;
 
-      // 랭킹
+      // 정당이름
+      data.party_name = result_legislator[i].l_party_name;
+
+      // 지역 내 랭킹
+      if(i == 0){
+        data.rank = 1;
+        result_legislator[i].ranking = data.rank;
+      }
+      else{
+        if(result_legislator[i-1].score == result_legislator[i].score){
+          data.rank = result_legislator[i-1].ranking;
+          result_legislator[i].ranking = result_legislator[i-1].ranking;
+        }
+        else if(result_legislator[i-1].score > result_legislator[i].score){
+          data.rank = i+1;
+          result_legislator[i].ranking = i+1;
+        }
+      }
+
+      // 전체 랭킹
       // 위원별 랭킹 저장해논 값을 찾아 랭킹 매핑
       for(var j=0; j<rank.length; j++){
         if(result_legislator[i].id == rank[j].id){
-          data.rank = rank[j].r;
+          data.rankInAll = rank[j].r;
         }
       }
       if(result_legislator[i].score){
-        data.rank += "위";
+        data.rankInAll += "위";
       }
       else{
-        data.rank = "-위";
+        data.rankInAll = "-위";
       }
 
       // 투표 여부
@@ -135,7 +148,6 @@ router.get('/:islike/:p_name', async(req, res, next) => {
 
     res.status(200).json({
       data : {
-        cnt : cnt,
         legislator : result
       },
       message : "Success",

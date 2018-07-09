@@ -26,7 +26,6 @@ router.get('/:islike/:city', async(req, res, next) => {
   //     });
   // }
 
-  var cnt; // 의석 수
   const time = new Date();
   var data = []; // 응답할 데이터
   var votedLegislator = []; // 유저에 해당하는 투표한 의원 id
@@ -56,13 +55,8 @@ router.get('/:islike/:city', async(req, res, next) => {
       );
     }
 
-    // 의석 수 가져오기
-    let select_legislatorcnt = "SELECT count(*) as cnt FROM legislator where region_city = ?";
-    let result_legislatorcnt = await db.queryParamCnt_Arr(select_legislatorcnt,[req.params.city]);
-    cnt = result_legislatorcnt[0].cnt;
-
     //의원정보 가져오기
-    let select_legislator = "SELECT id, name, region_city, region_state, profile_img_url, isPpresident, isLpresident, isPPpresident, score, position FROM legislator ";
+    let select_legislator = "SELECT id, name, l_party_name, region_city, region_state, profile_img_url, isPpresident, isLpresident, isPPpresident, score, position FROM legislator ";
     select_legislator += "LEFT JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote ";
     select_legislator += "WHERE islike = ? GROUP BY lv_legislator_id) as lv ";
     select_legislator += "ON legislator.id = lv.lv_legislator_id where legislator.region_city = ? ORDER BY score DESC";
@@ -72,7 +66,6 @@ router.get('/:islike/:city', async(req, res, next) => {
 
     // return할 result
     let result = [];
-    var prev_rank;
     for(var i=0; i<result_legislator.length; i++){
       var data = {};
 
@@ -89,20 +82,25 @@ router.get('/:islike/:city', async(req, res, next) => {
       data.imgurl = result_legislator[i].profile_img_url;
 
       // 정당이름
-      data.party_name = result_legislator[0].l_party_name;
+      data.party_name = result_legislator[i].l_party_name;
+
+      if(!result_legislator[i].score){
+        result_legislator[i].score = 0;
+      }
 
       // 지역 내 랭킹
       if(i == 0){
         data.rank = 1;
-        prev_rank = data.rank;
+        result_legislator[i].ranking = data.rank;
       }
       else{
         if(result_legislator[i-1].score == result_legislator[i].score){
-          data.rank = prev_rank;
-          prev_rank = prev_rank + 1;
+          data.rank = result_legislator[i-1].ranking;
+          result_legislator[i].ranking = result_legislator[i-1].ranking;
         }
-        else{
-          data.rank = prev_rank + 1;
+        else if(result_legislator[i-1].score > result_legislator[i].score){
+          data.rank = i+1;
+          result_legislator[i].ranking = i+1;
         }
       }
 
@@ -141,7 +139,6 @@ router.get('/:islike/:city', async(req, res, next) => {
 
     res.status(200).json({
       data : {
-        cnt : cnt,
         legislator : result
       },
       message : "Success",
