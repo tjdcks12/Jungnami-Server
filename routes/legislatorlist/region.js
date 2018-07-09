@@ -120,17 +120,13 @@ router.get('/:islike/:city', async(req, res, next) => {
     if(result.length == 0){
       res.status(300).json({
         message : "No data",
-        status : 300
       });
       return;
     }
 
     res.status(200).json({
-      data : {
-        legislator : result
-      },
-      message : "Success",
-      status : 200
+      data : result,
+      message : "Success"
     });
   } catch(error) {
     res.status(500).send({

@@ -95,8 +95,7 @@ router.get('/:keyword', async(req, res, next) => {
 
     res.status(200).json({
       data : result,
-      message : "Success",
-      status : 200
+      message : "Success"
     });
 
   }catch(error) {
