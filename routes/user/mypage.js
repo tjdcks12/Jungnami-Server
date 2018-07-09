@@ -84,9 +84,9 @@ router.get('/:mypage_id', async(req, res, next) => {
         result.voting_cnt = selectQuery[0].voting_cnt;
 
       } else {
-        result.push_cnt = -1;
-        result.coin = -1;
-        result.voting_cnt = -1;
+        result.push_cnt = 0;
+        result.coin = 0;
+        result.voting_cnt = 0;
       }
 
 

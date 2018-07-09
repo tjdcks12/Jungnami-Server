@@ -35,11 +35,12 @@ router.get('/', async(req, res, next) => {
       return;
 
     }else{
-      let v_cnt = selectQuery[0].voting_cnt;
+      let data = {};
+      data.voting_cnt = selectQuery[0].voting_cnt;
 
       res.status(200).send({
           message : "Select Data Success",
-          data : v_cnt
+          data : data
         });
     }
 
