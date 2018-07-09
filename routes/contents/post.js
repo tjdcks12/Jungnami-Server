@@ -45,7 +45,7 @@ router.get('/', async(req, res, next) => {
 
 /*  컨텐츠 게시 완료  */
 /*  /contents/post  */
-router.post('/', upload.array('thumbnail'), async(req, res) => {
+router.post('/', upload.single('thumbnail'), async(req, res) => {
 
   let title = req.body.title;
   let subtitle = req.body.subtitle;
@@ -54,9 +54,10 @@ router.post('/', upload.array('thumbnail'), async(req, res) => {
   let l_id = req.body.l_id; // array
 
   let thumbnail;
-  console.log("성찬이 : " + req.files);
-  if (req.files){
-    thumbnail = req.files;
+  console.log("성찬이 : " + req.file);
+
+  if (req.file.location){
+    thumbnail = req.file.location;
   } else {
     thumbnail = null;
   }
