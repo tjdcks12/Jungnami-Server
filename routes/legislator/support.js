@@ -21,9 +21,9 @@ router.get('/', async(req, res, next) => {
 
       return;
   }
-  
+
   try{
-    let u_id = chkToken.id; 
+    let u_id = chkToken.id;
     let selectSql = "SELECT coin FROM user WHERE id = ?;"
     let selectQuery = await db.queryParamCnt_Arr(selectSql,[u_id]);
 
@@ -64,8 +64,8 @@ router.post('/', async(req, res, next) => {
     const chkToken = jwt.verify(req.headers.authorization);
 
     let u_id = chkToken.id;
-    let l_id =+ req.body.l_id;
-    let coin =+ req.body.coin; // 몇 코인 후원할 것인지
+    let l_id = req.body.l_id;
+    let coin = req.body.coin; // 몇 코인 후원할 것인지
 
     var user_coin, legislator_coin;
 
