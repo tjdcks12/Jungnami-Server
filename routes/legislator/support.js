@@ -64,8 +64,8 @@ router.post('/', async(req, res, next) => {
     const chkToken = jwt.verify(req.headers.authorization);
 
     let u_id = chkToken.id;
-    let l_id = req.body.l_id;
-    let coin = req.body.coin; // 몇 코인 후원할 것인지
+    let l_id =+ req.body.l_id;
+    let coin =+ req.body.coin; // 몇 코인 후원할 것인지
 
     var user_coin, legislator_coin;
 
@@ -95,9 +95,9 @@ router.post('/', async(req, res, next) => {
       legislator_point =+ legislaotrpointQuery[0].point;
     }
 */
-
+    console.log(user_coin + " : " + coin);
     // update point
-    if (user_coin <= coin) {
+    if (user_coin >= coin) {
 
       let supportSql = "UPDATE legislator SET coin = coin + ? WHERE id = ?;"
       let supportQuery = await db.queryParamCnt_Arr(supportSql,[coin, l_id]);
