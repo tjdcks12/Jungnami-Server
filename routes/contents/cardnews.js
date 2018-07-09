@@ -61,7 +61,7 @@ router.get('/:contents_id',  async (req, res) => {
       resultdata.subtitle = contentsinfo[0].subtitle;
 
       resultdata.type = contentsinfo[0].contents_type; // type검사 : 동영상(1) or cardnews(0)
-      resultdata.imagearary = imageArry;
+      resultdata.imagearray = imageArry;
       resultdata.youtube = contentsinfo[0].youtube_url;
 
       resultdata.likeCnt = contentslikeCnt[0].likecnt;
