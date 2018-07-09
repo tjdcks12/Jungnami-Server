@@ -1,4 +1,5 @@
 /* KIM JI YEON */
+/* 사용안함 */
 
 var express = require('express');
 const router = express.Router();

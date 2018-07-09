@@ -1,5 +1,6 @@
 /* KIM JI YEON */
 /* contents/postimage */
+/* 사용안함 */
 
 const multer = require('multer');
 const multerS3 = require('multer-s3');
