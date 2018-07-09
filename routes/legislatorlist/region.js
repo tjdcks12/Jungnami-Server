@@ -111,7 +111,7 @@ router.get('/:islike/:city', async(req, res, next) => {
         data.rankInAll += "위";
       }
       else{
-        data.rankInAll = "-위";
+        data.rankInAll = "-";
       }
 
       result.push(data);
