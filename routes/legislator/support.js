@@ -63,12 +63,6 @@ router.post('/', async(req, res, next) => {
 
     const chkToken = jwt.verify(req.headers.authorization);
 
-    if(chkToken == -1) {
-        res.status(401).send({
-            message : "Access Denied"
-        });
-    }
-
     let u_id = chkToken.id;
     let l_id =+ req.body.l_id;
     let coin =+ req.body.coin; // 몇 코인 후원할 것인지
@@ -115,7 +109,7 @@ router.post('/', async(req, res, next) => {
         message : "Update Data Success"
       });
     } else { // 정나미 포인트가 부족해요
-      res.status(304).send({
+      res.status(401).send({
         message : "I don't have enough point"
       });
     }
