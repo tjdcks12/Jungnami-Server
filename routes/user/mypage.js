@@ -185,8 +185,8 @@ router.get('/:mypage_id', async(req, res, next) => {
 
           board.source.push(source);
 
-          board.b_content = null;
-          board.b_img = null;
+          board.b_content = '0';
+          board.b_img = '0';
         }
 
         let getlikecntSql = "SELECT count(*) as like_cnt FROM boardLike WHERE bl_board_id = ?";

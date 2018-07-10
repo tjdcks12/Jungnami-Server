@@ -14,8 +14,8 @@ router.get('/', async(req, res, next) => {
 
 //p_follower_id p_boardComment_id p_boardLike_id
 
-  let updatesql = "update push set p_follower_id = '0', p_boardComment_id = '0', p_boardLike_id = '0' "
-      updatesql += "where p_follower_id is null or p_boardComment_id is null or p_boardLike_id = '0';"
+  let updatesql = "update user set img_url = '0' "
+      updatesql += "where img_url is null;"
   let updatedate = await db.queryParamCnt_Arr(updatesql, []);
 
   console.log(updatedate.affectedRows)

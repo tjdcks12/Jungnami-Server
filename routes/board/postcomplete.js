@@ -4,25 +4,10 @@ var router = express.Router();
 const async = require('async');
 
 const db = require('../../module/pool.js');
-const multer = require('multer');
-const multerS3 = require('multer-s3');
-const aws = require('aws-sdk');
-
 const jwt = require('../../module/jwt.js');
-aws.config.loadFromPath('./config/aws_config.json');
+const upload = require('../../module/multer_board_img.js');
 
-const s3 = new aws.S3();
 
-const upload = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: 'myrubysbucket',
-    acl: 'public-read',
-    key: function(req, file, cb) {
-      cb(null, "board/" + file.originalname);
-    }
-  })
-});
 
 router.post('/', upload.array('image'), async(req, res) => {
   try{
@@ -38,11 +23,27 @@ router.post('/', upload.array('image'), async(req, res) => {
     }
 
     var userid = chkToken.id;
+    let content, image;
+    let shared = req.body.shared;
 
-    console.log(req.body);
+    if (req.body.content){
+      content = req.body.content;
+    } else {
+      content = "0"
+    }
 
-    let postboardQuery = 'INSERT INTO myjungnami.board (b_user_id, content, img_url, shared) VALUES ( ?, ?, ?, ?)';
-    let data = await db.queryParamCnt_Arr(postboardQuery, [userid, req.body.content, req.body.img_url, req.body.shared]);
+    if (req.files[0]){
+      image = req.files[0].location;
+    } else {
+      image = "0"
+    }
+
+    console.log(content)
+    console.log(image)
+
+
+    let postboardQuery = 'INSERT INTO myjungnami.board (b_user_id, content, img_url, shared) VALUES (?, ?, ?, ?)';
+    let data = await db.queryParamCnt_Arr(postboardQuery, [userid, content, image, shared]);
     if(data == undefined){
       res.status(204).send({
         "message" : "fail insert"
