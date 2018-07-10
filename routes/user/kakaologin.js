@@ -42,6 +42,8 @@ router.post('/', async(req, res, next) => {
 
   try {
     let cacaoResult = await request(option);
+    console.log(cacaoResult.gender);
+    console.log(cacaoResult.email);
 
     let result = {};
     result.nickname = cacaoResult.properties.nickname;

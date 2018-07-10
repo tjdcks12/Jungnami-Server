@@ -24,7 +24,7 @@ router.get('/:category', async (req, res) => {
     let pushcntQuery = await db.queryParamCnt_Arr(pushcntSql,[userid]);
 
     // 컨텐츠 다가져오기 ( score desc )
-    var select_contents = 'SELECT * FROM contents WHERE category = ? ORDER BY score DESC';
+    var select_contents = 'SELECT * FROM contents WHERE category = ? ORDER BY writingtime DESC';
     var result_contents = await db.queryParamCnt_Arr(select_contents, [req.params.category]);
     if(result_contents.length == 0){
       res.status(300).send({

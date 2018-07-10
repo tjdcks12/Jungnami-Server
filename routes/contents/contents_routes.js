@@ -37,6 +37,7 @@ router.use('/post', require('./post'));
 //12. 컨텐츠 리스트 메인화면 추천탭
 router.use('/recommend', require('./recommend'));
 
-
+//13. web에서 contents 탭
+router.use('/recommendforweb', require('./recommendforweb'))
 
 module.exports = router;
