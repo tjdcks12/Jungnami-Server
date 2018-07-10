@@ -97,7 +97,7 @@ router.get('/:p_name/:l_name', async(req, res, next) => {
         data.name = result_legislator[i].name;
 
         // 내용 (지역, 대표)
-        data.content = result_legislator[i].position;
+        data.position = result_legislator[i].position;
         // if(result_legislator[i].isPpresident == 1){
         //   data.content += "당 대표";
         // }
