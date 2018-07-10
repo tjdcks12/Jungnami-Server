@@ -26,7 +26,6 @@ router.post('/',  async (req, res) => {
 
     let insert_scrap = 'INSERT INTO scrap (s_contents_id, s_user_id) VALUES (?,?)';
     let result_scrap = await db.queryParamCnt_Arr(insert_scrap,[req.body.contentsid, userid]);
-    console.log(result_scrap);
 
     if(result_scrap == undefined){
       res.status(204).send({

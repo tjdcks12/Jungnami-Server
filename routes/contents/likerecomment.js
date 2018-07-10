@@ -96,8 +96,6 @@ router.post('/', async(req, res) => {
 			});
 
 			var pushmsg = (userid = '님이 회원님의 댓글을 좋아합니다.');
-
-			console.log(data);
 		}
 
 	}catch(err){

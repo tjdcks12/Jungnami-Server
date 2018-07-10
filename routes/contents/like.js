@@ -33,8 +33,6 @@ router.post('/', async(req, res) => {
 				"message" : "Successfully insert contentslike",
 				"data" : data
 			});
-
-			console.log(data);
 		}
 
 

@@ -94,8 +94,6 @@ router.post('/', async(req, res) => {
 				"message" : "Successfully insert contents' comment like",
 				"data" : data
 			});
-
-			console.log(data);
 		}
 
 

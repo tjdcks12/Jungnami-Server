@@ -88,47 +88,4 @@ router.get('/:comment_id', async(req, res) => {
 })
 
 
-
-
-// 모듈 추가했음 지워도 됨 _ from jiyeon
-/*
-var timesetfun = function(param_writingtime) {
-// 현재시간
-var currentTime = new Date();
-let returnvalue;
-var writingtime = param_writingtime;
-
-//--------------- 시간 계산------------------
-//1. 작성 10분 이내
-if(currentTime.getTime() - writingtime.getTime() < 600000){
-returnvalue = "방금 전";
-return returnvalue;
-} //2. 1시간 이내
-else if(currentTime.getTime() - writingtime.getTime() < 3600000){
-returnvalue = Math.floor((currentTime.getTime() - writingtime.getTime())/60000) + "분 전";
-return returnvalue;
-}//3. 작성한지 24시간 넘음
-else if(currentTime.getTime() - writingtime.getTime() > 86400000){
-returnvalue = writingtime.getFullYear() + "년 " + (writingtime.getMonth()+1) +"월 " + writingtime.getDate() + "일";
-return returnvalue;
-} //4. 24시간 이내
-else{
-if(currentTime.getDate() != writingtime.getDate()){
-returnvalue = (24 - writingtime.getHours()) + (currentTime.getHours());
-if(returnvalue == 24){
-returnvalue = writingtime.getFullYear() + "년 " + (writingtime.getMonth()+1) +"월 " + writingtime.getDate() + "일";
-}
-else{
-returnvalue += "시간 전";
-}
-}
-else{
-returnvalue = (currentTime.getHours() - writingtime.getHours()) + "시간 전";
-}
-return returnvalue;
-}
-
-}*/
-
-
 module.exports = router;

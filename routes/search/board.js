@@ -25,7 +25,6 @@ router.get('/:keyword', async(req, res, next) => {
   try{
     let select_content = "SELECT board.id as id, nickname, content, writingtime, board.img_url FROM board JOIN user ON board.b_user_id = user.id ORDER BY writingtime DESC";
     let result_content = await db.queryParamCnt_Arr(select_content);
-    console.log("test : " + result_content);
 
     // return할 result
     var result = [];
