@@ -80,7 +80,7 @@ router.get('/:board_id', async(req, res) => {
 				resultArry.push(subresultObj);
 			}
 
-			res.status(201).send({
+			res.status(200).send({
 				"message" : "Successfully get board comment list",
 				"data" : resultArry
 			});
