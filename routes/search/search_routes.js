@@ -8,7 +8,7 @@ router.use('/legislatorparty', require('./legislatorparty'));
 router.use('/legislatorregion', require('./legislatorregion'));
 
 // 게시판에서 검색
-router.use('/community', require('./community'));
+router.use('/board', require('./board'));
 
 // 컨텐츠 검색
 router.use('/contents', require('./contents'));
