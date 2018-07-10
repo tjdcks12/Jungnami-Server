@@ -57,7 +57,7 @@ router.get('/:contents_id',  async (req, res) => {
 
       resultdata.title = contentsinfo[0].title;
       resultdata.thumbnail = contentsinfo[0].thumbnail_url;
-      resultdata.writingtime = contentsinfo[0].writingtime.toLocaleString();
+      resultdata.text = contentsinfo[0].category + " · " + contentsinfo[0].writingtime.toLocaleString();
       resultdata.subtitle = contentsinfo[0].subtitle;
 
       resultdata.type = contentsinfo[0].contents_type; // type검사 : 동영상(1) or cardnews(0)

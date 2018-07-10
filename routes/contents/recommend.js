@@ -47,7 +47,7 @@ router.get('/', async (req, res) => {
       data.thumbnail = result_contents[i].thumbnail_url;
 
       // 카테고리 + 시간
-      data.text = result_contents[i].category + " * " + checktime.checktime(result_contents[i].writingtime);
+      data.text = result_contents[i].category + " · " + checktime.checktime(result_contents[i].writingtime);
 
       // 동영상 체크
       data.type = result_contents[i].contents_type; // 0: cardnews, 1:youtube_url
