@@ -49,24 +49,20 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     let subtitle = req.body.subtitle;
     let contents_type = req.body.contents_type;
     let category = req.body.category;
-    let l_id = req.body.l_id; // array
-
-    console.log(req.body);
+    let l_id; // array
 
     let thumbnail, cardnews, youtubelink;
 
-    if (req.files.thumbnail[0].location){
+    if (req.files.thumbnail){
       thumbnail = req.files.thumbnail[0].location;
     } else {
       thumbnail = null;
     }
 
-    if(l_id.length < 1) { // wrong input
-      res.status(403).send({
-            "message" : "Wrong l_id input! (l_id is array)"
-        });
-      return;
-
+    if(l_id == undefined) { // wrong input
+      l_id = [];
+    } else {
+      l_id = req.body.l_id;
     }
 
     // content table에 thumbnail 저장
@@ -84,11 +80,9 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     let c_id = postResult.insertId;
 
 
-    console.log("before if ::: " + req.files.cardnews);
     // contentImg table에 cardnews 저장
     if (req.files.cardnews){
 
-      console.log("after if ::: " + req.files.cardnews);
       cardnews = req.files.cardnews;
 
       let insertcardnewsSql = "INSERT INTO contentsImg (ci_contents_id, img_url) VALUES (?,?)";
@@ -124,8 +118,6 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
 
     // hash table에 c_id, l_id 저장
     for (var i=0; i<l_id.length; i++) {
-
-      console.log(l_id[i]);
 
       var hashSql = "INSERT INTO hash (h_contents_id, h_legislator_id) VALUES (?, ?);";
       var hashQuery = await db.queryParamCnt_Arr(hashSql, [c_id, l_id[i]]);

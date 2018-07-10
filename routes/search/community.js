@@ -23,7 +23,7 @@ router.get('/:keyword', async(req, res, next) => {
   let searcher = new hangul.Searcher(searchWord);
 
   try{
-    let select_content = "SELECT board.id as id, nickname, content, writingtime FROM board JOIN user ON board.b_user_id = user.id ORDER BY writingtime DESC";
+    let select_content = "SELECT board.id as id, nickname, content, writingtime, board.img_url FROM board JOIN user ON board.b_user_id = user.id ORDER BY writingtime DESC";
     let result_content = await db.queryParamCnt_Arr(select_content);
     console.log("test : " + result_content);
 
@@ -39,36 +39,13 @@ router.get('/:keyword', async(req, res, next) => {
         // 내용
         data.content = result_content[i].content;
 
+        // 사진
+        data.img_url = result_content[i].img_url;
+
         // 시간 계산
         // 작성 10분 이내
         var writingtime = result_content[i].writingtime;
         data.writingtime = checktime.checktime(writingtime);
-        // if(currentTime.getTime() - writingtime.getTime() < 600000){
-        //   data.writingtime = "방금 전";
-        // } // 1시간 이내
-        // else if(currentTime.getTime() - writingtime.getTime() < 3600000){
-        //   data.writingtime = Math.floor((currentTime.getTime() - writingtime.getTime())/60000) + "분 전";
-        // }// 작성한지 24시간 넘음
-        // else if(currentTime.getTime() - writingtime.getTime() > 86400000){
-        //   data.writingtime = writingtime.getFullYear() + "년 " + (writingtime.getMonth()+1) +"월 " + writingtime.getDate() + "일";
-        // } // 24시간 이내
-        // else{
-        //   if(currentTime.getDate() != writingtime.getDate()){
-        //     data.writingtime = (24 - writingtime.getHours()) + (currentTime.getHours());
-        //     if(data.writingtime == 24){
-        //       data.writingtime = writingtime.getFullYear() + "년 " + (writingtime.getMonth()+1) +"월 " + writingtime.getDate() + "일";
-        //     }
-        //     else{
-        //       data.writingtime += "시간 전";
-        //     }
-        //   }
-        //   else{
-        //     data.writingtime = (currentTime.getHours() - writingtime.getHours()) + "시간 전";
-        //   }
-        // }
-
-        // console.log(writingtime.toLocaleString());
-        // console.log(data.writingtime);
 
         // 좋아요 수
         let select_like = "SELECT * FROM boardLike WHERE bl_board_id = ?";
