@@ -59,7 +59,7 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
       thumbnail = null;
     }
 
-    if(l_id == undefined) { // wrong input
+    if(req.body.l_id == undefined) { // wrong input
       l_id = [];
     } else {
       l_id = req.body.l_id;
@@ -78,6 +78,8 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     }
 
     let c_id = postResult.insertId;
+
+    console.log(postResult.insertId);
 
 
     // contentImg table에 cardnews 저장
@@ -116,11 +118,14 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
 
     }
 
+    console.log(l_id)
     // hash table에 c_id, l_id 저장
     for (var i=0; i<l_id.length; i++) {
 
       var hashSql = "INSERT INTO hash (h_contents_id, h_legislator_id) VALUES (?, ?);";
       var hashQuery = await db.queryParamCnt_Arr(hashSql, [c_id, l_id[i]]);
+
+      console.log(hashQuery)
 
       if(hashQuery == undefined) {
         res.status(204).send({
