@@ -58,7 +58,6 @@ router.get('/:islike/:city', async(req, res, next) => {
     select_legislator += "ON legislator.id = lv.lv_legislator_id where legislator.region_city = ? ORDER BY score DESC";
 
     let result_legislator = await db.queryParamCnt_Arr(select_legislator, [req.params.islike, req.params.city]);
-    console.log(result_legislator);
 
     // return할 result
     let result = [];

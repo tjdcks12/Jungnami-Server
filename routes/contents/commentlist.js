@@ -70,8 +70,6 @@ router.get('/:contents_id', async(req, res) => {
 				// 좋아요 여부 확인
 				subresultObj.islike = 0;
 				for(var j=0; j<islike.length; j++){
-
-					console.log(commenttableInfo[i].id + " : " + islike[j]);
 					if(commenttableInfo[i].id == islike[j]){
 						subresultObj.islike = 1;
 					}

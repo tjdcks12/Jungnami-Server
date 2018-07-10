@@ -41,8 +41,6 @@ router.post('/', async(req, res) => {
 				"message" : "insert contents' comment success",
 				"data" : data
 			});
-
-			console.log(data);
 		}
 	}catch(err){
 		console.log(err);

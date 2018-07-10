@@ -13,6 +13,8 @@ var schedule = require('node-schedule');
 // 스케줄링 정보
 var scheduleinfo = require('./module/scheduleinfo');
 
+// helmet
+var helmet = require('helmet');
 // 매일 23시59분30초에 스케줄링
 var j = schedule.scheduleJob('30 59 23 * * *', function(){
   console.log("scheduling start!");
@@ -23,6 +25,10 @@ var j = schedule.scheduleJob('30 59 23 * * *', function(){
 
 var app = express();
 var bodyParser = require('body-parser');
+
+//helmet
+app.use(helmet());
+
 app.use(bodyParser.json({limit: "50mb"}));
 app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
 

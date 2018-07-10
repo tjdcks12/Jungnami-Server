@@ -95,7 +95,6 @@ router.post('/', async(req, res, next) => {
       legislator_point =+ legislaotrpointQuery[0].point;
     }
 */
-    console.log(user_coin + " : " + coin);
     // update point
     if (user_coin >= coin) {
 
