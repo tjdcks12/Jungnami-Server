@@ -61,7 +61,7 @@ router.get('/', async (req, res) => {
       data.nickname = result_user[0].nickname;
 
       // 유저 이미지
-      data.nickname = result_user[0].img_url;
+      data.userimg = result_user[0].img_url;
 
       // 보드 이미지
       data.img = result_board[i].img_url;
