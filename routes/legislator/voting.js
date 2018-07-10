@@ -23,7 +23,7 @@ router.get('/', async(req, res, next) => {
         return;
     }
 
-    let u_id = chkToken.id; 
+    let u_id = chkToken.id;
     let selectSql = "SELECT voting_cnt FROM user WHERE id = ?;"
     let selectQuery = await db.queryParamCnt_Arr(selectSql,[u_id]);
 
@@ -63,6 +63,13 @@ router.post('/', async(req, res, next) => {
   try {
 
     const chkToken = jwt.verify(req.headers.authorization);
+    if(chkToken == -1) {
+        res.status(401).send({
+            message : "Access Denied"
+        });
+
+        return;
+    }
 
     let u_id = chkToken.id;
     let l_id =+ req.body.l_id;
