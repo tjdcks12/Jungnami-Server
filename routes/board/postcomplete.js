@@ -35,7 +35,7 @@ router.post('/', upload.array('image'), async(req, res) => {
     if (req.files[0]){
       image = req.files[0].location;
     } else {
-      image = ""
+      image = "0"
     }
 
     console.log(content)
