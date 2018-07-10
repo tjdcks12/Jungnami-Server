@@ -31,8 +31,11 @@ router.get('/:keyword', async(req, res, next) => {
     // return할 result
     var result = [];
     for(var i=0; i<result_content.length; i++){
-        var data = {};
-        if(searcher.search(result_content[i].title) >= 0){
+      var data = {};
+      if(searcher.search(result_content[i].title) >= 0){
+
+        // id
+        data.contentsid = result_content[i].id;
 
         // 제목
         data.title = result_content[i].title;
