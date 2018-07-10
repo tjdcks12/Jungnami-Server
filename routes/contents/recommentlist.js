@@ -32,7 +32,7 @@ router.get('/:comment_id', async(req, res) => {
 			}
 
 			//유저 닉, 이미지, 시간, 컨텐츠, 좋아요, 대댓 수 출력
-			let getrecommentlistQuery = 'select * from myjungnami.contentsRecomment where cr_contentsComment_id = ? order by writingtime';
+			let getrecommentlistQuery = 'select * from contentsRecomment left join (SELECT crl_contentsRecomment_id, count(*) as cnt from contentsRecommentLike GROUP BY crl_contentsRecomment_id) as crl on contentsRecomment.id = crl.crl_contentsRecomment_id  where cr_contentsComment_id = ? order by crl.cnt desc, writingtime desc';
 			let recommenttableInfo = await db.queryParamCnt_Arr(getrecommentlistQuery, [req.params.comment_id]);
 			//댓글 테이블에서 댓글 목록 받아와서
 
@@ -58,7 +58,7 @@ router.get('/:comment_id', async(req, res) => {
 				subresultObj.content = recommenttableInfo[i].content;
 				subresultObj.timeset = timeset;
 				subresultObj.user_nick = userinfoObj[0].nickname;
-				subresultObj.user_img_rul = userinfoObj[0].img_url;
+				subresultObj.user_img = userinfoObj[0].img_url;
 				subresultObj.recommentlikeCnt = recommentlikeCnt[0].recommentlikeCnt;
 
 				// 좋아요 여부 확인

@@ -33,7 +33,7 @@ router.get('/:comment_id', async(req, res) => {
 				islike[i] = result_islike[i].brl_boardRecomment_id;
 			}
 
-			let getrecommentlistQuery = 'select * from myjungnami.boardRecomment where br_boardComment_id = ? ORDER BY writingtime';
+			let getrecommentlistQuery = 'select * from boardRecomment left join (SELECT brl_boardRecomment_id, count(*) as cnt from boardRecommentLike GROUP BY brl_boardRecomment_id) as brl on boardRecomment.id = brl.brl_boardRecomment_id  where br_boardComment_id = ? order by brl.cnt desc, writingtime desc';
 			let recommenttableInfo = await db.queryParamCnt_Arr(getrecommentlistQuery, [req.params.comment_id]);
 
 			let resultArry = [];
@@ -58,7 +58,7 @@ router.get('/:comment_id', async(req, res) => {
 				subresultObj.content = recommenttableInfo[i].content;
 				subresultObj.timeset = timeset;
 				subresultObj.user_nick = userinfoObj[0].nickname;
-				subresultObj.user_img_rul = userinfoObj[0].img_url;
+				subresultObj.user_img = userinfoObj[0].img_url;
 				subresultObj.recommentlikeCnt = recommentlikeCnt[0].recommentlikeCnt;
 
 				// 좋아요 여부 확인
@@ -77,8 +77,6 @@ router.get('/:comment_id', async(req, res) => {
 				"message" : "Successfully get board recomment",
 				"data" : resultArry
 			});
-
-			console.log(resultArry);
 		}
 	}catch(err){
 		console.log(err);
