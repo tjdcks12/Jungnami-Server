@@ -41,19 +41,17 @@ router.post('/', async(req, res, next) => {
   }
 
   try {
-    let cacaoResult = await request(option);
-    console.log(cacaoResult.gender);
-    console.log(cacaoResult.email);
+    let kakaoResult = await request(option);
 
     let result = {};
-    result.nickname = cacaoResult.properties.nickname;
-    result.thumbnail_image = cacaoResult.properties.thumbnail_image;
+    result.nickname = kakaoResult.properties.nickname;
+    result.thumbnail_image = kakaoResult.properties.thumbnail_image;
 
-    var nickname = cacaoResult.properties.nickname;
-    var img_url = cacaoResult.properties.thumbnail_image;
+    var nickname = kakaoResult.properties.nickname;
+    var img_url = kakaoResult.properties.thumbnail_image;
 
-    //console.log(cacaoResult.kakao_account.has_email + " : " + cacaoResult.kakao_account.email);
-    var id = cacaoResult.id;
+    //console.log(kakaoResult.kakao_account.has_email + " : " + kakaoResult.kakao_account.email);
+    var id = kakaoResult.id;
     var token;
 
     var chkToken;
@@ -138,7 +136,7 @@ router.post('/', async(req, res, next) => {
     }
   }
   catch(err) {
-    console.log("Cacao Error => " + err);
+    console.log("kakao Error => " + err);
     next(err);
   }
   finally {

@@ -56,7 +56,7 @@ router.get('/', async (req, res) => {
     }
 
     // tmi 가져오기
-    select_contents = "SELECT * FROM contents WHERE category = '스토리' ORDER BY writingtime DESC LIMIT 20";
+    select_contents = "SELECT * FROM contents WHERE category = 'tmi' ORDER BY writingtime DESC LIMIT 20";
     result_contents = await db.queryParamCnt_Arr(select_contents);
     if(result_contents.length == 0){
       res.status(300).send({
@@ -87,8 +87,8 @@ router.get('/', async (req, res) => {
       tmi.push(data);
     }
 
-    // tmi 가져오기
-    select_contents = "SELECT * FROM contents WHERE category = 'tmi' ORDER BY writingtime DESC LIMIT 20";
+    // 스토리 가져오기
+    select_contents = "SELECT * FROM contents WHERE category = '스토리' ORDER BY writingtime DESC LIMIT 20";
     result_contents = await db.queryParamCnt_Arr(select_contents);
     if(result_contents.length == 0){
       res.status(300).send({
