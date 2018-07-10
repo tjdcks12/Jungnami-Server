@@ -2,11 +2,13 @@
 var express = require('express');
 var router = express.Router();
 const async = require('async');
+
 const db = require('../../module/pool.js');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const aws = require('aws-sdk');
 
+const jwt = require('../../module/jwt.js');
 aws.config.loadFromPath('./config/aws_config.json');
 
 const s3 = new aws.S3();
@@ -24,6 +26,9 @@ const upload = multer({
 
 router.post('/', upload.array('image'), async(req, res) => {
   try{
+
+    const chkToken = jwt.verify(req.headers.authorization);
+
     if(chkToken == -1) {
       res.status(401).send({
         message : "Access Denied"
@@ -34,7 +39,9 @@ router.post('/', upload.array('image'), async(req, res) => {
 
     var userid = chkToken.id;
 
-    let postboardQuery = 'INSERT INTO myjungnami.board( b_user_id, content, img_url, shared) VALUES ( ?, ?, ?, ?)';
+    console.log(req.body);
+
+    let postboardQuery = 'INSERT INTO myjungnami.board (b_user_id, content, img_url, shared) VALUES ( ?, ?, ?, ?)';
     let data = await db.queryParamCnt_Arr(postboardQuery, [userid, req.body.content, req.body.img_url, req.body.shared]);
     if(data == undefined){
       res.status(204).send({
