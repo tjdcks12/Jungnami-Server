@@ -28,8 +28,8 @@ router.get('/', async(req, res, next) => {
     let result_point = await db.queryParamCnt_Arr(select_point,[id]);
 
     res.status(200).send({
-      voting_cnt : result_point[0].voting_cnt,
-      message : "Success"
+      message : "Success",
+      data : result_point[0].voting_cnt
     });
 
   } catch(error) {

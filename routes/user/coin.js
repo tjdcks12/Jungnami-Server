@@ -34,10 +34,13 @@ router.get('/', async(req, res, next) => {
     let select_exchange = "SELECT * FROM exchange";
     let result_exchange = await db.queryParamCnt_Arr(select_exchange,[]);
 
+    var result = {};
+    result.coin = result_coin[0].coin;
+    result.exchange = result_exchange;
+
     res.status(200).send({
-      coin : result_coin[0].coin,
-      exchange : result_exchange,
-      message : "Success"
+      message : "Success",
+      data : result
     });
 
   } catch(error) {
