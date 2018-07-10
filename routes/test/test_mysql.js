@@ -12,22 +12,23 @@ router.get('/', async(req, res, next) => {
   console.log("test");
 
 
-  let updatesql = "update test set test = '5678' where test = '1234'"
+//p_follower_id p_boardComment_id p_boardLike_id
+
+  let updatesql = "update push set p_follower_id = '0', p_boardComment_id = '0', p_boardLike_id = '0' "
+      updatesql += "where p_follower_id is null or p_boardComment_id is null or p_boardLike_id = '0';"
   let updatedate = await db.queryParamCnt_Arr(updatesql, []);
 
   console.log(updatedate.affectedRows)
 
 
 
+  // let deletesql = "delete from test where test = '1234'"
+  // let deletedate = await db.queryParamCnt_Arr(deletesql, []);
+
+  // console.log(deletedate.affectedRows)
 
 
-  let deletesql = "delete from test where test = '1234'"
-  let deletedate = await db.queryParamCnt_Arr(deletesql, []);
-
-  console.log(deletedate.affectedRows)
-
-
-  if (deletedate.affectedRows < 1) {
+  if (updatedate.affectedRows < 1) {
 
     res.json({
         message : "delete error",
