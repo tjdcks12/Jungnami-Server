@@ -61,6 +61,7 @@ router.get('/:board_id', async(req, res) => {
 				let getlikecntQuery = "select count(*) as commentcnt from myjungnami.boardCommentLike where bcl_boardComment_id = ?";
 				commentlikeCnt = await db.queryParamCnt_Arr(getlikecntQuery, [commenttableInfo[i].id]);
 
+				subresultObj.commentid = commenttableInfo[i].id;
 				subresultObj.timeset = timeset;
 				subresultObj.user_nick = userinfoObj[0].nickname;
 				subresultObj.user_img_rul = userinfoObj[0].img_url;

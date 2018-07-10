@@ -56,6 +56,8 @@ router.get('/', async (req, res) => {
 
         return;
       }
+      data.boardid = result_board[i].id;
+
       data.nickname = result_user[0].nickname;
 
       // 썸네일

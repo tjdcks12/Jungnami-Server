@@ -37,6 +37,8 @@ router.get('/:category', async (req, res) => {
     var result = [];
     for(var i=0; i<result_contents.length; i++){
       var data = {};
+      // id
+      data.contentsid = result_contents[i].id;
 
       // title
       data.title = result_contents[i].title;
