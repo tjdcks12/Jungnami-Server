@@ -21,9 +21,9 @@ router.get('/', async(req, res, next) => {
 
       return;
   }
-  
+
   try{
-    let u_id = chkToken.id; 
+    let u_id = chkToken.id;
     let selectSql = "SELECT coin FROM user WHERE id = ?;"
     let selectQuery = await db.queryParamCnt_Arr(selectSql,[u_id]);
 
@@ -95,9 +95,9 @@ router.post('/', async(req, res, next) => {
       legislator_point =+ legislaotrpointQuery[0].point;
     }
 */
-
+    console.log(user_coin + " : " + coin);
     // update point
-    if (user_coin <= coin) {
+    if (user_coin >= coin) {
 
       let supportSql = "UPDATE legislator SET coin = coin + ? WHERE id = ?;"
       let supportQuery = await db.queryParamCnt_Arr(supportSql,[coin, l_id]);
