@@ -76,7 +76,7 @@ router.get('/:l_name', async(req, res, next) => {
     }
 
     //의원정보 가져오기
-    let select_legislator = "SELECT id, name, region_city, region_state, profile_img_url, isPpresident, isLpresident, isPPpresident, score, position FROM legislator ";
+    let select_legislator = "SELECT id, l_party_name, name, region_city, region_state, profile_img_url, isPpresident, isLpresident, isPPpresident, score, position FROM legislator ";
     select_legislator += "LEFT JOIN (SELECT  lv_legislator_id, count(*) as score FROM legislatorVote ";
     select_legislator += "GROUP BY lv_legislator_id) as lv ";
     select_legislator += "ON legislator.id = lv.lv_legislator_id ORDER BY score DESC";
@@ -95,6 +95,9 @@ router.get('/:l_name', async(req, res, next) => {
 
         // 이름
         data.name = result_legislator[i].name;
+
+        // 정당
+        data.party = result_legislator[i].l_party_name;
 
         // 내용 (지역, 대표)
         data.position = result_legislator[i].position;
