@@ -58,36 +58,36 @@ router.get('/:mypage_id', async(req, res, next) => {
 
       result.mypage_id = mypage_id;
       result.nickname = selectQuery[0].nickname;
-      result.img_url = selectQuery[0].img_url;
+      result.img = selectQuery[0].img_url;
       result.scrapcnt = scrapQuery[0].scrapcnt;
       result.boardcnt = boardQuery[0].boardcnt;
-      result.followercnt = followerQuery[0].followercnt;
       result.followingcnt = followingQuery[0].followingcnt;
-
+      result.followercnt = followerQuery[0].followercnt;
 
       if (u_id == mypage_id) {  // 내가 내 계정에 들어온거라면 
 
-        let pushcntSql = "SELECT count(*) as pushcnt FROM push WHERE p_user_id = ? AND ischecked = false"
-        let pushcntQuery = await db.queryParamCnt_Arr(pushcntSql,[mypage_id]);
-
-        if(pushcntQuery.length == 0){
-          console.log("query not ok");
-
-          res.status(300).send({
-                message: "Select push count Error"
-          });
-          return;
-        }
-
-        result.push_cnt = pushcntQuery[0].pushcnt;
         result.coin = selectQuery[0].coin;
-        result.voting_cnt = selectQuery[0].voting_cnt;
+        result.votingcnt = selectQuery[0].voting_cnt;
 
       } else {
-        result.push_cnt = 0;
         result.coin = 0;
-        result.voting_cnt = 0;
+        result.votingcnt = 0;
       }
+
+      let pushcntSql = "SELECT count(*) as pushcnt FROM push WHERE p_user_id = ? AND ischecked = false"
+      let pushcntQuery = await db.queryParamCnt_Arr(pushcntSql,[mypage_id]);
+
+      if(pushcntQuery.length == 0){
+        console.log("query not ok");
+
+        res.status(300).send({
+              message: "Select push count Error"
+        });
+        return;
+      }
+
+      result.pushcnt = pushcntQuery[0].pushcnt;
+
 
 
       // 스크랩한 컨텐츠
@@ -121,8 +121,7 @@ router.get('/:mypage_id', async(req, res, next) => {
 
         scrap.c_title = selectcontentsQuery[0].title;
         scrap.thumbnail = selectcontentsQuery[0].thumbnail_url;
-        scrap.time = checktime.checktime(selectcontentsQuery[0].writingtime);
-        scrap.category = selectcontentsQuery[0].category;
+        scrap.text = selectcontentsQuery[0].category + " * " + checktime.checktime(selectcontentsQuery[0].writingtime);
 
         result.scrap.push(scrap);
       }
@@ -157,15 +156,15 @@ router.get('/:mypage_id', async(req, res, next) => {
 
         board.source = [];
 
-        // 내가 직접 쓴 글 
+        // 내가 직접 쓴 글
         if (selectboardQuery[i].shared == 0) {        
 
           let selectboardinfoSql = "SELECT * FROM board WHERE id = ?"
           let selectboardinfoQuery = await db.queryParamCnt_Arr(selectboardinfoSql,[board.b_id]);
 
           board.b_content = selectboardinfoQuery[0].content;
-          board.b_img_url = selectboardinfoQuery[0].img_url;
-  
+          board.b_img = selectboardinfoQuery[0].img_url;
+
         } // 공유한 글
         else if (selectboardQuery[i].shared > 0) {   
           source = {};
@@ -181,10 +180,13 @@ router.get('/:mypage_id', async(req, res, next) => {
           source.u_img = selectshareduserQuery[0].img_url;
 
           source.b_content = selectsharedboardinfoQuery[0].content;
-          source.b_img_url = selectsharedboardinfoQuery[0].img_url;
+          source.b_img = selectsharedboardinfoQuery[0].img_url;
           source.b_time = checktime.checktime(selectsharedboardinfoQuery[0].writingtime);
 
           board.source.push(source);
+
+          board.b_content = null;
+          board.b_img = null;
         }
 
         let getlikecntSql = "SELECT count(*) as like_cnt FROM boardLike WHERE bl_board_id = ?";
@@ -196,14 +198,6 @@ router.get('/:mypage_id', async(req, res, next) => {
         board.b_time = checktime.checktime(selectboardQuery[0].writingtime);
         board.like_cnt = getlikecntQuery[0].like_cnt;
         board.comment_cnt = getcommentcntQuery[0].comment_cnt;
-
-
-        if (selectboardQuery.length == 0) {
-          res.status(300).send({
-              message: "Select board Error"
-          });
-          return;
-        }
 
         result.board.push(board);
       }
