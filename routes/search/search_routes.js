@@ -19,5 +19,9 @@ router.use('/follower', require('./follower'));
 // 팔로우 검색
 router.use('/following', require('./following'));
 
+// 국회의원 검색 (tab1)
+router.use('/legislator', require('./legislator'));
+
+
 
 module.exports = router;
