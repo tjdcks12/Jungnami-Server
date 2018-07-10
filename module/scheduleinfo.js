@@ -10,7 +10,7 @@ module.exports = {
   initscore : async () => {
     console.log("initscore!");
     try {
-      let updatesql = 'UPDATE user SET voting_cnt = 5';
+      let updatesql = 'UPDATE user SET voting_cnt = voting_cnt + 5';
       let resultsql = await db.queryParamCnt_Arr(updatesql);
     }
     catch(err) {
