@@ -88,6 +88,7 @@ ranking : 몇위인지. 공동순위 가능 (string)
       if(!result_legislator[i].score){
         result_legislator[i].score = 0;
       }
+      data.score = result_legislator[i].score;
 
       // 지역 내 랭킹
       if(i == 0){

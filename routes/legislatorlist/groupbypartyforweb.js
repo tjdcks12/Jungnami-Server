@@ -74,6 +74,7 @@ router.get('/:islike/:p_name', async(req, res, next) => {
       if(!result_legislator[i].score){
         result_legislator[i].score = 0;
       }
+      data.score = result_legislator[i].score;
 
       // 정당 내 랭킹
       if(i == 0){
