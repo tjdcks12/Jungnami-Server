@@ -22,7 +22,9 @@ router.get('/', async (req, res) => {
     userid = chkToken.id;
     var select_img = 'SELECT img_url FROM user WHERE id = ?';
     var result_img = await db.queryParamCnt_Arr(select_img, userid);
-    user_img_url = result_img[0].img_url;
+    if(result_img.length != 0){
+      user_img_url = result_img[0].img_url;
+    }
   }
 
   try{

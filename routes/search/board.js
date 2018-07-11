@@ -51,12 +51,12 @@ router.get('/:keyword', async(req, res, next) => {
         // 좋아요 수
         let select_like = "SELECT * FROM boardLike WHERE bl_board_id = ?";
         let result_like = await db.queryParamCnt_Arr(select_like, result_content[i].id);
-        data.likecnt = addComma.addComma(result_like.length);
+        data.likecnt = result_like.length;
 
         // 댓글 수
         let select_comment = "SELECT * FROM boardComment WHERE bc_board_id = ?";
         let result_comment = await db.queryParamCnt_Arr(select_comment, result_content[i].id);
-        data.commentcnt = addComma.addComma(result_comment.length);
+        data.commentcnt = result_comment.length;
 
         result.push(data);
       }
