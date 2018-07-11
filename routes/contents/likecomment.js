@@ -1,6 +1,7 @@
 //컨텐츠 댓글에 좋아요
 var express = require('express');
 var router = express.Router();
+
 const async = require('async');
 const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
@@ -10,7 +11,6 @@ const get_pushdata = require('../../module/pushdata.js');
 const serverKey = require('../../config/fcmKey.js').key;
 
 router.post('/', async(req, res) => {
-
 	const chkToken = jwt.verify(req.headers.authorization);
 
 	if(chkToken == -1) {
@@ -24,14 +24,14 @@ router.post('/', async(req, res) => {
 	var userid = chkToken.id;
 
 	try{
-		if(!req.body.comment_id){
+		if(req.body.comment_id == undefined){
 			res.status(403).send({
 				message : "please input comments' id and user id"
 			});
 		}else{
 			let contentscommentlikeQuery = 'INSERT INTO myjungnami.contentsCommentLike(id, ccl_contentsComment_id, ccl_user_id) VALUES (null, ?, ?)';
 			let data = await db.queryParamCnt_Arr(contentscommentlikeQuery, [req.body.comment_id, userid]);
-			if(data == undefined){
+			if(data <= 0){
 				res.status(204).send({
 					"message" : "fail insert"
 				});
@@ -91,8 +91,7 @@ router.post('/', async(req, res) => {
 			// 푸쉬알람 끝
 
 			res.status(201).send({
-				"message" : "Successfully insert contents' comment like",
-				"data" : data
+				"message" : "Successfully insert contents' comment like"
 			});
 		}
 

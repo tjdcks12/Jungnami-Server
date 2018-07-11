@@ -24,7 +24,7 @@ router.post('/', async(req, res) => {
 
 	try{
 		//로그인 되었을 때
-		if(!(req.body.comment_id && userid)){
+		if(req.body.comment_id == undefined){
 			res.status(403).send({
 				message : "please input comment id and user id"
 			});

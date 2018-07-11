@@ -1,6 +1,7 @@
 //컨텐츠 대댓글 좋아요
 var express = require('express');
 var router = express.Router();
+
 const async = require('async');
 const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
@@ -10,7 +11,6 @@ const get_pushdata = require('../../module/pushdata.js');
 const serverKey = require('../../config/fcmKey.js').key;
 
 router.post('/', async(req, res) => {
-	var id; // 사용자 email
 
 	const chkToken = jwt.verify(req.headers.authorization);
 
@@ -25,14 +25,14 @@ router.post('/', async(req, res) => {
 	var userid = chkToken.id;
 
 	try{
-		if(!req.body.recomment_id){
+		if(req.body.recomment_id == undefined){
 			res.status(403).send({
 				message : "please input recomment id and user id"
 			});
 		}else{
 			let contentsRecommentlikeQuery = 'INSERT INTO myjungnami.contentsRecommentLike(id, crl_contentsRecomment_id, crl_user_id) VALUES (null, ?, ?)';
 			let data = await db.queryParamCnt_Arr(contentsRecommentlikeQuery, [req.body.recomment_id, userid]);
-			if(data == undefined){
+			if(data <= 0){
 				res.status(204).send({
 					"message" : "fail insert"
 				});
