@@ -1,5 +1,5 @@
-/* 정당별 호감/비호감 의원 리스트 */
-/*  /legislatorlist/legislatorlist */
+/* 지역별 호감/비호감 의원 리스트 */
+/*  /legislatorlist/groupbyregionforweb */
 /* 종찬 */
 
 var express = require('express');
@@ -9,8 +9,9 @@ const async = require('async');
 
 const jwt = require('../../module/jwt.js');
 const db = require('../../module/pool.js');
+const addComma = require('../../module/addComma.js');
 
-router.get('/:islike/:p_name', async(req, res, next) => {
+router.get('/:islike/:city', async(req, res, next) => {
 
   var id; // 사용자 id
 
@@ -26,8 +27,9 @@ router.get('/:islike/:p_name', async(req, res, next) => {
   var rank = []; // 의원별 랭킹 정보 저장
 
   try{
+
     // 랭킹 계산하기
-    let select_rank = "SELECT id, score FROM legislator  LEFT JOIN (SELECT  lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = ? GROUP BY lv_legislator_id) as lv ON legislator.id = lv.lv_legislator_id";
+    let select_rank = "SELECT id, score FROM legislator LEFT JOIN (SELECT  lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = ? GROUP BY lv_legislator_id) as lv ON legislator.id = lv.lv_legislator_id";
     let result_rank = await db.queryParamCnt_Arr(select_rank, [req.params.islike]);
     for(var i=0; i<result_rank.length; i++){
       var r = 1;
@@ -48,9 +50,22 @@ router.get('/:islike/:p_name', async(req, res, next) => {
     let select_legislator = "SELECT id, name, l_party_name, region_city, region_state, profile_img_url, isPpresident, isLpresident, isPPpresident, score, position FROM legislator ";
     select_legislator += "LEFT JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote ";
     select_legislator += "WHERE islike = ? GROUP BY lv_legislator_id) as lv ";
-    select_legislator += "ON legislator.id = lv.lv_legislator_id where legislator.l_party_name = ? ORDER BY score DESC";
+    select_legislator += "ON legislator.id = lv.lv_legislator_id where legislator.region_city = ? ORDER BY score DESC";
 
-    let result_legislator = await db.queryParamCnt_Arr(select_legislator,[req.params.islike, req.params.p_name]);
+    let result_legislator = await db.queryParamCnt_Arr(select_legislator, [req.params.islike, req.params.city]);
+
+
+
+/*
+l_id : 의원 인덱스 .
+l_name : 의원 이름 .
+party_name : 의원의 소속정당 이름 .
+score : 득표수 (뷰에서 쓰이지 않아요)
+scoretext : 득표수에 comma 추가 + "표" (string)
+profileimg : 프로필 이미지 (null 이면 "0") .
+ranking : 몇위인지. 공동순위 가능 (string) 
+*/
+
 
     // return할 result
     let result = [];
@@ -58,67 +73,36 @@ router.get('/:islike/:p_name', async(req, res, next) => {
       var data = {};
 
       // 의원 id
-      data.id = result_legislator[i].id;
+      data.l_id = result_legislator[i].id;
 
       // 이름
-      data.name = result_legislator[i].name;
-
-      // 내용 (지역, 대표)
-      data.position = result_legislator[i].position;
-      // if(result_legislator[i].isPpresident == 1){
-      //   data.content += "당 대표";
-      // }
-      // if(result_legislator[i].isLpresident == 1){
-      //   data.content += "원내 대표";
-      // }
-      // if(result_legislator[i].isPPpresident == 1){
-      //   if(data.content != ""){
-      //     data.content += ", ";
-      //   }
-      //   data.content += "비례 대표";
-      // }
-      //
-      // if (result_legislator[i].region_city != "") {  // 지역구+선거구
-      //   if(data.content != "")
-      //     data.content += ", "
-      //   data.content += result_legislator[i].region_city + " ";
-      //   data.content += result_legislator[i].region_state;
-      // }
-
-      // 이미지
-      data.imgurl = result_legislator[i].profile_img_url;
+      data.l_name = result_legislator[i].name;
 
       // 정당이름
       data.party_name = result_legislator[i].l_party_name;
 
+      // 이미지
+      data.profileimg = result_legislator[i].profile_img_url;
+
+      // 득표수
+      if(!result_legislator[i].score){
+        result_legislator[i].score = 0;
+      }
+
       // 지역 내 랭킹
       if(i == 0){
-        data.rank = 1;
-        result_legislator[i].ranking = data.rank;
+        data.ranking = 1;
+        result_legislator[i].ranking = data.ranking;
       }
       else{
         if(result_legislator[i-1].score == result_legislator[i].score){
-          data.rank = result_legislator[i-1].ranking;
+          data.ranking = result_legislator[i-1].ranking;
           result_legislator[i].ranking = result_legislator[i-1].ranking;
         }
         else if(result_legislator[i-1].score > result_legislator[i].score){
-          data.rank = i+1;
+          data.ranking = i+1;
           result_legislator[i].ranking = i+1;
         }
-      }
-
-      // 전체 랭킹
-      // 위원별 랭킹 저장해논 값을 찾아 랭킹 매핑
-      for(var j=0; j<rank.length; j++){
-        if(result_legislator[i].id == rank[j].id){
-          data.rankInAll = rank[j].r;
-        }
-      }
-      if(result_legislator[i].score){
-        data.rankInAll += "위";
-      }
-      else{
-        data.rankInAll = "-";
       }
 
       result.push(data);
