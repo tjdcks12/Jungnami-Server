@@ -72,25 +72,23 @@ router.get('/:islike/:city', async(req, res, next) => {
       // 정당이름
       data.party_name = result_legislator[i].l_party_name;
 
-      if(!result_legislator[i].score){
-        result_legislator[i].score = 0;
-      }
+      //data.score = result_legislator[i].score;
 
       // 지역 내 랭킹
-      if(i == 0){
-        data.rank = 1;
-        result_legislator[i].ranking = data.rank;
-      }
-      else{
-        if(result_legislator[i-1].score == result_legislator[i].score){
-          data.rank = result_legislator[i-1].ranking;
-          result_legislator[i].ranking = result_legislator[i-1].ranking;
-        }
-        else if(result_legislator[i-1].score > result_legislator[i].score){
-          data.rank = i+1;
-          result_legislator[i].ranking = i+1;
-        }
-      }
+      // if(i == 0){
+      //   data.rank = 1;
+      //   result_legislator[i].ranking = data.rank;
+      // }
+      // else{
+      //   if(result_legislator[i-1].score == result_legislator[i].score){
+      //     data.rank = result_legislator[i-1].ranking;
+      //     result_legislator[i].ranking = result_legislator[i-1].ranking;
+      //   }
+      //   else if(result_legislator[i-1].score > result_legislator[i].score){
+      //     data.rank = i+1;
+      //     result_legislator[i].ranking = i+1;
+      //   }
+      // }
 
       // 전체 랭킹
       // 위원별 랭킹 저장해논 값을 찾아 랭킹 매핑
@@ -106,16 +104,36 @@ router.get('/:islike/:city', async(req, res, next) => {
         data.rankInAll = "-";
       }
 
-      // 투표 여부
-      data.voted = false;
-      for(var j=0; j<votedLegislator.length; j++){
-        if(result_legislator[i].id == votedLegislator[j].lv_legislator_id){
-          data.voted = true;
-        }
-      }
-
       result.push(data);
     }
+
+    // 순위 뽑기 + 막대그래프 길이
+    for(var i=0; i<result_legislator.length; i++) {
+
+      if (result_legislator[i].score == null) {
+          result_legislator[i].score = 0;
+          result[i].rank = "-"
+
+      } else {
+
+        if (i==0) {
+          w = result_legislator[i].score; // 최대 득표수
+          result[i].rank = 1;
+        } else {
+
+          if(result_legislator[i].score == result_legislator[i-1].score) {
+            result[i].rank = result[i-1].rank;
+            continue;
+          } else if (result_legislator[i].score < result_legislator[i-1].score) {
+            result[i].rank = i+1;
+          }
+        }
+
+        result[i].rank = (result[i].rank).toString();
+      }
+    }
+
+
 
     if(result.length == 0){
       res.status(300).json({
@@ -129,6 +147,7 @@ router.get('/:islike/:city', async(req, res, next) => {
       message : "Success"
     });
   } catch(error) {
+    console.log(error);
     res.status(500).send({
       message : "Internal Server Error"
     });

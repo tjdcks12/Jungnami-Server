@@ -63,7 +63,7 @@ party_name : 의원의 소속정당 이름 .
 score : 득표수 (뷰에서 쓰이지 않아요)
 scoretext : 득표수에 comma 추가 + "표" (string)
 profileimg : 프로필 이미지 (null 이면 "0") .
-ranking : 몇위인지. 공동순위 가능 (string) 
+ranking : 몇위인지. 공동순위 가능 (string)
 */
 
 
@@ -90,25 +90,35 @@ ranking : 몇위인지. 공동순위 가능 (string)
       }
       data.score = result_legislator[i].score;
 
-      // 지역 내 랭킹
-      if(i == 0){
-        data.ranking = 1;
-        result_legislator[i].ranking = data.ranking;
-      }
-      else{
-        if(result_legislator[i-1].score == result_legislator[i].score){
-          data.ranking = result_legislator[i-1].ranking;
-          result_legislator[i].ranking = result_legislator[i-1].ranking;
-        }
-        else if(result_legislator[i-1].score > result_legislator[i].score){
-          data.ranking = i+1;
-          result_legislator[i].ranking = i+1;
-        }
-      }
 
       result.push(data);
     }
 
+    // 순위 뽑기 + 막대그래프 길이
+    for(var i=0; i<result_legislator.length; i++) {
+
+      if (result_legislator[i].score == 0) {
+          result[i].ranking = "-"
+
+      } else {
+
+        if (i==0) {
+          w = result_legislator[i].score; // 최대 득표수
+          result[i].ranking = 1;
+        } else {
+
+          if(result_legislator[i].score == result_legislator[i-1].score) {
+            result[i].ranking = result[i-1].ranking;
+            continue;
+          } else if (result_legislator[i].score < result_legislator[i-1].score) {
+            result[i].ranking = i+1;
+          }
+        }
+
+        result[i].ranking = (result[i].ranking).toString();
+      }
+    }
+    
     if(result.length == 0){
       res.status(300).json({
         message : "No data"

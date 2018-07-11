@@ -76,23 +76,32 @@ router.get('/:islike/:p_name', async(req, res, next) => {
       }
       data.score = result_legislator[i].score;
 
-      // 정당 내 랭킹
-      if(i == 0){
-        data.ranking = 1;
-        result_legislator[i].ranking = data.ranking;
-      }
-      else{
-        if(result_legislator[i-1].score == result_legislator[i].score){
-          data.ranking = result_legislator[i-1].ranking;
-          result_legislator[i].ranking = result_legislator[i-1].ranking;
-        }
-        else if(result_legislator[i-1].score > result_legislator[i].score){
-          data.ranking = i+1;
-          result_legislator[i].ranking = i+1;
-        }
-      }
-
       result.push(data);
+    }
+
+    // 순위 뽑기 + 막대그래프 길이
+    for(var i=0; i<result_legislator.length; i++) {
+
+      if (result_legislator[i].score == 0) {
+          result[i].ranking = "-"
+
+      } else {
+
+        if (i==0) {
+          w = result_legislator[i].score; // 최대 득표수
+          result[i].ranking = 1;
+        } else {
+
+          if(result_legislator[i].score == result_legislator[i-1].score) {
+            result[i].ranking = result[i-1].ranking;
+            continue;
+          } else if (result_legislator[i].score < result_legislator[i-1].score) {
+            result[i].ranking = i+1;
+          }
+        }
+
+        result[i].ranking = (result[i].ranking).toString();
+      }
     }
 
     if(result.length == 0){
