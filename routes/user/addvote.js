@@ -27,7 +27,7 @@ router.post('/', async(req, res, next) => {
     // 유저 코인 가져오기
     let select_coin = "SELECT coin FROM user WHERE id = ?";
     var result_coin= await db.queryParamCnt_Arr(select_coin, [id]);
-    if(contentscommentCnt.length == 0){
+    if(result_coin.length == 0){
       res.status(300).send({
         "message" : "NO data"
       });
@@ -35,7 +35,6 @@ router.post('/', async(req, res, next) => {
       return;
     }
 
-    console.log(vote + " , " + result_coin[0].coin);
     // 코인이 부족한 경우
     if(vote > result_coin[0].coin){
       res.status(401).send({
@@ -71,6 +70,7 @@ router.post('/', async(req, res, next) => {
     });
 
   } catch(error) {
+    console.log(error);
     res.status(500).send({
       message : "Internal Server Error"
     });

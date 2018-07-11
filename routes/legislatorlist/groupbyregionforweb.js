@@ -118,7 +118,7 @@ ranking : 몇위인지. 공동순위 가능 (string)
         result[i].ranking = (result[i].ranking).toString();
       }
     }
-    
+
     if(result.length == 0){
       res.status(300).json({
         message : "No data"
