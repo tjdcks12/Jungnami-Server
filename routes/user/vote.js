@@ -24,12 +24,12 @@ router.get('/', async(req, res, next) => {
     let id = chkToken.id;
 
     // 유저 투표권 수 가져오기
-    let select_point = "SELECT voting_cnt FROM user WHERE id = ?";
+    let select_point = "SELECT coin FROM user WHERE id = ?";
     let result_point = await db.queryParamCnt_Arr(select_point,[id]);
 
     res.status(200).send({
       message : "Success",
-      data : result_point[0].voting_cnt
+      data : result_point[0].coin
     });
 
   } catch(error) {
