@@ -27,7 +27,7 @@ router.post('/', async(req, res) => {
 			});
 		}else{
 			let postcontentslikeQuery = 'INSERT INTO myjungnami.contentsLike(id, cl_contents_id, cl_user_id) VALUES (null, ?, ?)';
-			let data = await db.queryParamCnt_Arr(postcontentslikeQuery, [req.body.contents_id, req.body.userid]);
+			let data = await db.queryParamCnt_Arr(postcontentslikeQuery, [req.body.contents_id, userid]);
 
 			res.status(201).send({
 				"message" : "Successfully insert contentslike",
