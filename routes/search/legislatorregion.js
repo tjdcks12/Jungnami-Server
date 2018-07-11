@@ -33,9 +33,9 @@ router.get('/:city/:l_name', async(req, res, next) => {
 
   try{
     // 투표 여부
-    // let select_vote = "SELECT lv_legislator_id FROM legislatorVote WHERE lv_user_id = ?";
-    // let result_vote = await db.queryParamCnt_Arr(select_vote, id);
-    // votedLegislator = result_vote;
+    let select_vote = "SELECT lv_legislator_id FROM legislatorVote WHERE lv_user_id = ?";
+    let result_vote = await db.queryParamCnt_Arr(select_vote, id);
+    votedLegislator = result_vote;
 
     // 호감 랭킹 계산하기
     let select_ranklike = "SELECT id, score FROM legislator LEFT JOIN (SELECT  lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = 1 GROUP BY lv_legislator_id) as lv ON legislator.id = lv.lv_legislator_id";
@@ -153,12 +153,12 @@ router.get('/:city/:l_name', async(req, res, next) => {
         data.rank = rank;
 
         // 투표 여부
-        // data.voted = false;
-        // for(var j=0; j<votedLegislator.length; j++){
-        //   if(result_legislator[i].id == votedLegislator[j].lv_legislator_id){
-        //     data.voted = true;
-        //   }
-        // }
+        data.voted = false;
+        for(var j=0; j<votedLegislator.length; j++){
+          if(result_legislator[i].id == votedLegislator[j].lv_legislator_id){
+            data.voted = true;
+          }
+        }
 
         result.push(data);
       }
