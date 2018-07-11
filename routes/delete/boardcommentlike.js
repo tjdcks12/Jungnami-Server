@@ -25,8 +25,8 @@ router.delete('/:boardcommentid', async(req, res, next) => {
 
   try{
     let delete_like = 'DELETE FROM boardCommentLike WHERE bcl_boardComment_id = ? AND bcl_user_id = ?';
-    let result_like = await db.queryParamCnt_Arr(delete_like,[req.params.boardcommentid, userid]);
-    if(result_like <= 0){
+    let result_delete = await db.queryParamCnt_Arr(delete_like,[req.params.boardcommentid, userid]);
+    if(result_delete <= 0){
       res.status(204).send({
         "message" : "No data"
       });
