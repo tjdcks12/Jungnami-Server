@@ -11,7 +11,7 @@ const serverKey = require('../../config/fcmKey.js').key;
 
 router.post('/', async(req, res) => {
 	const chkToken = jwt.verify(req.headers.authorization);
-	
+
 	if(chkToken == -1) {
 		res.status(401).send({
 			message : "Access Denied"
@@ -21,7 +21,7 @@ router.post('/', async(req, res) => {
 	var userid = chkToken.id;
 
 	try{
-		if(!(req.body.board_id && userid)){
+		if(!req.body.board_id){
 			res.status(403).send({
 				message : "please input board_id and user_id"
 			});

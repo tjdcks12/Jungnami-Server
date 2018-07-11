@@ -24,7 +24,7 @@ router.post('/', async(req, res) => {
 	var userid = chkToken.id;
 
 	try{
-		if(!(req.body.comment_id && userid)){
+		if(!req.body.comment_id){
 			res.status(403).send({
 				message : "please input comments' id and user id"
 			});
