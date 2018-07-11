@@ -106,7 +106,6 @@ router.get('/:islike/:p_name', async(req, res, next) => {
       else{
         data.rankInAll = "-";
       }
-
       result.push(data);
     }
 

@@ -32,7 +32,7 @@ router.get('/:l_name', async(req, res, next) => {
   var votedLegislator = []; // 유저에 해당하는 투표한 의원 id
 
   try{
-    // 투표 여부
+    //투표 여부
     let select_vote = "SELECT lv_legislator_id FROM legislatorVote WHERE lv_user_id = ?";
     let result_vote = await db.queryParamCnt_Arr(select_vote, id);
     votedLegislator = result_vote;
