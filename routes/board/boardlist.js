@@ -14,14 +14,19 @@ router.get('/', async (req, res) => {
   const chkToken = jwt.verify(req.headers.authorization);
 
   var userid;
+  var user_img_url;
   if(chkToken == -1){
     userid = "";
   }
   else{
     userid = chkToken.id;
+    var select_img = 'SELECT img_url FROM user WHERE id = ?';
+    var result_img = await db.queryParamCnt_Arr(select_img, userid);
+    user_img_url = result_img[0].img_url;
   }
 
   try{
+
     // 푸쉬알람 카운트 가져오기
     let pushcntSql = "SELECT count(*) as pushcnt FROM push WHERE p_user_id = ? AND ischecked = false"
     let pushcntQuery = await db.queryParamCnt_Arr(pushcntSql,[userid]);
@@ -98,6 +103,7 @@ router.get('/', async (req, res) => {
       "message" : "Successfully get boardlist",
       "data" : {
         content : result,
+        user_img_url : user_img_url,
         alarmcnt : pushcntQuery[0].pushcnt
       }
     });
