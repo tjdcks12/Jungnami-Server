@@ -127,7 +127,7 @@ router.get('/:mypage_id', async(req, res, next) => {
 
         scrap.c_title = selectcontentsQuery[0].title;
         scrap.thumbnail = selectcontentsQuery[0].thumbnail_url;
-        scrap.text = selectcontentsQuery[0].category + " * " + checktime.checktime(selectcontentsQuery[0].writingtime);
+        scrap.text = selectcontentsQuery[0].category + " · " + checktime.checktime(selectcontentsQuery[0].writingtime);
 
         result.scrap.push(scrap);
       }
