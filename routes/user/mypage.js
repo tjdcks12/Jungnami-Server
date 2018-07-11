@@ -19,7 +19,7 @@ router.get('/:mypage_id', async(req, res, next) => {
   if(chkToken == -1) {
     u_id = '';
   } else {
-    u_id = chkToken.id; 
+    u_id = chkToken.id;
   }
 
   let mypage_id = req.params.mypage_id; // 해당 계정 주인
@@ -52,7 +52,7 @@ router.get('/:mypage_id', async(req, res, next) => {
             message: "Select user Error"
       });
       return;
-      
+
     }else{
       console.log("query ok");
 
@@ -64,7 +64,7 @@ router.get('/:mypage_id', async(req, res, next) => {
       result.followingcnt = followingQuery[0].followingcnt;
       result.followercnt = followerQuery[0].followercnt;
 
-      if (u_id == mypage_id) {  // 내가 내 계정에 들어온거라면 
+      if (u_id == mypage_id) {  // 내가 내 계정에 들어온거라면
 
         result.coin = selectQuery[0].coin;
         result.votingcnt = selectQuery[0].voting_cnt;
@@ -77,16 +77,21 @@ router.get('/:mypage_id', async(req, res, next) => {
       let pushcntSql = "SELECT count(*) as pushcnt FROM push WHERE p_user_id = ? AND ischecked = false"
       let pushcntQuery = await db.queryParamCnt_Arr(pushcntSql,[mypage_id]);
 
-      if(pushcntQuery.length == 0){
-        console.log("query not ok");
-
-        res.status(300).send({
-              message: "Select push count Error"
-        });
-        return;
+      // 푸쉬 알람 없을 수도 있음
+      // if(pushcntQuery.length == 0){
+      //   console.log("query not ok");
+      //
+      //   res.status(300).send({
+      //         message: "Select push count Error"
+      //   });
+      //   return;
+      // }
+      if(pushcntQuery.length != 0){
+          result.pushcnt = pushcntQuery[0].pushcnt;
       }
-
-      result.pushcnt = pushcntQuery[0].pushcnt;
+      else{
+        result.pushcnt = 0;
+      }
 
 
 
@@ -96,12 +101,13 @@ router.get('/:mypage_id', async(req, res, next) => {
       let selectscrapSql = "SELECT * FROM scrap WHERE s_user_id = ?"
       let selectscrapQuery = await db.queryParamCnt_Arr(selectscrapSql,[mypage_id]);
 
-      if(selectscrapQuery.length == 0){
-        res.status(300).send({
-              message: "Select user Error"
-        });
-        return;
-      }
+      // 스크랩한 컨텐으 없을 수도 있음
+      // if(selectscrapQuery.length == 0){
+      //   res.status(300).send({
+      //         message: "Select user Error"
+      //   });
+      //   return;
+      // }
 
       for(var i=0; i<selectscrapQuery.length; i++) {
 
@@ -125,7 +131,7 @@ router.get('/:mypage_id', async(req, res, next) => {
 
         result.scrap.push(scrap);
       }
-      
+
 
 
       // 작성한 커뮤니티 게시물
@@ -134,12 +140,13 @@ router.get('/:mypage_id', async(req, res, next) => {
       let selectboardSql = "SELECT * FROM board WHERE b_user_id = ?"
       let selectboardQuery = await db.queryParamCnt_Arr(selectboardSql,[mypage_id]);
 
-      if(selectboardQuery.length == 0){
-        res.status(300).send({
-              message: "Select user Error"
-        });
-        return;
-      }
+      // 작성한 커뮤니티 게시글 없을 수도 있음
+      // if(selectboardQuery.length == 0){
+      //   res.status(300).send({
+      //         message: "Select user Error"
+      //   });
+      //   return;
+      // }
 
       for(var i=0; i<selectboardQuery.length; i++) {
 
@@ -157,7 +164,7 @@ router.get('/:mypage_id', async(req, res, next) => {
         board.source = [];
 
         // 내가 직접 쓴 글
-        if (selectboardQuery[i].shared == 0) {        
+        if (selectboardQuery[i].shared == 0) {
 
           let selectboardinfoSql = "SELECT * FROM board WHERE id = ?"
           let selectboardinfoQuery = await db.queryParamCnt_Arr(selectboardinfoSql,[board.b_id]);
@@ -166,7 +173,7 @@ router.get('/:mypage_id', async(req, res, next) => {
           board.b_img = selectboardinfoQuery[0].img_url;
 
         } // 공유한 글
-        else if (selectboardQuery[i].shared > 0) {   
+        else if (selectboardQuery[i].shared > 0) {
           source = {};
 
           let selectsharedboardinfoSql = "SELECT * FROM board WHERE id = ?"
@@ -201,7 +208,7 @@ router.get('/:mypage_id', async(req, res, next) => {
 
         result.board.push(board);
       }
-      
+
 
     }
 
