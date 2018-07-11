@@ -50,7 +50,7 @@ router.get('/:board_id', async(req, res) => {
 
 
 				//유저닉네임이랑 이미지 사진
-				let getuserinfoQuery = "select user.nickname, user.img_url from myjungnami.user where id = ?";
+				let getuserinfoQuery = "select user.id, user.nickname, user.img_url from myjungnami.user where id = ?";
 				userinfoObj = await db.queryParamCnt_Arr(getuserinfoQuery, [commenttableInfo[i].bc_user_id]);
 
 				//게시글 대댓글 갯수
@@ -76,6 +76,9 @@ router.get('/:board_id', async(req, res) => {
 						subresultObj.islike = 1;
 					}
 				}
+
+				
+				subresultObj.user_id = userinfoObj[0].id;
 
 				resultArry.push(subresultObj);
 			}
