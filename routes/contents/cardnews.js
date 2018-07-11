@@ -3,12 +3,26 @@ var express = require('express');
 var router = express.Router();
 const async = require('async');
 const db = require('../../module/pool.js');
+
+const jwt = require('../../module/jwt.js');
 const checktime = require('../../module/checktime.js');
 
 //contents에서 받아오는 id 로  title좋아요 수 , 댓글 수, 시간, cate
 //contents_id로 contentsimg 테이블에서 사진 20개 받아오기
 
 router.get('/:contents_id',  async (req, res) => {
+
+
+  const chkToken = jwt.verify(req.headers.authorization);
+
+  let u_id;
+
+  if(chkToken == -1) {
+    u_id = '';
+  } else {
+    u_id = chkToken.id;
+  }
+  
   try{
     if(!(req.params.contents_id)){
       res.status(403).send({
@@ -66,6 +80,20 @@ router.get('/:contents_id',  async (req, res) => {
 
       resultdata.likeCnt = contentslikeCnt[0].likecnt;
       resultdata.commentCnt = contentscommentCnt[0].commentcnt;
+
+
+      // 내가 좋아요한 글 가져오기
+      var select_like = 'SELECT cl_contents_id FROM contentsLike WHERE cl_user_id = ?'
+      var result_like = await db.queryParamCnt_Arr(select_like, [u_id]);
+
+      // 좋아요 여부
+      resultdata.islike = 0;
+      for(var j=0; j<result_like.length; j++){
+        if(result_like[j].cl_contents_id == contentsinfo[0].id){
+          resultdata.islike = 1;
+          break;
+        }
+      }
 
       var update_views = 'UPDATE contents SET views = views + 1 WHERE id = ?';
       var result_views = await db.queryParamCnt_Arr(update_views, [req.params.contents_id]);
