@@ -89,7 +89,7 @@ router.get('/:f_id/:keyword', async(req, res, next) => {
 
     var searchResult = [];
     for(var i=0; i<result.length; i++){
-          if(searcher.search(decodeURI(result[i].follower_nickname)) >= 0){
+          if(searcher.search(result[i].follower_nickname) >= 0){
 
             searchResult.push(result[i]);
       }
