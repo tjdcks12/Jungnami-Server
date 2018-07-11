@@ -36,7 +36,7 @@ router.get('/', async(req, res, next) => {
             message: "No Data"
       });
       return;
-            
+
     }else{
       console.log("query ok");
     }
@@ -70,7 +70,9 @@ router.post('/', upload.array('img_url'), async(req, res, next) => {
     }
 
     let u_id = chkToken.id;
-    let nickname = req.body.nickname;
+
+    // 닉네임 인코딩
+    let nickname = encodeURI(req.body.nickname);
     let img_url = req.files[0].location;
 
     let updateSql = "UPDATE user SET nickname = ?, img_url = ? WHERE id = ?;"
@@ -79,7 +81,7 @@ router.post('/', upload.array('img_url'), async(req, res, next) => {
     res.status(201).send({
       message : "Update Data Success"
     });
-    
+
   } catch(error) {
     res.status(500).send({
         message : "Internal Server Error"
