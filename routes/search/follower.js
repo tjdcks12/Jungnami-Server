@@ -14,7 +14,7 @@ const hangul = require('hangul-js');
 /*  팔로워 검색하기  */
 /*  /search/follower  */
 router.get('/:f_id/:keyword', async(req, res, next) => {
-  
+
   try {
 
     const chkToken = jwt.verify(req.headers.authorization);
@@ -53,7 +53,7 @@ router.get('/:f_id/:keyword', async(req, res, next) => {
     let followingSelectQuery = await db.queryParamCnt_Arr(followingSelectSql,[u_id]);
 
     var result = []; // follower_id, follower_nickname, follower_img_url, isMyFollowing
-    
+
     if(followingSelectQuery.length == 0) {
       console.log("query not ok");
 
@@ -89,7 +89,7 @@ router.get('/:f_id/:keyword', async(req, res, next) => {
 
     var searchResult = [];
     for(var i=0; i<result.length; i++){
-          if(searcher.search(result[i].follower_nickname) >= 0){
+          if(searcher.search(decodeURI(result[i].follower_nickname)) >= 0){
 
             searchResult.push(result[i]);
       }

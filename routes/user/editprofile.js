@@ -72,7 +72,7 @@ router.post('/', upload.array('img_url'), async(req, res, next) => {
     let u_id = chkToken.id;
 
     // 닉네임 인코딩
-    let nickname = encodeURI(req.body.nickname);
+    let nickname = req.body.nickname;
     let img_url = req.files[0].location;
 
     let updateSql = "UPDATE user SET nickname = ?, img_url = ? WHERE id = ?;"

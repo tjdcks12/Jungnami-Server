@@ -14,7 +14,16 @@ const hangul = require('hangul-js');
 const checktime = require('../../module/checktime.js');
 
 router.get('/:keyword', async(req, res, next) => {
+  const chkToken = jwt.verify(req.headers.authorization);
 
+  var userid;
+  var user_img_url;
+  if(chkToken == -1){
+    userid = "";
+  }
+  else{
+    userid = chkToken.id;
+  }
   // 현재시간
   var currentTime = new Date();
 
@@ -23,8 +32,12 @@ router.get('/:keyword', async(req, res, next) => {
   let searcher = new hangul.Searcher(searchWord);
 
   try{
-    let select_content = "SELECT board.id as id, nickname, content, writingtime, board.img_url FROM board JOIN user ON board.b_user_id = user.id ORDER BY writingtime DESC";
+    let select_content = "SELECT board.id as id, nickname, user.img_url as user_img_url, content, writingtime, board.img_url as img_url FROM board JOIN user ON board.b_user_id = user.id ORDER BY writingtime DESC";
     let result_content = await db.queryParamCnt_Arr(select_content);
+
+    // 좋아요한 글 가져오기
+    var select_check = 'SELECT bl_board_id FROM boardLike WHERE bl_user_id = ?'
+    var result_check = await db.queryParamCnt_Arr(select_check, [userid]);
 
     // return할 result
     var result = [];
@@ -40,8 +53,20 @@ router.get('/:keyword', async(req, res, next) => {
         // 내용
         data.content = result_content[i].content;
 
+        // 유저 이미지
+        data.user_img_url = result_content[i].user_img_url;
+
         // 사진
         data.img_url = result_content[i].img_url;
+
+        // 좋아요 여부
+        data.islike = 0;
+        for(var j=0; j<result_check.length; j++){
+          if(result_check[j].bl_board_id == result_content[i].id){
+            data.islike = 1;
+            break;
+          }
+        }
 
         // 시간 계산
         // 작성 10분 이내

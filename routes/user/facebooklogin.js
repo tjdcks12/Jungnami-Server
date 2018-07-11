@@ -49,7 +49,7 @@ router.post('/', async(req, res, next) => {
 
     let result = {};
     // 닉네임 인코딩
-    result.nickname = encodeURI(facebookResult.name);
+    result.nickname = facebookResult.name;
     result.thumbnail_image = facebookResult.picture.data.url;
 
     var id = facebookResult.id;

@@ -21,9 +21,9 @@ router.get('/:f_id', async(req, res, next) => {
     if(chkToken == -1) {
       u_id = '';
     } else {
-      u_id = chkToken.id; 
+      u_id = chkToken.id;
     }
-  
+
     let following_id = req.params.f_id;
 
     let followerlistSql = "SELECT f_follower_id, nickname, img_url FROM follow, user "
@@ -58,7 +58,7 @@ router.get('/:f_id', async(req, res, next) => {
             message: "No Data"
       });
       return;
-      
+
     }else{
       console.log("query ok");
 
