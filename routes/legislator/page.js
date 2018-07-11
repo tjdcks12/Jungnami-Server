@@ -60,7 +60,7 @@ router.get('/:l_id', async(req, res, next) => {
     // 호감 순 랭킹 뽑기
     for(var i=0; i<likeRresult.length; i++) {
       if (likeRresult[i].score == null) {
-          likeRresult[i].ranking = "-위"
+          likeRresult[i].ranking = "-"
       } else {
 
         if (i==0) {
