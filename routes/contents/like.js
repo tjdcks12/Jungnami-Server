@@ -30,8 +30,7 @@ router.post('/', async(req, res) => {
 			let data = await db.queryParamCnt_Arr(postcontentslikeQuery, [req.body.contents_id, userid]);
 
 			res.status(201).send({
-				"message" : "Successfully insert contentslike",
-				"data" : data
+				"message" : "Successfully insert contentslike"
 			});
 		}
 
