@@ -83,7 +83,6 @@ router.post('/', async(req, res) => {
 					}
 
 					console.log('Push메시지가 발송되었습니다.');
-					console.log(response);
 				});
 			}
 			else {

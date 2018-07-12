@@ -38,8 +38,7 @@ router.post('/', async(req, res) => {
 			}
 
 			res.status(201).send({
-				"message" : "insert contents' comment success",
-				"data" : data
+				"message" : "insert contents' comment success"
 			});
 		}
 	}catch(err){
