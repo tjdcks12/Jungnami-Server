@@ -47,6 +47,22 @@ router.post('/', async(req, res) => {
 				return;
 
 			}
+
+
+			// push table에 insert
+			bl_id = data.insertId;
+
+		    let pushSql = "INSERT INTO push (p_user_id, p_boardLike_id) VALUES (?, ?);"
+		    let pushQuery = await db.queryParamCnt_Arr(pushSql,[result_find[0].b_user_id, bl_id]);
+		    if(pushQuery == undefined){
+		      res.status(204).send({
+		        "message" : "fail insert"
+		      });
+
+		      return;
+		    }
+
+
 			// 유저이름 가져오기
 			let select_user = 'SELECT * FROM user WHERE id = ?'
 			let result_user = await db.queryParamCnt_Arr(select_user, [userid] );
