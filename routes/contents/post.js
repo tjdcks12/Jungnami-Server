@@ -52,7 +52,6 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     let l_id; // array
 
     let thumbnail, cardnews, youtubelink;
-
     if (req.files.thumbnail){
       thumbnail = req.files.thumbnail[0].location;
     } else {
@@ -65,9 +64,15 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
       l_id = req.body.l_id;
     }
 
+
     // content table에 thumbnail 저장
     var postSql = "INSERT INTO contents (title, subtitle, thumbnail_url, category, contents_type) VALUES (?, ?, ?, ?, ?);";
     var postResult = await db.queryParamCnt_Arr(postSql,[title, subtitle, thumbnail, category, contents_type]);
+
+
+    console.log(req.body);
+    console.log(req.files);
+    console.log(postResult);
 
     if(postResult == undefined){
       res.status(204).send({

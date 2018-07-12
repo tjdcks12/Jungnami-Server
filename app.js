@@ -26,6 +26,9 @@ var j = schedule.scheduleJob('30 59 23 * * *', function(){
 var app = express();
 var bodyParser = require('body-parser');
 
+// 파일 용량
+//app.use(express.limit('20mb'));
+
 //helmet
 app.use(helmet());
 
