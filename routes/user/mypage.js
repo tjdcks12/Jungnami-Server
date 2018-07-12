@@ -77,15 +77,6 @@ router.get('/:mypage_id', async(req, res, next) => {
       let pushcntSql = "SELECT count(*) as pushcnt FROM push WHERE p_user_id = ? AND ischecked = false"
       let pushcntQuery = await db.queryParamCnt_Arr(pushcntSql,[mypage_id]);
 
-      // 푸쉬 알람 없을 수도 있음
-      // if(pushcntQuery.length == 0){
-      //   console.log("query not ok");
-      //
-      //   res.status(300).send({
-      //         message: "Select push count Error"
-      //   });
-      //   return;
-      // }
       if(pushcntQuery.length != 0){
           result.pushcnt = pushcntQuery[0].pushcnt;
       }
@@ -100,14 +91,6 @@ router.get('/:mypage_id', async(req, res, next) => {
 
       let selectscrapSql = "SELECT * FROM scrap WHERE s_user_id = ?"
       let selectscrapQuery = await db.queryParamCnt_Arr(selectscrapSql,[mypage_id]);
-
-      // 스크랩한 컨텐으 없을 수도 있음
-      // if(selectscrapQuery.length == 0){
-      //   res.status(300).send({
-      //         message: "Select user Error"
-      //   });
-      //   return;
-      // }
 
       for(var i=0; i<selectscrapQuery.length; i++) {
 
@@ -139,14 +122,6 @@ router.get('/:mypage_id', async(req, res, next) => {
 
       let selectboardSql = "SELECT * FROM board WHERE b_user_id = ?"
       let selectboardQuery = await db.queryParamCnt_Arr(selectboardSql,[mypage_id]);
-
-      // 작성한 커뮤니티 게시글 없을 수도 있음
-      // if(selectboardQuery.length == 0){
-      //   res.status(300).send({
-      //         message: "Select user Error"
-      //   });
-      //   return;
-      // }
 
       for(var i=0; i<selectboardQuery.length; i++) {
 
@@ -194,6 +169,20 @@ router.get('/:mypage_id', async(req, res, next) => {
 
           board.b_content = '0';
           board.b_img = '0';
+        }
+
+
+        // 내가 좋아요한 글 가져오기
+        var select_like = 'SELECT bl_board_id FROM boardLike WHERE bl_user_id = ?'
+        var result_like = await db.queryParamCnt_Arr(select_like, [u_id]);
+
+        // 좋아요 여부
+        board.islike = 0;
+        for(var j=0; j<result_like.length; j++){
+          if(result_like[j].bl_board_id == selectboardQuery[i].id){
+            board.islike = 1;
+            break;
+          }
         }
 
         let getlikecntSql = "SELECT count(*) as like_cnt FROM boardLike WHERE bl_board_id = ?";

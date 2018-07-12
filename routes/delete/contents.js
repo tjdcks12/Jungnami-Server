@@ -42,7 +42,3 @@ router.delete('/:contentsid',  async (req, res) => {
 
 module.exports = router;
 
-
-
-// routes 에 추가해야 함
-// router.use('/c_delete', require('./c_delete'));

@@ -21,17 +21,16 @@ router.post('/', async(req, res) => {
 	var userid = chkToken.id;
 
 	try{ ////로그인 시 좋아요 처리
-		if(!(req.body.cl_contents_id && userid)){
+		if(!(req.body.contents_id && userid)){
 			res.status(403).send({
 				message : "please input contents' id and user id"
 			});
 		}else{
 			let postcontentslikeQuery = 'INSERT INTO myjungnami.contentsLike(id, cl_contents_id, cl_user_id) VALUES (null, ?, ?)';
-			let data = await db.queryParamCnt_Arr(postcontentslikeQuery, [req.body.cl_contents_id, req.body.cl_user_id]);
+			let data = await db.queryParamCnt_Arr(postcontentslikeQuery, [req.body.contents_id, userid]);
 
 			res.status(201).send({
-				"message" : "Successfully insert contentslike",
-				"data" : data
+				"message" : "Successfully insert contentslike"
 			});
 		}
 

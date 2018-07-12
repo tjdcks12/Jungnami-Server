@@ -56,17 +56,6 @@ router.get('/:islike/:city', async(req, res, next) => {
 
 
 
-/*
-l_id : 의원 인덱스 .
-l_name : 의원 이름 .
-party_name : 의원의 소속정당 이름 .
-score : 득표수 (뷰에서 쓰이지 않아요)
-scoretext : 득표수에 comma 추가 + "표" (string)
-profileimg : 프로필 이미지 (null 이면 "0") .
-ranking : 몇위인지. 공동순위 가능 (string)
-*/
-
-
     // return할 result
     let result = [];
     for(var i=0; i<result_legislator.length; i++){
@@ -95,10 +84,12 @@ ranking : 몇위인지. 공동순위 가능 (string)
     }
 
     // 순위 뽑기 + 막대그래프 길이
+    var w = 0; 
     for(var i=0; i<result_legislator.length; i++) {
 
       if (result_legislator[i].score == 0) {
           result[i].ranking = "-"
+          result[i].width = 0;
 
       } else {
 
@@ -109,6 +100,7 @@ ranking : 몇위인지. 공동순위 가능 (string)
 
           if(result_legislator[i].score == result_legislator[i-1].score) {
             result[i].ranking = result[i-1].ranking;
+            result[i].width = result[i-1].width;
             continue;
           } else if (result_legislator[i].score < result_legislator[i-1].score) {
             result[i].ranking = i+1;
@@ -116,8 +108,11 @@ ranking : 몇위인지. 공동순위 가능 (string)
         }
 
         result[i].ranking = (result[i].ranking).toString();
+        result[i].width =+ (result[i].score / w).toFixed(2);
       }
     }
+
+
 
     if(result.length == 0){
       res.status(300).json({

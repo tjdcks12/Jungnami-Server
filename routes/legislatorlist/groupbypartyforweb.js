@@ -79,11 +79,15 @@ router.get('/:islike/:p_name', async(req, res, next) => {
       result.push(data);
     }
 
+
+
     // 순위 뽑기 + 막대그래프 길이
+    var w = 0; 
     for(var i=0; i<result_legislator.length; i++) {
 
       if (result_legislator[i].score == 0) {
           result[i].ranking = "-"
+          result[i].width = 0;
 
       } else {
 
@@ -94,6 +98,7 @@ router.get('/:islike/:p_name', async(req, res, next) => {
 
           if(result_legislator[i].score == result_legislator[i-1].score) {
             result[i].ranking = result[i-1].ranking;
+            result[i].width = result[i-1].width;
             continue;
           } else if (result_legislator[i].score < result_legislator[i-1].score) {
             result[i].ranking = i+1;
@@ -101,8 +106,11 @@ router.get('/:islike/:p_name', async(req, res, next) => {
         }
 
         result[i].ranking = (result[i].ranking).toString();
+        result[i].width =+ (result[i].score / w).toFixed(2);
       }
     }
+
+    
 
     if(result.length == 0){
       res.status(300).json({

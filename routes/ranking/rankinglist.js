@@ -44,9 +44,6 @@ router.get('/:islike', async(req, res, next) => {
     } else {
       console.log("query ok");
 
-      // let votedSql = "SELECT * FROM legislatorVote WHERE lv_user_id = ? AND islike = ?;"
-      // let votedQuery = await db.queryParamCnt_Arr(votedSql, [u_id, islike]);
-
       var result = [];
       for(var i=0; i<listQuery.length; i++){
         var rankingInfo = {};
@@ -66,16 +63,6 @@ router.get('/:islike', async(req, res, next) => {
         rankingInfo.profileimg = listQuery[i].profile_img_url;
         rankingInfo.mainimg = listQuery[i].main_img_url;
 
-        // 투표여부 필요없음 : 어차피 했건 안했건 동일하게 보여줌
-        /*
-        for (var j=0; j<votedQuery.length; j++)
-          if (listQuery[i].id == votedQuery[j].lv_legislator_id) {
-            rankingInfo.voted = true;
-            break;
-          }
-          else
-            rankingInfo.voted = false;
-        */
         result.push(rankingInfo);
       } 
 
