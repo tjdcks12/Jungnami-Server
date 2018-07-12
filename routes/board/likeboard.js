@@ -74,7 +74,6 @@ router.post('/', async(req, res) => {
 			}
 			var pushmsg = (result_user[0].nickname += '님이 회원님의 글을 좋아합니다.');
 
-			console.log(result_find[0].b_user_id);
 			// client fcmToken 가져오기
 			let select_fcmtoken = 'SELECT fcmToken FROM user WHERE id = ?';
 			let result_fcmtoken = await db.queryParamCnt_Arr(select_fcmtoken, [result_find[0].b_user_id]);
@@ -87,7 +86,6 @@ router.post('/', async(req, res) => {
 
 			if(result_fcmtoken[0].fcmToken != null){
 				var push_data = await get_pushdata.get_pushdata(result_fcmtoken[0].fcmToken, pushmsg);
-				console.log(result_fcmtoken[0].fcmToken);
 				var fcm = new FCM(serverKey);
 
 				fcm.send(push_data, function(err, response) {

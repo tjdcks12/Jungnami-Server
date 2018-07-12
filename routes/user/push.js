@@ -23,7 +23,6 @@ router.get('/', async(req, res, next) => {
   }
 
   let u_id = chkToken.id;
-  console.log(u_id)
 
   try {
 
