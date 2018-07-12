@@ -65,10 +65,6 @@ router.get('/', async (req, res) => {
       }
       data.boardid = result_board[i].id;
 
-      // 유저 아이디
-      data.user_id = result_user[0].id;
-
-      // 유저 닉네임
       data.nickname = result_user[0].nickname;
 
       // 유저 이미지
