@@ -27,13 +27,12 @@ const upload = multer({
 
 // 'image'가 클라이언트랑 입맞춰야하는 이미지 파라미터
 router.post('/', upload.array('image'), async(req, res) => {
-	console.log(req.files);
 
   // let testsql = "INSERT INTO board (board_user_id, content, img_url, board_shared) VALUES (?,?,?,?)";
   // let queryResult = await db.queryParamCnt_Arr(testsql,["1","이종찬",req.files[0].location,0]);
 
-  let testsql = "update user set img_url = ? where id = '809361018';";
-  let queryResult = await db.queryParamCnt_Arr(testsql,[req.files[0].location]);
+  let testsql = "update user set img_url = ? where id = ?;";
+  let queryResult = await db.queryParamCnt_Arr(testsql,[req.files[0].location, req.body.userid]);
 
 
 	res.status(201).send({
