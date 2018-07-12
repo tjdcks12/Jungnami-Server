@@ -19,7 +19,7 @@ const upload = multer({
         bucket: 'myrubysbucket',
         acl: 'public-read',
         key: function(req, file, cb) {
-            cb(null, "test/" + file.originalname);
+            cb(null, "user_img/" + file.originalname);
             // test가 폴더이름 ( ex) profile )
         }
     })
@@ -32,7 +32,7 @@ router.post('/', upload.array('image'), async(req, res) => {
   // let testsql = "INSERT INTO board (board_user_id, content, img_url, board_shared) VALUES (?,?,?,?)";
   // let queryResult = await db.queryParamCnt_Arr(testsql,["1","이종찬",req.files[0].location,0]);
 
-  let testsql = "update user set img_url = ? where nickname = '강수진';";
+  let testsql = "update user set img_url = ? where id = '809361018';";
   let queryResult = await db.queryParamCnt_Arr(testsql,[req.files[0].location]);
 
 
