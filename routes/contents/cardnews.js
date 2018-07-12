@@ -69,14 +69,16 @@ router.get('/:contents_id',  async (req, res) => {
       }
 
       // 컨텐츠 스크랩 여부
-      let check_scrap = 'SELECT count(*) AS scrap FROM scrap WHERE s_contents_id = ? AND s_user_id = ?';
-      let check_result = await db.queryParamCnt_Arr(check_scrap, [req.params.contents_id ,u_id]);
-      //console.log(check_result[0].scrap);
-      if(check_result[0].scrap == 0){
-        resultdata.isscrap = 0;
-      }
-      else{
-        resultdata.isscrap = 1;
+      let check_scrap = 'SELECT s_contents_id FROM scrap WHERE s_user_id = ?';
+      let check_result = await db.queryParamCnt_Arr(check_scrap, [u_id]);
+
+      // 컨텐츠 스크랩 여부
+      resultdata.isscrap = 0;
+      for(var j=0; j<check_result.length; j++){
+        if(check_result[j].s_contents_id == contentsinfo[0].id){
+          resultdata.isscrap = 1;
+          break;
+        }
       }
 
 
