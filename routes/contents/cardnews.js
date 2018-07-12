@@ -77,7 +77,6 @@ router.get('/:contents_id',  async (req, res) => {
         return;
       }
 
-
       res.status(200).send({
         "message" : "Successfully get posting view",
         "data" : resultdata
