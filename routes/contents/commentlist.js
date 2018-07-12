@@ -62,6 +62,7 @@ router.get('/:contents_id', async(req, res) => {
 				subresultObj.commentid = commenttableInfo[i].id;
 				subresultObj.timeset = timeset;
 				subresultObj.content = commenttableInfo[i].content;
+				subresultObj.user_id = userinfoObj[0].id;
 				subresultObj.user_nick = userinfoObj[0].nickname;
 				subresultObj.user_img = userinfoObj[0].img_url;
 				subresultObj.recommentCnt = recommentCnt[0].recommentCnt;
