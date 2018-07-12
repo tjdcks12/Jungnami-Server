@@ -22,7 +22,7 @@ router.get('/:contents_id',  async (req, res) => {
   } else {
     u_id = chkToken.id;
   }
-  
+
   try{
     if(!(req.params.contents_id)){
       res.status(403).send({
@@ -66,6 +66,17 @@ router.get('/:contents_id',  async (req, res) => {
         });
 
         return;
+      }
+
+      // 컨텐츠 스크랩 여부
+      let check_scrap = 'SELECT count(*) AS scrap FROM scrap WHERE s_contents_id = ? AND s_user_id = ?';
+      let check_result = await db.queryParamCnt_Arr(check_scrap, [req.params.contents_id ,u_id]);
+      //console.log(check_result[0].scrap);
+      if(check_result[0].scrap == 0){
+        resultdata.isscrap = 0;
+      }
+      else{
+        resultdata.isscrap = 1;
       }
 
 
