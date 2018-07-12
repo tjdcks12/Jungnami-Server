@@ -146,11 +146,10 @@ router.get('/:l_id', async(req, res, next) => {
     for(var i=0; i<result_contents.length; i++){
       var data = {};
 
-      data.id = result_contents[i].id;
-      data.thumbnail_url = result_contents[i].thumbnail_url;
-      data.title = result_contents[i].title;
-      data.category = result_contents[i].category;
-      data.writingtime = checktime.checktime(result_contents[i].writingtime);
+      data.c_id = result_contents[i].id;
+      data.thumbnail = result_contents[i].thumbnail_url;
+      data.c_title = result_contents[i].title;
+      data.text = result_contents[i].category + " · " + checktime.checktime(result_contents[i].writingtime);
 
       contents.push(data);
     }
