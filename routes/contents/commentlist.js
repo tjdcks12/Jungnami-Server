@@ -48,7 +48,7 @@ router.get('/:contents_id', async(req, res) => {
 				let timeset = checktime.checktime(commenttableInfo[i].writingtime);
 
 				//유저닉네임이랑 이미지 사진
-				let getuserinfoQuery = "select user.nickname, user.img_url from myjungnami.user where id = ?";
+				let getuserinfoQuery = "select user.id, user.nickname, user.img_url from myjungnami.user where id = ?";
 				userinfoObj = await db.queryParamCnt_Arr(getuserinfoQuery, [commenttableInfo[i].cc_user_id]);
 
 				//게시글 대댓글 갯수
