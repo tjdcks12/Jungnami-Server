@@ -28,7 +28,7 @@ router.get('/', async(req, res, next) => {
   try {
 
     // 나의 푸시알림 목록
-    let pushsql = "SELECT * FROM push WHERE p_user_id = ?";
+    let pushsql = "SELECT * FROM push WHERE p_user_id = ? ORDER BY id DESC";
     let pushdata = await db.queryParamCnt_Arr(pushsql,[u_id]);
 
         if(pushdata.length == 0){
