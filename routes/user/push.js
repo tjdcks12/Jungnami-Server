@@ -56,7 +56,8 @@ router.get('/', async(req, res, next) => {
 
           r.id = followerinfoquery[0].id;
           r.img_url = followerinfoquery[0].img_url;
-          r.text = followerinfoquery[0].nickname + "님이 팔로우 했습니다.";
+          r.actionname = followerinfoquery[0].nickname;
+          r.actionmessage = "님이 팔로우 했습니다.";
 
           // 내가 그 사람을 팔로잉 하고 있는지
           let followersql = "SELECT * FROM follow WHERE f_follower_id = ? AND f_following_id = ?;";
@@ -85,7 +86,8 @@ router.get('/', async(req, res, next) => {
           let boardcommentuserdata = await db.queryParamCnt_Arr(boardcommentusersql,[r.id]);
 
           r.img_url = boardcommentuserdata[0].img_url;
-          r.text = boardcommentuserdata[0].nickname + "님이 회원님의 게시물에 댓글을 남겼습니다";
+          r.actionname = boardcommentuserdata[0].nickname;
+          r.actionmessage = "님이 회원님의 게시물에 댓글을 남겼습니다";
           r.time = checktime.checktime(boardcommentinfodata[0].writingtime);
 
         } // 보드 좋아요 관련
@@ -100,7 +102,8 @@ router.get('/', async(req, res, next) => {
           let boardlikeuserdata = await db.queryParamCnt_Arr(boardlikeusersql,[r.id]);
 
           r.img_url = boardlikeuserdata[0].img_url;
-          r.text = boardlikeuserdata[0].nickname + "님이 회원님의 게시물을 좋아합니다.";
+          r.actionname = boardlikeuserdata[0].nickname;
+          r.actionmessage = "님이 회원님의 게시물을 좋아합니다.";
           r.time = checktime.checktime(boardlikeinfodata[0].time);
 
         }// 보드 댓글 좋아요 관련
@@ -115,7 +118,8 @@ router.get('/', async(req, res, next) => {
           let boardcommentlikeuserdata = await db.queryParamCnt_Arr(boardcommentlikeusersql,[r.id]);
 
           r.img_url = boardcommentlikeuserdata[0].img_url;
-          r.text = boardcommentlikeuserdata[0].nickname + "님이 회원님의 댓글을 좋아합니다.";
+          r.actionname = boardcommentlikeuserdata[0].nickname;
+          r.actionmessage = "님이 회원님의 댓글을 좋아합니다.";
           r.time = checktime.checktime(boardcommentlikeinfodata[0].time);
 
         }// 컨텐츠 댓글 좋아요 관련
@@ -130,7 +134,8 @@ router.get('/', async(req, res, next) => {
           let contentscommentlikeuserdata = await db.queryParamCnt_Arr(contentscommentlikeusersql,[r.id]);
 
           r.img_url = contentscommentlikeuserdata[0].img_url;
-          r.text = contentscommentlikeuserdata[0].nickname + "님이 회원님의 댓글 좋아합니다.";
+          r.actionname = contentscommentlikeuserdata[0].nickname;
+          r.actionmessage = "님이 회원님의 댓글을 좋아합니다.";
           r.time = checktime.checktime(contentscommentlikeinfodata[0].time);
 
         }

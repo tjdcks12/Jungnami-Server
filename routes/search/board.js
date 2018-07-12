@@ -32,7 +32,7 @@ router.get('/:keyword', async(req, res, next) => {
   let searcher = new hangul.Searcher(searchWord);
 
   try{
-    let select_content = "SELECT board.id as id, nickname, user.img_url as user_img_url, content, writingtime, board.img_url as img_url FROM board JOIN user ON board.b_user_id = user.id ORDER BY writingtime DESC";
+    let select_content = "SELECT board.id as id, user.id as user_id, nickname, user.img_url as user_img_url, content, writingtime, board.img_url as img_url FROM board JOIN user ON board.b_user_id = user.id ORDER BY writingtime DESC";
     let result_content = await db.queryParamCnt_Arr(select_content);
 
     // 좋아요한 글 가져오기
@@ -47,16 +47,13 @@ router.get('/:keyword', async(req, res, next) => {
         // id
         data.id = result_content[i].id;
 
-        // 닉네임
+        // 유저 정보
+        data.user_id = result_content[0].user_id;
         data.nickname = result_content[i].nickname;
+        data.user_img_url = result_content[i].user_img_url;
 
         // 내용
         data.content = result_content[i].content;
-
-        // 유저 이미지
-        data.user_img_url = result_content[i].user_img_url;
-
-        // 사진
         data.img_url = result_content[i].img_url;
 
         // 좋아요 여부

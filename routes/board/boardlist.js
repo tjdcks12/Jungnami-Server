@@ -65,18 +65,14 @@ router.get('/', async (req, res) => {
       }
       data.boardid = result_board[i].id;
 
+      // 유저 정보
+      data.user_id = result_user[0].id;
       data.nickname = result_user[0].nickname;
-
-      // 유저 이미지
       data.userimg = result_user[0].img_url;
 
-      // 보드 이미지
+      // 보드 정보
       data.img = result_board[i].img_url;
-
-      // 시간
       data.writingtime = checktime.checktime(result_board[i].writingtime);
-
-      // 내용
       data.content = result_board[i].content;
 
       // 좋아요 여부
