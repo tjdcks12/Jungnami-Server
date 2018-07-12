@@ -27,7 +27,7 @@ var app = express();
 var bodyParser = require('body-parser');
 
 // 파일 용량
-app.use(express.limit('20mb'));
+//app.use(express.limit('20mb'));
 
 //helmet
 app.use(helmet());
