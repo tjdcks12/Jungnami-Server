@@ -78,9 +78,9 @@ router.get('/:f_id', async(req, res, next) => {
 
             // 내가 이 사람을 팔로잉 중이에요
             if(followinglistQuery[i].f_following_id == followingSelectQuery[j].f_following_id) {
-              if (follower_id == u_id) // 나의 팔로잉 목록이라면, 팔로잉 취소할래?
-                r.isMyFollowing = "취소";
-              else
+              //if (follower_id == u_id) // 나의 팔로잉 목록이라면, 팔로잉 취소할래?
+              //  r.isMyFollowing = "취소";
+              //else
                 r.isMyFollowing = "팔로잉";
               break;
             } // 나다!
