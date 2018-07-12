@@ -43,7 +43,7 @@ router.get('/', async(req, res, next) => {
 
 /*  컨텐츠 게시 완료  */
 /*  /contents/post  */
-router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'cardnews', maxCount : 20}]), async(req, res) => {
+router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'cardnews', maxCount : 50}]), async(req, res) => {
   try{
     let title = req.body.title;
     let subtitle = req.body.subtitle;
