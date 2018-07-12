@@ -91,7 +91,7 @@ router.get('/', async(req, res, next) => {
         } // 보드 좋아요 관련
         else if (pushdata[i].p_boardLike_id != null) {
 
-          let boardlikeinfosql = "SELECT bl_user_id, writingtime FROM boardLike WHERE id = ?;"
+          let boardlikeinfosql = "SELECT bl_user_id, time FROM boardLike WHERE id = ?;"
           let boardlikeinfodata = await db.queryParamCnt_Arr(boardlikeinfosql,[pushdata[i].p_boardLike_id]);
 
           r.id = boardlikeinfodata[0].bl_user_id;
@@ -101,12 +101,12 @@ router.get('/', async(req, res, next) => {
 
           r.img_url = boardlikeuserdata[0].img_url;
           r.text = boardlikeuserdata[0].nickname + "님이 회원님의 게시물을 좋아합니다.";
-          r.time = checktime.checktime(boardlikeinfodata[0].writingtime);
+          r.time = checktime.checktime(boardlikeinfodata[0].time);
 
         }// 보드 댓글 좋아요 관련
         else if(pushdata[i].p_boardCommentLike_id != null){
 
-          let boardcommentlikeinfosql = "SELECT bcl_user_id, writingtime FROM boardCommentLike WHERE id = ?;"
+          let boardcommentlikeinfosql = "SELECT bcl_user_id, time FROM boardCommentLike WHERE id = ?;"
           let boardcommentlikeinfodata = await db.queryParamCnt_Arr(boardcommentlikeinfosql,[pushdata[i].p_boardCommentLike_id]);
 
           r.id = boardcommentlikeinfodata[0].bcl_user_id;
@@ -116,22 +116,22 @@ router.get('/', async(req, res, next) => {
 
           r.img_url = boardcommentlikeuserdata[0].img_url;
           r.text = boardcommentlikeuserdata[0].nickname + "님이 회원님의 댓글을 좋아합니다.";
-          r.time = checktime.checktime(boardcommentlikeuserdata[0].writingtime);
+          r.time = checktime.checktime(boardcommentlikeinfodata[0].time);
 
         }// 컨텐츠 댓글 좋아요 관련
         else if(pushdata[i].p_contentsCommentLike_id != null){
 
-          let contentscommentlikeinfosql = "SELECT bl_user_id, writingtime FROM contentsCommentLike WHERE id = ?;"
+          let contentscommentlikeinfosql = "SELECT ccl_user_id, time FROM contentsCommentLike WHERE id = ?;"
           let contentscommentlikeinfodata = await db.queryParamCnt_Arr(contentscommentlikeinfosql,[pushdata[i].p_contentsCommentLike_id]);
 
-          r.id = contentscommentlikeinfodata[0].bl_user_id;
+          r.id = contentscommentlikeinfodata[0].ccl_user_id;
 
           let contentscommentlikeusersql = "SELECT nickname, img_url FROM user WHERE id = ?;"
           let contentscommentlikeuserdata = await db.queryParamCnt_Arr(contentscommentlikeusersql,[r.id]);
 
           r.img_url = contentscommentlikeuserdata[0].img_url;
-          r.text = contentscommentlikeuserdata[0].nickname + "님이 회원님의 댓글을 좋아합니다.";
-          r.time = checktime.checktime(contentscommentlikeuserdata[0].writingtime);
+          r.text = contentscommentlikeuserdata[0].nickname + "님이 회원님의 댓글 좋아합니다.";
+          r.time = checktime.checktime(contentscommentlikeinfodata[0].time);
 
         }
 
