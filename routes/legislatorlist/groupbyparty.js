@@ -73,9 +73,6 @@ router.get('/:islike/:p_name', async(req, res, next) => {
       data.party_name = result_legislator[i].l_party_name;
 
 
-      if(!result_legislator[i].score){
-        result_legislator[i].score = 0;
-      }
 
       // 지역 내 랭킹
       if(i == 0){
