@@ -71,7 +71,7 @@ router.get('/:contents_id',  async (req, res) => {
       // 컨텐츠 스크랩 여부
       let check_scrap = 'SELECT count(*) AS scrap FROM scrap WHERE s_contents_id = ? AND s_user_id = ?';
       let check_result = await db.queryParamCnt_Arr(check_scrap, [req.params.contents_id ,u_id]);
-      //console.log(check_result[0].scrap);
+      console.log(check_result[0].scrap);
       if(check_result[0].scrap == 0){
         resultdata.isscrap = 0;
       }

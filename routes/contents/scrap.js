@@ -35,7 +35,7 @@ router.post('/',  async (req, res) => {
       return;
     }
 
-		res.status(200).send({
+		res.status(201).send({
 			"message" : "Successfully scrap"
 	 	});
 
