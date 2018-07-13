@@ -27,9 +27,9 @@ router.get('/:f_id/:keyword', async(req, res, next) => {
     }
 
     let u_id = chkToken.id;
-    let following_id = req.param.f_id;
+    let following_id = req.params.f_id;
 
-    let searchFollower = req.param.keyword;
+    let searchFollower = req.params.keyword;
     let searcher = new hangul.Searcher(searchFollower);
 
     let followerlistSql = "SELECT f_follower_id, nickname, img_url FROM follow, user "
