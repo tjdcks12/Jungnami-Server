@@ -49,19 +49,13 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     let subtitle = req.body.subtitle;
     let contents_type = req.body.contents_type;
     let category = req.body.category;
-    let l_id; // array
+    
 
     let thumbnail, cardnews, youtubelink;
     if (req.files.thumbnail){
       thumbnail = req.files.thumbnail[0].location;
     } else {
       thumbnail = null;
-    }
-
-    if(req.body.l_id == undefined) { // wrong input
-      l_id = [];
-    } else {
-      l_id = req.body.l_id;
     }
 
 
@@ -116,6 +110,17 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     }
 
     // hash table에 c_id, l_id 저장
+    let l_id; // array
+
+    if(req.body.l_id == undefined) { // wrong input
+      l_id = [];
+    } else if (typeof(req.body.l_id) == typeof(new Array())){ // array
+      l_id = req.body.l_id;
+    } else { // int
+      l_id.push(req.body.l_id);
+    }
+    console.log(l_id)
+
     for (var i=0; i<l_id.length; i++) {
 
       var hashSql = "INSERT INTO hash (h_contents_id, h_legislator_id) VALUES (?, ?);";

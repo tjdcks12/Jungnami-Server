@@ -12,9 +12,17 @@ router.get('/', async(req, res, next) => {
   // console.log(encodeURI('😉'));
   // console.log(decodeURI(encodeURI('😉')));
 
-  var currentTime = new Date();
-  currentTime = currentTime.toLocaleDateString() + "_" + currentTime.toLocaleTimeString();
-  console.log(currentTime);
+  // var currentTime = new Date();
+  // currentTime = currentTime.toLocaleDateString() + "_" + currentTime.toLocaleTimeString();
+  // console.log(currentTime);
+
+  var a = 123;
+  var b = "4567";
+  var c = new Array();
+
+  console.log(typeof(a), typeof(b))
+  console.log(typeof(new Array()))
+  console.log(c)
 
 });
 
