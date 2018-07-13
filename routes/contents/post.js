@@ -49,7 +49,7 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     let subtitle = req.body.subtitle;
     let contents_type = req.body.contents_type;
     let category = req.body.category;
-    
+
 
     let thumbnail, cardnews, youtubelink;
     if (req.files.thumbnail){
@@ -119,7 +119,6 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     } else { // int
       l_id.push(req.body.l_id);
     }
-    console.log(l_id)
 
     for (var i=0; i<l_id.length; i++) {
 
