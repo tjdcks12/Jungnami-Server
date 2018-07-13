@@ -26,13 +26,6 @@ router.get('/', async (req, res) => {
     // 추천 컨텐츠 다가져오기
     var select_contents = 'SELECT * FROM contents ORDER BY score DESC LIMIT 20';
     var result_contents = await db.queryParamCnt_Arr(select_contents);
-    if(result_contents.length == 0){
-      res.status(300).send({
-        "message" : "NO data"
-      });
-
-      return;
-    }
 
     var recommend = [];
     for(var i=0; i<result_contents.length; i++){
@@ -55,16 +48,9 @@ router.get('/', async (req, res) => {
       recommend.push(data);
     }
 
-    // tmi 가져오기
-    select_contents = "SELECT * FROM contents WHERE category = 'tmi' ORDER BY writingtime DESC LIMIT 20";
+    // TMI 가져오기
+    select_contents = "SELECT * FROM contents WHERE category = 'TMI' ORDER BY writingtime DESC LIMIT 20";
     result_contents = await db.queryParamCnt_Arr(select_contents);
-    if(result_contents.length == 0){
-      res.status(300).send({
-        "message" : "NO data"
-      });
-
-      return;
-    }
 
     var tmi = [];
     for(var i=0; i<result_contents.length; i++){
@@ -90,13 +76,6 @@ router.get('/', async (req, res) => {
     // 스토리 가져오기
     select_contents = "SELECT * FROM contents WHERE category = '스토리' ORDER BY writingtime DESC LIMIT 20";
     result_contents = await db.queryParamCnt_Arr(select_contents);
-    if(result_contents.length == 0){
-      res.status(300).send({
-        "message" : "NO data"
-      });
-
-      return;
-    }
 
     var story = [];
     for(var i=0; i<result_contents.length; i++){

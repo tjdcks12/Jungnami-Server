@@ -22,7 +22,8 @@ router.get('/', async(req, res, next) => {
     return;
   }
 
-  let u_id = chkToken.id;
+  //let u_id = chkToken.id;
+  let u_id = "811157438";
 
   try {
 
@@ -70,9 +71,6 @@ router.get('/', async(req, res, next) => {
 
           let followingtimesql = "SELECT time FROM follow WHERE f_follower_id = ? AND f_following_id = ?;";
           let followingtimedata = await db.queryParamCnt_Arr(followingtimesql,[r.id, u_id]);
-          console.log(pushdata.length);
-          console.log(pushdata[i]);
-          console.log(followingtimedata);
 
           r.time = checktime.checktime(followingtimedata[0].time);
 
@@ -143,6 +141,7 @@ router.get('/', async(req, res, next) => {
         }
 
         r.ischecked = pushdata[i].ischecked;
+        result.push(r);
 
       }catch(error){
         console.log(error);
