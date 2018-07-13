@@ -139,7 +139,7 @@ router.get('/:l_id', async(req, res, next) => {
 
     // 의원 관련 컨텐츠 가져오기
     // 컨텐츠id, 썸네일, 타이틀, 카테고리, 타임
-    let select_contents = 'SELECT contents.id as id, thumbnail_url, title, category, writingtime FROM contents LEFT JOIN hash ON contents.id = hash.h_contents_id WHERE hash.h_legislator_id = ?';
+    let select_contents = 'SELECT contents.id as id, thumbnail_url, title, category, contents_type, writingtime FROM contents LEFT JOIN hash ON contents.id = hash.h_contents_id WHERE hash.h_legislator_id = ?';
     let result_contents = await db.queryParamCnt_Arr(select_contents,[l_id]);
 
     var contents = [];
@@ -149,6 +149,7 @@ router.get('/:l_id', async(req, res, next) => {
       data.c_id = result_contents[i].id;
       data.thumbnail = result_contents[i].thumbnail_url;
       data.c_title = result_contents[i].title;
+      data.c_type =  result_contents[i].contents_type;
       data.text = result_contents[i].category + " · " + checktime.checktime(result_contents[i].writingtime);
 
       contents.push(data);
