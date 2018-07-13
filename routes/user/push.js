@@ -60,9 +60,9 @@ router.get('/', async(req, res, next) => {
 
           // 내가 그 사람을 팔로잉 하고 있는지
           let followersql = "SELECT * FROM follow WHERE f_follower_id = ? AND f_following_id = ?;";
-          let followerdata = await db.queryParamCnt_Arr(followersql,[r.id, u_id]);
+          let followerdata = await db.queryParamCnt_Arr(followersql,[u_id, r.id]);
 
-          if(followerdata.length == -1) {
+          if(followerdata.length == 0) {
             r.button = "팔로우"; // 팔로우 할 수 있다
           } else {
             r.button = "팔로잉"; // 팔로잉 중이다
@@ -70,6 +70,9 @@ router.get('/', async(req, res, next) => {
 
           let followingtimesql = "SELECT time FROM follow WHERE f_follower_id = ? AND f_following_id = ?;";
           let followingtimedata = await db.queryParamCnt_Arr(followingtimesql,[r.id, u_id]);
+          console.log(r.id);
+          console.log(u_id);
+          console.log(followingtimedata);
 
           r.time = checktime.checktime(followingtimedata[0].time);
 
