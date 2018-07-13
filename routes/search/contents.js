@@ -46,7 +46,7 @@ router.get('/:keyword', async(req, res, next) => {
 
 
         // 카테고리 + 시간
-        data.text = result_content[i].category + " * " + checktime.checktime(result_content[i].writingtime);
+        data.text = result_content[i].category + " · " + checktime.checktime(result_content[i].writingtime);
 
         result.push(data);
       }

@@ -69,11 +69,6 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     var postSql = "INSERT INTO contents (title, subtitle, thumbnail_url, category, contents_type) VALUES (?, ?, ?, ?, ?);";
     var postResult = await db.queryParamCnt_Arr(postSql,[title, subtitle, thumbnail, category, contents_type]);
 
-
-    console.log(req.body);
-    console.log(req.files);
-    console.log(postResult);
-
     if(postResult == undefined){
       res.status(204).send({
         "message" : "Insert contents thumbnail error"
@@ -83,9 +78,6 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     }
 
     let c_id = postResult.insertId;
-
-    console.log(postResult.insertId);
-
 
     // contentImg table에 cardnews 저장
     if (req.files.cardnews){
@@ -123,14 +115,11 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
 
     }
 
-    console.log(l_id)
     // hash table에 c_id, l_id 저장
     for (var i=0; i<l_id.length; i++) {
 
       var hashSql = "INSERT INTO hash (h_contents_id, h_legislator_id) VALUES (?, ?);";
       var hashQuery = await db.queryParamCnt_Arr(hashSql, [c_id, l_id[i]]);
-
-      console.log(hashQuery)
 
       if(hashQuery == undefined) {
         res.status(204).send({

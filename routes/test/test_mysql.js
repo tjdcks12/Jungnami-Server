@@ -15,8 +15,9 @@ router.post('/', async(req, res, next) => {
   let u_id = req.body.u_id;
   let l_id =+ req.body.l_id;
   let islike =+ req.body.islike;
+  let vote =+ req.body.vote;
 
-  for(var i=0; i<458; i++){
+  for(var i=0; i<vote; i++){
     let insertSql = "INSERT INTO legislatorVote (lv_legislator_id, lv_user_id, islike) VALUES (?, ?, ?);"
     let insertQuery = await db.queryParamCnt_Arr(insertSql,[l_id, u_id, islike]);
 
