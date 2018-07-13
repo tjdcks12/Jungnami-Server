@@ -10,6 +10,9 @@ router.use('/post', require('./post'));
 //3. 게시판 글 작성 완료시
 router.use('/postcomplete', require('./postcomplete'));
 
+//3-1. 게시판 글 작성 완료시
+router.use('/postcompleteforand', require('./postcompleteforand'));
+
 //4. 게시판 글에 좋아요
 router.use('/likeboard', require('./likeboard'));
 
