@@ -24,10 +24,11 @@ router.post('/', upload.array('image'), async(req, res) => {
 
     var userid = chkToken.id;
     let content, image;
-    let shared = praseInt(req.body.shared);
+    let shared = req.body.shared;
 
     if (req.body.content){
       content = req.body.content;
+      content = content.substr(1, content.length-2)
     } else {
       content = ""
     }

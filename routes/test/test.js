@@ -7,7 +7,7 @@ const async = require('async');
 const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 
-router.get('/', async(req, res, next) => {
+router.post('/', async(req, res, next) => {
 
   // console.log(encodeURI('😉'));
   // console.log(decodeURI(encodeURI('😉')));
@@ -16,13 +16,16 @@ router.get('/', async(req, res, next) => {
   // currentTime = currentTime.toLocaleDateString() + "_" + currentTime.toLocaleTimeString();
   // console.log(currentTime);
 
-  var a = 123;
-  var b = "4567";
-  var c = new Array();
+  // var a = 123;
+  // var b = "4567";
+  // var c = new Array();
 
-  console.log(typeof(a), typeof(b))
-  console.log(typeof(new Array()))
-  console.log(c)
+  // console.log(typeof(a), typeof(b))
+  // console.log(typeof(new Array()))
+  // console.log(c)
+
+  console.log((req.body.content).substr(1, (req.body.content).length-2))
+
 
 });
 
