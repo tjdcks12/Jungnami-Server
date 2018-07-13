@@ -110,16 +110,20 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     }
 
     // hash table에 c_id, l_id 저장
-    let l_id; // array
+    let l_id = []; // array
 
     if(req.body.l_id == undefined) { // wrong input
       l_id = [];
-    } else if (typeof(req.body.l_id) == typeof(new Array())){ // array
+    } else if (typeof(req.body.l_id) == typeof(l_id)){ // array
       l_id = req.body.l_id;
-    } else { // int
+    } else { 
       l_id.push(req.body.l_id);
     }
+
+    console.log(req.body.l_id)
+    console.log(typeof(req.body.l_id))
     console.log(l_id)
+    console.log(typeof(l_id))
 
     for (var i=0; i<l_id.length; i++) {
 

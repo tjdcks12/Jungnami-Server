@@ -17,7 +17,6 @@ const upload = multer({
     key: function(req, file, cb) {
       var currentTime = new Date();
       currentTime = currentTime.toLocaleDateString() + "_" + currentTime.toLocaleTimeString();
-      console.log(currentTime);
 
       cb(null, "contents/" + currentTime+ "/" + file.originalname);
     }
