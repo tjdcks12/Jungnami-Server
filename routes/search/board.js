@@ -48,7 +48,7 @@ router.get('/:keyword', async(req, res, next) => {
         data.id = result_content[i].id;
 
         // 유저 정보
-        data.user_id = result_content[0].user_id;
+        data.user_id = result_content[i].user_id;
         data.nickname = result_content[i].nickname;
         data.user_img_url = result_content[i].user_img_url;
 

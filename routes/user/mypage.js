@@ -64,6 +64,17 @@ router.get('/:mypage_id', async(req, res, next) => {
       result.followingcnt = followingQuery[0].followingcnt;
       result.followercnt = followerQuery[0].followercnt;
 
+      // 내가 그 사람을 팔로잉 하고 있는지
+      let followersql = "SELECT * FROM follow WHERE f_follower_id = ? AND f_following_id = ?;";
+      let followerdata = await db.queryParamCnt_Arr(followersql,[u_id, mypage_id]);
+      if(followerdata.length == 0){
+        result.isfollow = 0;
+      }
+      else{
+        result.isfollow = 1;
+      }
+
+
       if (u_id == mypage_id) {  // 내가 내 계정에 들어온거라면
 
         result.coin = selectQuery[0].coin;
