@@ -103,10 +103,10 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     if (req.body.youtubelink){
       youtubelink = req.body.youtubelink;
 
-      let insertyoutubelinkSql = "UPDATE contents SET youtubelink = ? WHERE id = ?;"
+      let insertyoutubelinkSql = "UPDATE contents SET youtube_url = ? WHERE id = ?;"
       let insertyoutubelinkQuery = await db.queryParamCnt_Arr(insertyoutubelinkSql,[youtubelink, c_id]);
 
-      if (updatedata.affectedRows == 0){
+      if (insertyoutubelinkQuery.affectedRows == 0){
         res.status(204).send({
           message : "Update youtubelink error"
         });

@@ -100,7 +100,7 @@ router.get('/:mypage_id', async(req, res, next) => {
       // 스크랩한 컨텐츠
       result.scrap = [];
 
-      let selectscrapSql = "SELECT * FROM scrap WHERE s_user_id = ?"
+      let selectscrapSql = "SELECT * FROM scrap WHERE s_user_id = ? ORDER BY id"
       let selectscrapQuery = await db.queryParamCnt_Arr(selectscrapSql,[mypage_id]);
 
       for(var i=0; i<selectscrapQuery.length; i++) {
