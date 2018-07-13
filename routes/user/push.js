@@ -22,7 +22,8 @@ router.get('/', async(req, res, next) => {
     return;
   }
 
-  let u_id = chkToken.id;
+  //let u_id = chkToken.id;
+  let u_id = "811157438";
 
   try {
 
@@ -140,6 +141,7 @@ router.get('/', async(req, res, next) => {
         }
 
         r.ischecked = pushdata[i].ischecked;
+        result.push(r);
 
       }catch(error){
         console.log(error);
