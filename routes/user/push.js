@@ -144,8 +144,6 @@ router.get('/', async(req, res, next) => {
 
         r.ischecked = pushdata[i].ischecked;
 
-        result.push(r);
-
       }catch(error){
         console.log(error);
       } finally {

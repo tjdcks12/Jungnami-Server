@@ -15,6 +15,7 @@ router.get('/', async(req, res, next) => {
   var currentTime = new Date();
   currentTime = currentTime.toLocaleDateString() + "_" + currentTime.toLocaleTimeString();
   console.log(currentTime);
+
 });
 
 module.exports = router;
