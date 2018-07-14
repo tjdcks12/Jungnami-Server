@@ -100,7 +100,7 @@ router.get('/:mypage_id', async(req, res, next) => {
       // 스크랩한 컨텐츠
       result.scrap = [];
 
-      let selectscrapSql = "SELECT * FROM scrap WHERE s_user_id = ? ORDER BY id"
+      let selectscrapSql = "SELECT * FROM scrap WHERE s_user_id = ? ORDER BY id DESC"
       let selectscrapQuery = await db.queryParamCnt_Arr(selectscrapSql,[mypage_id]);
 
       for(var i=0; i<selectscrapQuery.length; i++) {
@@ -131,7 +131,7 @@ router.get('/:mypage_id', async(req, res, next) => {
       // 작성한 커뮤니티 게시물
       result.board = [];
 
-      let selectboardSql = "SELECT * FROM board WHERE b_user_id = ?"
+      let selectboardSql = "SELECT * FROM board WHERE b_user_id = ? ORDER BY writingtime DESC"
       let selectboardQuery = await db.queryParamCnt_Arr(selectboardSql,[mypage_id]);
 
       for(var i=0; i<selectboardQuery.length; i++) {
