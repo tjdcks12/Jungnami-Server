@@ -95,7 +95,7 @@ The proper way to submit changes to nginx is via the nginx development mailing l
 
 ---
 
-3. Helmet
+3. [Helmet](http://badge.fury.io/js/helmet)
 <!--
 <img align="right" width="200" src="http://static.nfl.com/static/content/public/static/img/logos/react-helmet.jpg" />
 [![npm version](https://badge.fury.io/js/helmet.svg)](http://badge.fury.io/js/helmet)
@@ -112,7 +112,9 @@ Helmet helps you secure your Express apps by setting various HTTP headers.
 
 
 6. SSL
+<!--
 <img align="center" width="200" src="https://github.com/CommanTeam/Server/blob/master/public/images/SSL.png" />
+-->
 
 * 전송 계층 보안 (영어: Transport Layer Security, TLS, 과거 명칭: 보안 소켓 레이어/Secure Sockets Layer, SSL)는 암호 규약이다.
 
@@ -124,9 +126,7 @@ Helmet helps you secure your Express apps by setting various HTTP headers.
   3. 대칭키 암호로 암호화하고 메시지 인증
 ---
 
-
-
-
+<!--
 # Technology Stack
 
 [![Build Status](https://travis-ci.org/e-/Hangul.js.svg?branch=master)](https://travis-ci.org/e-/Hangul.js) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
@@ -245,3 +245,5 @@ searcher.search('달무리'); // -1
 ## 테스트 및 기여
 
 코드를 수정하셨다면 꼭 `grunt` 명령어를 통해 테스트를 수행해 주세요. 현재 마스터 브랜치에 있는 코드의 테스트 결과는 [여기](http://e-.github.io/Hangul.js/test/)서 보실 수 있습니다.
+
+-->
