@@ -20,9 +20,10 @@ router.get('/:contents_id', async(req, res) => {
 
 	try{
 		if(!(req.params.contents_id)){
-			res.status(403).send({
-				message : "please input contents' id"
-			});
+			return next("1403");
+			// res.status(403).send({
+			// 	message : "please input contents' id"
+			// });
 		}else{
 			// 유저 댓글 좋아요 여부
 			var islike = [];
@@ -36,6 +37,9 @@ router.get('/:contents_id', async(req, res) => {
 			let getcommentlistQuery = 'select * from contentsComment left join (SELECT ccl_contentsComment_id, count(*) as cnt from contentsCommentLike GROUP BY ccl_contentsComment_id) as ccl on contentsComment.id = ccl.ccl_contentsComment_id  where cc_contents_id = ? order by ccl.cnt desc, writingtime desc';
 			let commenttableInfo = await db.queryParamCnt_Arr(getcommentlistQuery, [req.params.contents_id]);
 			//댓글 테이블에서 댓글 목록 받아와서
+			if(commenttableInfo.length == 0){
+				return next("1204");
+			}
 
 			let resultArry = [];
 
@@ -80,7 +84,7 @@ router.get('/:contents_id', async(req, res) => {
 			}
 
 			res.status(200).send({
-				"message" : "Successfully get contents comment list",
+				"message" : "Success",
 				"data" : resultArry
 			});
 		}
@@ -88,11 +92,11 @@ router.get('/:contents_id', async(req, res) => {
 
 	}catch(err){
 		console.log(err);
-		res.status(500).send({
-			"message" : "Server error"
-		});
+		return next("500");
+		// res.status(500).send({
+		// 	"message" : "Server error"
+		// });
 	}
 })
-
 
 module.exports = router;

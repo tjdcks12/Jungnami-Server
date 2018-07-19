@@ -20,20 +20,33 @@ router.get('/:board_id', async(req, res) => {
 
 	try{
 		if(!(req.params.board_id)){
-			res.status(403).send({
-				message : "please input board_id"
-			});
+			return next("1403");
+			// res.status(403).send({
+			// 	message : "please input board_id"
+			// });
 		}else{
 			// 유저 대댓글 좋아요 여부
 			var islike = [];
-			let select_islike = 'SELECT bcl_boardComment_id FROM boardCommentLike WHERE bcl_user_id = ?';
+			let select_islike =
+			`
+			SELECT bcl_boardComment_id
+			FROM boardCommentLike
+			WHERE bcl_user_id = ?
+			`;
 			let result_islike = await db.queryParamCnt_Arr(select_islike, [userid])
 			for(var i=0; i<result_islike.length; i++){
 				islike[i] = result_islike[i].bcl_boardComment_id;
 			}
 
 			//유저 닉, 이미지, 시간, 컨텐츠, 좋아요, 대댓 수 출력
-			let getcommentlistQuery = 'select * from boardComment left join (SELECT bcl_boardComment_id, count(*) as cnt from boardCommentLike GROUP BY bcl_boardComment_id) as bcl on boardComment.id = bcl.bcl_boardComment_id  where bc_board_id = ? order by bcl.cnt desc, writingtime desc';
+			let getcommentlistQuery =
+			`
+			select *
+			from boardComment
+			left join (SELECT bcl_boardComment_id, count(*) as cnt from boardCommentLike GROUP BY bcl_boardComment_id) as bcl
+			on boardComment.id = bcl.bcl_boardComment_id
+			where bc_board_id = ? order by bcl.cnt desc, writingtime desc
+			`;
 			let commenttableInfo = await db.queryParamCnt_Arr(getcommentlistQuery, [req.params.board_id]);
 			//댓글 테이블에서 댓글 목록 받아와서
 
@@ -50,15 +63,30 @@ router.get('/:board_id', async(req, res) => {
 
 
 				//유저닉네임이랑 이미지 사진
-				let getuserinfoQuery = "select user.id, user.nickname, user.img_url from myjungnami.user where id = ?";
+				let getuserinfoQuery =
+				`
+				select user.id, user.nickname, user.img_url
+				from myjungnami.user
+				where id = ?
+				`;
 				userinfoObj = await db.queryParamCnt_Arr(getuserinfoQuery, [commenttableInfo[i].bc_user_id]);
 
 				//게시글 대댓글 갯수
-				let getrecommentcntQuery = "select count(*) as recommentcnt from myjungnami.boardRecomment where br_boardComment_id = ?;";
+				let getrecommentcntQuery =
+				`
+				select count(*) as recommentcnt
+				from myjungnami.boardRecomment
+				where br_boardComment_id = ?
+				`;
 				recommentCnt = await db.queryParamCnt_Arr(getrecommentcntQuery, [commenttableInfo[i].id] );
 
 				//댓글 좋아요 수
-				let getlikecntQuery = "select count(*) as commentcnt from myjungnami.boardCommentLike where bcl_boardComment_id = ?";
+				let getlikecntQuery =
+				`
+				select count(*) as commentcnt
+				from myjungnami.boardCommentLike
+				where bcl_boardComment_id = ?
+				`;
 				commentlikeCnt = await db.queryParamCnt_Arr(getlikecntQuery, [commenttableInfo[i].id]);
 
 				subresultObj.commentid = commenttableInfo[i].id;
@@ -82,16 +110,17 @@ router.get('/:board_id', async(req, res) => {
 			}
 
 			res.status(200).send({
-				"message" : "Successfully get board comment list",
+				"message" : "Success",
 				"data" : resultArry
 			});
 
 		}
 	}catch(err){
-		console.log(err);
-		res.status(500).send({
-			"message" : "Server error"
-		});
+		return next("500");
+		// console.log(err);
+		// res.status(500).send({
+		// 	"message" : "Server error"
+		// });
 	}
 })
 

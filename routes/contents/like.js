@@ -11,35 +11,38 @@ router.post('/', async(req, res) => {
 	const chkToken = jwt.verify(req.headers.authorization);
 
 	if(chkToken == -1) {
-		res.status(401).send({
-			message : "Access Denied"
-		});
-
-		return;
+		return next("401");
+		// res.status(401).send({
+		// 	message : "Access Denied"
+		// });
+		//
+		// return;
 	}
 
 	var userid = chkToken.id;
 
 	try{ ////로그인 시 좋아요 처리
 		if(!(req.body.contents_id && userid)){
-			res.status(403).send({
-				message : "please input contents' id and user id"
-			});
+			return next("1403");
+			// res.status(403).send({
+			// 	message : "please input contents' id and user id"
+			// });
 		}else{
 			let postcontentslikeQuery = 'INSERT INTO myjungnami.contentsLike(id, cl_contents_id, cl_user_id) VALUES (null, ?, ?)';
 			let data = await db.queryParamCnt_Arr(postcontentslikeQuery, [req.body.contents_id, userid]);
 
 			res.status(201).send({
-				"message" : "Successfully insert contentslike"
+				"message" : "Success"
 			});
 		}
 
 
 	}catch(err){
 		console.log(err);
-		res.status(500).send({
-			"message" : "Server error"
-		});
+		return next("500");
+		// res.status(500).send({
+		// 	"message" : "Server error"
+		// });
 	}
 })
 

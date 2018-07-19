@@ -9,24 +9,23 @@ const jwt = require('../../module/jwt.js');
 /* GET home page. */
 router.get('/',  async (req, res) => {
   try{
-
     const chkToken = jwt.verify(req.headers.authorization);
     if(chkToken == -1) {
-      res.status(401).send({
-        message : "Access Denied"
-      });
-
-      return;
+      return next("401");
+      // res.status(401).send({
+      //   message : "Access Denied"
+      // });
+      //
+      // return;
     }
 
     var userid = chkToken.id;
-
 
     let getpostingviewQuery = 'SELECT img_url FROM myjungnami.user where id = ?';
     let data = await db.queryParamCnt_Arr(getpostingviewQuery, userid);
 
     res.status(200).send({
-      "message" : "Successfully get posting view",
+      "message" : "Success",
       "data" : {
         img_url : data[0].img_url
       }
@@ -34,9 +33,10 @@ router.get('/',  async (req, res) => {
 
   }catch(err){
     console.log(err);
-    res.status(500).send({
-      "message" : "Server error"
-    });
+    return next("500");
+    // res.status(500).send({
+    //   "message" : "Server error"
+    // });
   }
 });
 

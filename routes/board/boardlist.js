@@ -10,7 +10,7 @@ const checktime = require('../../module/checktime.js');
 //board_id, b_user_id, content, imgurl writing time, shared,
 //user의 profile_url, board_id의 like_cnt, comment_cnt
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   const chkToken = jwt.verify(req.headers.authorization);
 
   var userid;
@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
   }
   else{
     userid = chkToken.id;
-    var select_img = 'SELECT img_url FROM user WHERE id = ?';
+    var select_img = `SELECT img_url FROM user WHERE id = ?`;
     var result_img = await db.queryParamCnt_Arr(select_img, userid);
     if(result_img.length != 0){
       user_img_url = result_img[0].img_url;
@@ -30,23 +30,42 @@ router.get('/', async (req, res) => {
   try{
 
     // 푸쉬알람 카운트 가져오기
-    let pushcntSql = "SELECT count(*) as pushcnt FROM push WHERE p_user_id = ? AND ischecked = false"
+    let pushcntSql =
+    `
+    SELECT count(*) as pushcnt
+    FROM push
+    WHERE p_user_id = ? AND ischecked = false
+    `;
+
     let pushcntQuery = await db.queryParamCnt_Arr(pushcntSql,[userid]);
 
 
     // 게시글 불러오기 ( 공유뺴고, 시간순)
-    var select_board = 'SELECT * FROM board WHERE shared = 0 ORDER BY writingtime DESC'
+    var select_board =
+    `
+    SELECT *
+    FROM board
+    WHERE shared = 0
+    ORDER BY writingtime DESC
+    `
+
     var result_board = await db.queryParamCnt_Arr(select_board);
     if(result_board == 0){
-      res.status(300).send({
-        "message" : "NO data"
-      });
-
-      return;
+      return next("1204");
+      // res.status(300).send({
+      //   "message" : "NO data"
+      // });
+      //
+      // return;
     }
 
     // 좋아요한 글 가져오기
-    var select_like = 'SELECT bl_board_id FROM boardLike WHERE bl_user_id = ?'
+    var select_like =
+    `
+    SELECT bl_board_id
+    FROM boardLike
+    WHERE bl_user_id = ?
+    `
     var result_like = await db.queryParamCnt_Arr(select_like, [userid]);
 
     var result = [];
@@ -54,14 +73,20 @@ router.get('/', async (req, res) => {
       var data = {};
 
       // 닉네임
-      var select_user = 'SELECT * FROM user WHERE id=?'
+      var select_user = `
+      SELECT *
+      FROM user
+      WHERE id=?
+      `
+
       var result_user = await db.queryParamCnt_Arr(select_user, [result_board[i].b_user_id]);
       if(result_user == 0){
-        res.status(300).send({
-          "message" : "NO data"
-        });
-
-        return;
+        return next("1204");
+        // res.status(300).send({
+        //   "message" : "NO data"
+        // });
+        //
+        // return;
       }
       data.boardid = result_board[i].id;
 
@@ -85,12 +110,22 @@ router.get('/', async (req, res) => {
       }
 
       // 좋아요 카운트
-      var cnt_like = 'SELECT count(*) AS cnt FROM boardLike WHERE bl_board_id = ?';
+      var cnt_like =
+      `
+      SELECT count(*) AS cnt
+      FROM boardLike
+      WHERE bl_board_id = ?
+      `;
       var result_likecnt = await db.queryParamCnt_Arr(cnt_like, [result_board[i].id]);
       data.likecnt = result_likecnt[0].cnt;
 
       // 댓글 카운트
-      var cnt_comment = 'SELECT count(*) AS cnt FROM boardComment WHERE bc_board_id = ?';
+      var cnt_comment =
+      `
+      SELECT count(*) AS cnt
+      FROM boardComment
+      WHERE bc_board_id = ?
+      `;
       var result_cntcomment = await db.queryParamCnt_Arr(cnt_comment, [result_board[i].id]);
       data.commentcnt = result_cntcomment[0].cnt;
 
@@ -98,7 +133,7 @@ router.get('/', async (req, res) => {
     }
 
     res.status(200).send({
-      "message" : "Successfully get boardlist",
+      "message" : "Success",
       "data" : {
         content : result,
         user_img_url : user_img_url,
@@ -107,10 +142,11 @@ router.get('/', async (req, res) => {
     });
 
   }catch(err){
-    console.log(err);
-    res.status(500).send({
-      "message" : "Server error"
-    });
+    return next(err);
+    // console.log(err);
+    // res.status(500).send({
+    //   "message" : "Server error"
+    // });
   }
 });
 

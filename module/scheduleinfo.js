@@ -2,9 +2,6 @@
 const async = require('async');
 const db = require('../module/pool.js');
 
-/*
-Modularize DB Connection
-*/
 module.exports = {
   /* voting cnt 초기화 */
   initscore : async () => {

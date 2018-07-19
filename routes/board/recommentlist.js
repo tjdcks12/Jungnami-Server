@@ -21,9 +21,10 @@ router.get('/:comment_id', async(req, res) => {
 
 	try{
 		if(!(req.params.comment_id)){
-			res.status(403).send({
-				message : "please input comment id"
-			});
+			return next("1403");
+			// res.status(403).send({
+			// 	message : "please input comment id"
+			// });
 		}else{
 			// 유저 대댓글 좋아요 여부
 			var islike = [];
@@ -80,9 +81,10 @@ router.get('/:comment_id', async(req, res) => {
 		}
 	}catch(err){
 		console.log(err);
-		res.status(500).send({
-			"message" : "Server error"
-		});
+		return next("500");
+		// res.status(500).send({
+		// 	"message" : "Server error"
+		// });
 	}
 })
 module.exports = router;

@@ -11,15 +11,15 @@ const upload = require('../../module/multer_board_img.js');
 
 router.post('/', upload.array('image'), async(req, res) => {
   try{
-
     const chkToken = jwt.verify(req.headers.authorization);
 
     if(chkToken == -1) {
-      res.status(401).send({
-        message : "Access Denied"
-      });
-
-      return;
+      return next("401");
+      // res.status(401).send({
+      //   message : "Access Denied"
+      // });
+      //
+      // return;
     }
 
     var userid = chkToken.id;
@@ -39,28 +39,19 @@ router.post('/', upload.array('image'), async(req, res) => {
       image = "0"
     }
 
-    console.log(content)
-    console.log(image)
-
 
     let postboardQuery = 'INSERT INTO myjungnami.board (b_user_id, content, img_url, shared) VALUES (?, ?, ?, ?)';
     let data = await db.queryParamCnt_Arr(postboardQuery, [userid, content, image, shared]);
-    if(data == undefined){
-      res.status(204).send({
-        "message" : "fail insert"
-      });
 
-      return;
-    }
-    
     res.status(201).send({
-      "message" : "Successfully insert posting",
+      "message" : "Success",
     });
   }catch(err){
     console.log(err);
-    res.status(500).send({
-      "message" : "Server error"
-    });
+    return next("500");
+    // res.status(500).send({
+    //   "message" : "Server error"
+    // });
   }
 })
 
