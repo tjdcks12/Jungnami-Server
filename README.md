@@ -25,23 +25,23 @@
 
 # 사용 Module
 
-1. [Async & Await](https://www.npmjs.com/package/async)
+* [Async & Await](https://www.npmjs.com/package/async)
 
-2. [hangul-js](https://www.npmjs.com/package/hangul-js) : 검색 기능 (실시간 및 자음, 모음)
+* [hangul-js](https://www.npmjs.com/package/hangul-js) : 검색 기능 (실시간 및 자음, 모음)
 
-3. [fcm-node](https://www.npmjs.com/package/fcm-node) : 푸쉬알림
+* [fcm-node](https://www.npmjs.com/package/fcm-node) : 푸쉬알림
 
-4. [node-schedule](https://www.npmjs.com/package/node-schedule) : 스케줄링
+* [node-schedule](https://www.npmjs.com/package/node-schedule) : 스케줄링
 
-5. [JWT(JsonWebTokens)](https://www.npmjs.com/package/jsonwebtoken)
+* [JWT(JsonWebTokens)](https://www.npmjs.com/package/jsonwebtoken)
 
-6. [helmet](https://github.com/helmetjs/helmet)
+* [helmet](https://github.com/helmetjs/helmet)
 
-7. [cors](https://github.com/expressjs/cors)
+* [cors](https://github.com/expressjs/cors)
 
-8. [winston](https://github.com/winstonjs/winston) : 로깅
+* [winston](https://github.com/winstonjs/winston) : 로깅
 
-9. [multer](https://github.com/expressjs/multer)
+* [multer](https://github.com/expressjs/multer)
 
 
 
