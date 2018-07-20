@@ -1,0 +1,27 @@
+{
+  "1204" : {
+    "status" : 200,
+    "description" : "데이터가 없습니다.",
+    "message" : "NO data"
+  },
+  "1401" : {
+    "status" : 401,
+    "description" : "로그인이 필요한 서비스입니다.",
+    "message" : "Acess Denied"
+  },
+  "1402" : {
+    "status" : 401,
+    "description" : "코인이 부족합니다.",
+    "meesage" : "NO coin"
+  },
+  "1403" : {
+    "status" : 403,
+    "description" : "파라미터가 없습니다.",
+    "message" : "NO parameter"
+  },
+  "500" : {
+    "status" : 500,
+    "description" : "서버 에러",
+    "message" : "Internal Server Error"
+  }
+}
