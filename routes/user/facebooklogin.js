@@ -23,11 +23,12 @@ router.post('/', async(req, res, next) => {
   // facebook access token
   let accessToken = req.body.accessToken;
   if(!accessToken){
-    res.status(401).send({
-        message : "Access Denied"
-    });
-
-    return;
+    return next("401");
+    // res.status(401).send({
+    //     message : "Access Denied"
+    // });
+    //
+    // return;
   }
   //let accessToken = 'EAAOrNfcR65ABANc1JsTRhLRO1PAP0SHucq9zrPtZAmEwAXgGhdvB2dGhswrq9vkA6ePJw8da2mb7DZBi7n2bWMMCuEuWDbhZAW6WU2OEW8ZArJf78bGZCFocApmgvcPnUqPqWbJ9JP7uBketGU38ZCUTztduGUejZBivgOCD3cau8aInxDdpFAQeiF0v5TovQ9oDCqh1mWIEYbPrZA1uSOFNQ1bd7MRH458ZD';
   // push 알람 클라이언트 토큰
@@ -95,7 +96,7 @@ router.post('/', async(req, res, next) => {
             id : id,
             token : token,
           },
-          message : "success"
+          message : "Success"
         });
       } else { // 토큰이 만료된 경우 재발급
         console.log("기간이 만료되었습니다. 재발급 합니다");
@@ -105,7 +106,7 @@ router.post('/', async(req, res, next) => {
             id : id,
             token : token
           },
-          message : "success"
+          message : "Success"
         })
       }
     } else{ // 토큰이 없는 경우
@@ -121,7 +122,7 @@ router.post('/', async(req, res, next) => {
             id : id,
             token : token
           },
-          message : "success"
+          message : "Success"
         });
       } else{ // 다른 기기이고 회원이 아닐때
         console.log("비회원입니다.")
@@ -135,7 +136,7 @@ router.post('/', async(req, res, next) => {
             id : id,
             token : token
           },
-          message : "success"
+          message : "Success"
         })
       }
     }

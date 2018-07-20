@@ -21,7 +21,12 @@ router.get('/',  async (req, res) => {
 
     var userid = chkToken.id;
 
-    let getpostingviewQuery = 'SELECT img_url FROM myjungnami.user where id = ?';
+    let getpostingviewQuery =
+    `
+    SELECT img_url
+    FROM myjungnami.user
+    where id = ?
+    `;
     let data = await db.queryParamCnt_Arr(getpostingviewQuery, userid);
 
     res.status(200).send({

@@ -27,16 +27,36 @@ router.get('/:mypage_id', async(req, res, next) => {
   try {
 
     // 스크랩 수, 내 피드 수, 팔로워 수, 팔로잉 수
-    let scrapSql = "SELECT count(*) as scrapcnt FROM scrap WHERE s_user_id = ?"
+    let scrapSql =
+    `
+    SELECT count(*) as scrapcnt
+    FROM scrap
+    WHERE s_user_id = ?
+    `
     let scrapQuery = await db.queryParamCnt_Arr(scrapSql,[mypage_id]);
 
-    let boardSql = "SELECT count(*) as boardcnt FROM board WHERE b_user_id = ?"
+    let boardSql =
+    `
+    SELECT count(*) as boardcnt
+    FROM board
+    WHERE b_user_id = ?
+    `
     let boardQuery = await db.queryParamCnt_Arr(boardSql,[mypage_id]);
 
-    let followerSql = "SELECT count(*) as followercnt FROM follow WHERE f_following_id = ?"
+    let followerSql =
+    `
+    SELECT count(*) as followercnt
+    FROM follow
+    WHERE f_following_id = ?
+    `
     let followerQuery = await db.queryParamCnt_Arr(followerSql,[mypage_id]);
 
-    let followingSql = "SELECT count(*) as followingcnt FROM follow WHERE f_follower_id = ?"
+    let followingSql =
+    `
+    SELECT count(*) as followingcnt
+    FROM follow
+    WHERE f_follower_id = ?
+    `
     let followingQuery = await db.queryParamCnt_Arr(followingSql,[mypage_id]);
 
 
@@ -46,16 +66,14 @@ router.get('/:mypage_id', async(req, res, next) => {
 
     var result = {};
     if(selectQuery.length == 0){
-      console.log("query not ok");
-
-      res.status(300).send({
-            message: "Select user Error"
-      });
-      return;
-
+      return next("1204");
+      // console.log("query not ok");
+      //
+      // res.status(300).send({
+      //       message: "Select user Error"
+      // });
+      // return;
     }else{
-      console.log("query ok");
-
       result.mypage_id = mypage_id;
       result.nickname = selectQuery[0].nickname;
       result.img = selectQuery[0].img_url;
@@ -65,7 +83,12 @@ router.get('/:mypage_id', async(req, res, next) => {
       result.followercnt = followerQuery[0].followercnt;
 
       // 내가 그 사람을 팔로잉 하고 있는지
-      let followersql = "SELECT * FROM follow WHERE f_follower_id = ? AND f_following_id = ?;";
+      let followersql =
+      `
+      SELECT *
+      FROM follow
+      WHERE f_follower_id = ? AND f_following_id = ?
+      `;
       let followerdata = await db.queryParamCnt_Arr(followersql,[u_id, mypage_id]);
       if(followerdata.length == 0){
         result.isfollow = 0;
@@ -85,7 +108,12 @@ router.get('/:mypage_id', async(req, res, next) => {
         result.votingcnt = 0;
       }
 
-      let pushcntSql = "SELECT count(*) as pushcnt FROM push WHERE p_user_id = ? AND ischecked = false"
+      let pushcntSql =
+      `
+      SELECT count(*) as pushcnt
+      FROM push
+      WHERE p_user_id = ? AND ischecked = false
+      `
       let pushcntQuery = await db.queryParamCnt_Arr(pushcntSql,[mypage_id]);
 
       if(pushcntQuery.length != 0){
@@ -100,7 +128,13 @@ router.get('/:mypage_id', async(req, res, next) => {
       // 스크랩한 컨텐츠
       result.scrap = [];
 
-      let selectscrapSql = "SELECT * FROM scrap WHERE s_user_id = ? ORDER BY id DESC"
+      let selectscrapSql =
+      `
+      SELECT *
+      FROM scrap
+      WHERE s_user_id = ?
+      ORDER BY id DESC
+      `
       let selectscrapQuery = await db.queryParamCnt_Arr(selectscrapSql,[mypage_id]);
 
       for(var i=0; i<selectscrapQuery.length; i++) {
@@ -109,15 +143,13 @@ router.get('/:mypage_id', async(req, res, next) => {
 
         scrap.c_id = selectscrapQuery[i].s_contents_id;
 
-        let selectcontentsSql = "SELECT * FROM contents WHERE id = ?"
+        let selectcontentsSql =
+        `
+        SELECT *
+        FROM contents
+        WHERE id = ?
+        `
         let selectcontentsQuery = await db.queryParamCnt_Arr(selectcontentsSql,[scrap.c_id]);
-
-        if (selectcontentsQuery.length == 0) {
-          res.status(300).send({
-              message: "Select contents Error"
-          });
-          return;
-        }
 
         scrap.c_title = selectcontentsQuery[0].title;
         scrap.thumbnail = selectcontentsQuery[0].thumbnail_url;
@@ -126,12 +158,16 @@ router.get('/:mypage_id', async(req, res, next) => {
         result.scrap.push(scrap);
       }
 
-
-
       // 작성한 커뮤니티 게시물
       result.board = [];
 
-      let selectboardSql = "SELECT * FROM board WHERE b_user_id = ? ORDER BY writingtime DESC"
+      let selectboardSql =
+      `
+      SELECT *
+      FROM board
+      WHERE b_user_id = ?
+      ORDER BY writingtime DESC
+      `
       let selectboardQuery = await db.queryParamCnt_Arr(selectboardSql,[mypage_id]);
 
       for(var i=0; i<selectboardQuery.length; i++) {
@@ -140,7 +176,12 @@ router.get('/:mypage_id', async(req, res, next) => {
 
         board.b_id = selectboardQuery[i].id;
 
-        let selectuserSql = "SELECT * FROM user WHERE id = ?"
+        let selectuserSql =
+        `
+        SELECT *
+        FROM user
+        WHERE id = ?
+        `
         let selectuserQuery = await db.queryParamCnt_Arr(selectuserSql,[mypage_id]);
 
         board.u_id = selectuserQuery[0].id;
@@ -152,7 +193,12 @@ router.get('/:mypage_id', async(req, res, next) => {
         // 내가 직접 쓴 글
         if (selectboardQuery[i].shared == 0) {
 
-          let selectboardinfoSql = "SELECT * FROM board WHERE id = ?"
+          let selectboardinfoSql =
+          `
+          SELECT *
+          FROM board
+          WHERE id = ?
+          `
           let selectboardinfoQuery = await db.queryParamCnt_Arr(selectboardinfoSql,[board.b_id]);
 
           board.b_content = selectboardinfoQuery[0].content;
@@ -162,10 +208,20 @@ router.get('/:mypage_id', async(req, res, next) => {
         else if (selectboardQuery[i].shared > 0) {
           source = {};
 
-          let selectsharedboardinfoSql = "SELECT * FROM board WHERE id = ?"
+          let selectsharedboardinfoSql =
+          `
+          SELECT *
+          FROM board
+          WHERE id = ?
+          `
           let selectsharedboardinfoQuery = await db.queryParamCnt_Arr(selectsharedboardinfoSql,[selectboardQuery[i].shared]);
 
-          let selectshareduserSql = "SELECT * FROM user WHERE id = ?"
+          let selectshareduserSql =
+          `
+          SELECT *
+          FROM user
+          WHERE id = ?
+          `
           let selectshareduserQuery = await db.queryParamCnt_Arr(selectshareduserSql,[selectsharedboardinfoQuery[0].b_user_id]);
 
           source.u_id = selectshareduserQuery[0].id;
@@ -184,7 +240,12 @@ router.get('/:mypage_id', async(req, res, next) => {
 
 
         // 내가 좋아요한 글 가져오기
-        var select_like = 'SELECT bl_board_id FROM boardLike WHERE bl_user_id = ?'
+        var select_like =
+        `
+        SELECT bl_board_id
+        FROM boardLike
+        WHERE bl_user_id = ?
+        `
         var result_like = await db.queryParamCnt_Arr(select_like, [u_id]);
 
         // 좋아요 여부
@@ -196,10 +257,20 @@ router.get('/:mypage_id', async(req, res, next) => {
           }
         }
 
-        let getlikecntSql = "SELECT count(*) as like_cnt FROM boardLike WHERE bl_board_id = ?";
+        let getlikecntSql =
+        `
+        SELECT count(*) as like_cnt
+        FROM boardLike
+        WHERE bl_board_id = ?
+        `;
         let getlikecntQuery = await db.queryParamCnt_Arr(getlikecntSql, [board.b_id]);
 
-        let getcommentcntSql = "SELECT count(*) as comment_cnt FROM boardComment WHERE bc_board_id = ?;";
+        let getcommentcntSql =
+        `
+        SELECT count(*) as comment_cnt
+        FROM boardComment
+        WHERE bc_board_id = ?
+        `;
         let getcommentcntQuery = await db.queryParamCnt_Arr(getcommentcntSql, [board.b_id] );
 
         board.b_time = checktime.checktime(selectboardQuery[0].writingtime);
@@ -208,20 +279,19 @@ router.get('/:mypage_id', async(req, res, next) => {
 
         result.board.push(board);
       }
-
-
     }
 
     res.status(200).send({
-        message : "Select Data Success",
+        message : "Success",
         data : result
       });
 
   } catch(error) {
     console.log(error)
-    res.status(500).send({
-        message : "Internal Server Error"
-      });
+    return next("500");
+    // res.status(500).send({
+    //     message : "Internal Server Error"
+    //   });
   }
 });
 

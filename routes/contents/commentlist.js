@@ -27,14 +27,28 @@ router.get('/:contents_id', async(req, res) => {
 		}else{
 			// 유저 댓글 좋아요 여부
 			var islike = [];
-			let select_islike = 'SELECT ccl_contentsComment_id FROM contentsCommentLike WHERE ccl_user_id = ?';
+			let select_islike =
+			`
+			SELECT ccl_contentsComment_id
+			FROM contentsCommentLike
+			WHERE ccl_user_id = ?
+			`;
 			let result_islike = await db.queryParamCnt_Arr(select_islike, [userid])
 			for(var i=0; i<result_islike.length; i++){
 				islike[i] = result_islike[i].ccl_contentsComment_id;
 			}
 
 			//유저 닉, 이미지, 시간, 컨텐츠, 좋아요, 대댓 수 출력
-			let getcommentlistQuery = 'select * from contentsComment left join (SELECT ccl_contentsComment_id, count(*) as cnt from contentsCommentLike GROUP BY ccl_contentsComment_id) as ccl on contentsComment.id = ccl.ccl_contentsComment_id  where cc_contents_id = ? order by ccl.cnt desc, writingtime desc';
+			let getcommentlistQuery =
+			`
+			select *
+			from contentsComment
+			left join
+			(SELECT ccl_contentsComment_id, count(*) as cnt from contentsCommentLike GROUP BY ccl_contentsComment_id) as ccl
+			on contentsComment.id = ccl.ccl_contentsComment_id
+			where cc_contents_id = ?
+			order by ccl.cnt desc, writingtime desc
+			`;
 			let commenttableInfo = await db.queryParamCnt_Arr(getcommentlistQuery, [req.params.contents_id]);
 			//댓글 테이블에서 댓글 목록 받아와서
 			if(commenttableInfo.length == 0){
@@ -52,15 +66,30 @@ router.get('/:contents_id', async(req, res) => {
 				let timeset = checktime.checktime(commenttableInfo[i].writingtime);
 
 				//유저닉네임이랑 이미지 사진
-				let getuserinfoQuery = "select user.id, user.nickname, user.img_url from myjungnami.user where id = ?";
+				let getuserinfoQuery =
+				`
+				select user.id, user.nickname, user.img_url
+				from myjungnami.user
+				where id = ?
+				`;
 				userinfoObj = await db.queryParamCnt_Arr(getuserinfoQuery, [commenttableInfo[i].cc_user_id]);
 
 				//게시글 대댓글 갯수
-				let getrecommentcntQuery = "select count(*) as recommentCnt from myjungnami.contentsRecomment where cr_contentsComment_id = ?";
+				let getrecommentcntQuery =
+				`
+				select count(*) as recommentCnt
+				from myjungnami.contentsRecomment
+				where cr_contentsComment_id = ?
+				`;
 				recommentCnt = await db.queryParamCnt_Arr(getrecommentcntQuery, [commenttableInfo[i].id] );
 
 				//댓글 좋아요 수
-				let getlikecntQuery = "select count(*) as commentlikeCnt from myjungnami.contentsCommentLike where ccl_contentsComment_id = ?";
+				let getlikecntQuery =
+				`
+				select count(*) as commentlikeCnt
+				from myjungnami.contentsCommentLike
+				where ccl_contentsComment_id = ?
+				`;
 				commentlikeCnt = await db.queryParamCnt_Arr(getlikecntQuery, [commenttableInfo[i].id]);
 
 				subresultObj.commentid = commenttableInfo[i].id;

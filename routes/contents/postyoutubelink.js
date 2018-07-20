@@ -16,31 +16,27 @@ router.post('/', async(req, res) => {
   let youtubelink = req.body.youtubelink; // youtubelink
 
   try{
-
       // content table에 youtubelink 삽입
-      let insertyoutubelinkSql = "UPDATE contents SET youtubelink = ? WHERE id = ?;"
+      let insertyoutubelinkSql =
+      `
+      UPDATE contents
+      SET youtubelink = ?
+      WHERE id = ?;
+      `
       let insertyoutubelinkQuery = await db.queryParamCnt_Arr(insertyoutubelinkSql,[youtubelink, c_id]);
-      
-      if (updatedata.affectedRows == 0){
-        res.status(204).send({
-          message : "Update youtubelink error"
-        });
-        return;
-      }
+
 
       res.status(201).send({
-        message : "Successfully posting contents"
+        message : "Success"
       });
-      
+
   } catch (error) {
-    res.status(500).send({
-        message : "Internal Server Error"
-      });
+    return next("500");
+    // res.status(500).send({
+    //     message : "Internal Server Error"
+    //   });
   }
-
-
 });
 
 
 module.exports = router;
-

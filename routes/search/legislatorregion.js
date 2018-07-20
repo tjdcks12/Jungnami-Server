@@ -33,12 +33,22 @@ router.get('/:city/:l_name', async(req, res, next) => {
 
   try{
     // 투표 여부
-    let select_vote = "SELECT lv_legislator_id FROM legislatorVote WHERE lv_user_id = ?";
+    let select_vote =
+    `
+    SELECT lv_legislator_id
+    FROM legislatorVote
+    WHERE lv_user_id = ?
+    `;
     let result_vote = await db.queryParamCnt_Arr(select_vote, id);
     votedLegislator = result_vote;
 
     // 호감 랭킹 계산하기
-    let select_ranklike = "SELECT id, score FROM legislator LEFT JOIN (SELECT  lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = 1 GROUP BY lv_legislator_id) as lv ON legislator.id = lv.lv_legislator_id";
+    let select_ranklike =
+    `SELECT id, score
+    FROM legislator
+    LEFT JOIN (SELECT  lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = 1 GROUP BY lv_legislator_id) as lv
+    ON legislator.id = lv.lv_legislator_id
+    `;
     let result_ranklike = await db.queryParamCnt_Arr(select_ranklike, []);
     for(var i=0; i<result_ranklike.length; i++){
       var r = 1;
@@ -57,7 +67,12 @@ router.get('/:city/:l_name', async(req, res, next) => {
     }
 
     // 바호감 랭킹 계산하기
-    let select_rankunlike = "SELECT id, score FROM legislator LEFT JOIN (SELECT  lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = 0 GROUP BY lv_legislator_id) as lv ON legislator.id = lv.lv_legislator_id";
+    let select_rankunlike =
+    `SELECT id, score
+    FROM legislator
+    LEFT JOIN (SELECT  lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = 0 GROUP BY lv_legislator_id) as lv
+    ON legislator.id = lv.lv_legislator_id
+    `;
     let result_rankunlike = await db.queryParamCnt_Arr(select_rankunlike, []);
     for(var i=0; i<result_rankunlike.length; i++){
       var r = 1;
@@ -76,11 +91,13 @@ router.get('/:city/:l_name', async(req, res, next) => {
     }
 
     //의원정보 가져오기
-    let select_legislator = "SELECT id, l_party_name, name, region_city, region_state, profile_img_url, isPpresident, isLpresident, isPPpresident, score, position FROM legislator ";
-    select_legislator += "LEFT JOIN (SELECT  lv_legislator_id, count(*) as score FROM legislatorVote ";
-    select_legislator += "GROUP BY lv_legislator_id) as lv ";
-    select_legislator += "ON legislator.id = lv.lv_legislator_id WHERE legislator.region_city = ? ORDER BY score DESC";
-
+    let select_legislator =
+    `
+    SELECT id, l_party_name, name, region_city, region_state, profile_img_url, isPpresident, isLpresident, isPPpresident, score, position
+    FROM legislator
+    LEFT JOIN (SELECT  lv_legislator_id, count(*) as score FROM legislatorVote GROUP BY lv_legislator_id) as lv
+    ON legislator.id = lv.lv_legislator_id ORDER BY score DESC
+    `
     let result_legislator = await db.queryParamCnt_Arr(select_legislator,[req.params.city]);
 
 
@@ -165,10 +182,11 @@ router.get('/:city/:l_name', async(req, res, next) => {
     }
 
     if(result.length == 0){
-      res.status(300).json({
-        message : "No data"
-      });
-      return;
+      return next("1204");
+      // res.status(300).json({
+      //   message : "No data"
+      // });
+      // return;
     }
 
     res.status(200).json({
@@ -178,9 +196,10 @@ router.get('/:city/:l_name', async(req, res, next) => {
 
   }catch(error) {
     console.log(error);
-    res.status(500).send({
-      message : "Internal Server Error"
-    });
+    return next("500");
+    // res.status(500).send({
+    //   message : "Internal Server Error"
+    // });
   }
 });
 

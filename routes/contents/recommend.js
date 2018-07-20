@@ -20,18 +20,29 @@ router.get('/', async (req, res) => {
 
   try{
     // 푸쉬알람 카운트 가져오기
-    let pushcntSql = "SELECT count(*) as pushcnt FROM push WHERE p_user_id = ? AND ischecked = false"
+    let pushcntSql =
+    `
+    SELECT count(*) as pushcnt
+    FROM push
+    WHERE p_user_id = ? AND ischecked = false
+    `
     let pushcntQuery = await db.queryParamCnt_Arr(pushcntSql,[userid]);
 
     // 컨텐츠 다가져오기 ( score desc )
-    var select_contents = 'SELECT * FROM contents ORDER BY score DESC';
+    var select_contents =
+    `
+    SELECT *
+    FROM contents
+    ORDER BY score DESC
+    `
     var result_contents = await db.queryParamCnt_Arr(select_contents, [req.params.category]);
     if(result_contents.length == 0){
-      res.status(300).send({
-        "message" : "NO data"
-      });
-
-      return;
+      return next("1204");
+      // res.status(300).send({
+      //   "message" : "NO data"
+      // });
+      //
+      // return;
     }
 
     var result = [];
@@ -56,7 +67,7 @@ router.get('/', async (req, res) => {
     }
 
     res.status(200).send({
-      "message" : "Successfully get posting view",
+      "message" : "Success",
       "data" : {
         content : result,
         alarmcnt : pushcntQuery[0].pushcnt
@@ -65,9 +76,10 @@ router.get('/', async (req, res) => {
 
   }catch(err){
     console.log(err);
-    res.status(500).send({
-      "message" : "Server error"
-    });
+    return next("500");
+    // res.status(500).send({
+    //   "message" : "Server error"
+    // });
   }
 });
 

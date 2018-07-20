@@ -27,7 +27,13 @@ router.get('/:islike/:p_name', async(req, res, next) => {
 
   try{
     // 랭킹 계산하기
-    let select_rank = "SELECT id, score FROM legislator  LEFT JOIN (SELECT  lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = ? GROUP BY lv_legislator_id) as lv ON legislator.id = lv.lv_legislator_id";
+    let select_rank =
+    `
+    SELECT id, score
+    FROM legislator
+    LEFT JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = ? GROUP BY lv_legislator_id) as lv 
+    ON legislator.id = lv.lv_legislator_id
+    `;
     let result_rank = await db.queryParamCnt_Arr(select_rank, [req.params.islike]);
     for(var i=0; i<result_rank.length; i++){
       var r = 1;
@@ -45,10 +51,15 @@ router.get('/:islike/:p_name', async(req, res, next) => {
     }
 
     //의원정보 가져오기
-    let select_legislator = "SELECT id, name, l_party_name, region_city, region_state, profile_img_url, isPpresident, isLpresident, isPPpresident, score, position FROM legislator ";
-    select_legislator += "LEFT JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote ";
-    select_legislator += "WHERE islike = ? GROUP BY lv_legislator_id) as lv ";
-    select_legislator += "ON legislator.id = lv.lv_legislator_id where legislator.l_party_name = ? ORDER BY score DESC";
+    let select_legislator =
+    `
+    SELECT id, name, l_party_name, region_city, region_state, profile_img_url, isPpresident, isLpresident, isPPpresident, score, position
+    FROM legislator
+    LEFT JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote
+    WHERE islike = ? GROUP BY lv_legislator_id) as lv
+    ON legislator.id = lv.lv_legislator_id where legislator.l_party_name = ? ORDER BY score DESC
+    `
+
 
     let result_legislator = await db.queryParamCnt_Arr(select_legislator,[req.params.islike, req.params.p_name]);
 
@@ -133,10 +144,11 @@ router.get('/:islike/:p_name', async(req, res, next) => {
     }
 
     if(result.length == 0){
-      res.status(300).json({
-        message : "No data"
-      });
-      return;
+      return next("1204");
+      // res.status(300).json({
+      //   message : "No data"
+      // });
+      // return;
     }
 
     res.status(200).json({
@@ -144,9 +156,10 @@ router.get('/:islike/:p_name', async(req, res, next) => {
       message : "Success"
     });
   } catch(error) {
-    res.status(500).send({
-      message : "Internal Server Error"
-    });
+    return next("500");
+    // res.status(500).send({
+    //   message : "Internal Server Error"
+    // });
   }
 });
 

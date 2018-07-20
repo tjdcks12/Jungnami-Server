@@ -25,7 +25,12 @@ router.get('/:keyword', async(req, res, next) => {
 
   try{
 
-    let select_content = "SELECT * FROM contents ORDER BY score DESC";
+    let select_content =
+    `
+    SELECT *
+    FROM contents
+    ORDER BY score DESC
+    `;
     let result_content = await db.queryParamCnt_Arr(select_content);
 
     // return할 result
@@ -44,7 +49,6 @@ router.get('/:keyword', async(req, res, next) => {
         // 썸네일
         data.thumbnail = result_content[i].thumbnail_url;
 
-
         // 카테고리 + 시간
         data.text = result_content[i].category + " · " + checktime.checktime(result_content[i].writingtime);
 
@@ -53,10 +57,11 @@ router.get('/:keyword', async(req, res, next) => {
     }
 
     if(result.length == 0){
-      res.status(300).json({
-        message : "No data"
-      });
-      return;
+      return next("1204");
+      // res.status(300).json({
+      //   message : "No data"
+      // });
+      // return;
     }
 
     res.status(200).json({
@@ -66,9 +71,10 @@ router.get('/:keyword', async(req, res, next) => {
 
   }catch(error) {
     console.log(error);
-    res.status(500).send({
-      message : "Internal Server Error"
-    });
+    return next("500");
+    // res.status(500).send({
+    //   message : "Internal Server Error"
+    // });
   }
 });
 

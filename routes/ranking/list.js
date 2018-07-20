@@ -26,24 +26,29 @@ router.get('/:islike', async(req, res, next) => {
   let islike =+ req.params.islike;
 
   try {
-    let listSql = "SELECT * FROM legislator LEFT OUTER JOIN "
-        listSql += "(SELECT lv_legislator_id, count(*) as score FROM legislatorVote "
-        listSql += "WHERE islike=? GROUP BY lv_legislator_id) as lv "
-        listSql += "ON legislator.id = lv.lv_legislator_id ORDER BY lv.score DESC;"
+    let listSql =
+    `
+    SELECT *
+    FROM legislator
+    LEFT OUTER JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote
+    WHERE islike=?
+    GROUP BY lv_legislator_id) as lv
+    ON legislator.id = lv.lv_legislator_id
+    ORDER BY lv.score DESC;
+    `
 
     let listQuery = await db.queryParamCnt_Arr(listSql,[islike]);
 
     if(listQuery.length == 0){
-      console.log("query not ok");
-
-      res.status(300).send({
-        message: "No Data"
-      });
-      return;
+      return next("1204");
+      // console.log("query not ok");
+      //
+      // res.status(300).send({
+      //   message: "No Data"
+      // });
+      // return;
 
     } else {
-      console.log("query ok");
-
       var result = [];
       for(var i=0; i<listQuery.length; i++){
         var rankingInfo = {};
@@ -51,8 +56,8 @@ router.get('/:islike', async(req, res, next) => {
         rankingInfo.l_id = listQuery[i].id;
         rankingInfo.l_name = listQuery[i].name;
         rankingInfo.party_name = listQuery[i].l_party_name;
-        rankingInfo.position = listQuery[i].position; 
-        rankingInfo.score = listQuery[i].score; 
+        rankingInfo.position = listQuery[i].position;
+        rankingInfo.score = listQuery[i].score;
 
         if (rankingInfo.score == null){
           rankingInfo.scoretext = "0 표";
@@ -64,10 +69,10 @@ router.get('/:islike', async(req, res, next) => {
         rankingInfo.mainimg = listQuery[i].main_img_url;
 
         result.push(rankingInfo);
-      } 
+      }
 
       // 순위 뽑기 + 막대그래프 길이
-      var w = 0; 
+      var w = 0;
       for(var i=0; i<result.length; i++) {
 
         if (result[i].score == null) {
@@ -97,16 +102,15 @@ router.get('/:islike', async(req, res, next) => {
       }
 
       res.status(200).send({
-          message : "Select Data Success",
+          message : "Success",
           data : result
         });
     }
-
-
   } catch(error) {
-    res.status(500).send({
-        message : "Internal Server Error"
-      });
+    return next("500");
+    // res.status(500).send({
+    //     message : "Internal Server Error"
+    //   });
   }
 });
 

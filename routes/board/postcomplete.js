@@ -37,7 +37,12 @@ router.post('/', upload.array('image'), async(req, res) => {
       image = "0"
     }
 
-    let postboardQuery = 'INSERT INTO myjungnami.board (b_user_id, content, img_url, shared) VALUES (?, ?, ?, ?)';
+    let postboardQuery =
+    `
+    INSERT INTO
+    myjungnami.board (b_user_id, content, img_url, shared)
+    VALUES (?, ?, ?, ?)
+    `;
     let data = await db.queryParamCnt_Arr(postboardQuery, [userid, content, image, shared]);
 
 

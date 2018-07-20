@@ -16,51 +16,61 @@ router.delete('/:boardid',  async (req, res) => {
     const chkToken = jwt.verify(req.headers.authorization);
 
     if(chkToken == -1) {
-        res.status(401).send({
-            message : "Access Denied"
-        });
-        return;
+      return next("401");
+        // res.status(401).send({
+        //     message : "Access Denied"
+        // });
+        // return;
     }
 
     let u_id = chkToken.id;
     let b_id = req.params.boardid;
 
-    let boardSql = 'SELECT b_user_id FROM board WHERE id = ?';
+    let boardSql =
+    `
+    SELECT b_user_id
+    FROM board
+    WHERE id = ?
+    `;
     let boardQuery = await db.queryParamCnt_Arr(boardSql, [b_id]);
 
     if (u_id == boardQuery[0].b_user_id) { // 내가 작성한 글 맞으니까, 삭제 진행 하세요
 
-      let deleteboardSql = 'DELETE FROM board WHERE id = ?';
+      let deleteboardSql =
+      `
+      DELETE
+      FROM board
+      WHERE id = ?
+      `;
       let deleteboardQuery = await db.queryParamCnt_Arr(deleteboardSql, [b_id]);
 
-      if(deleteboardQuery <= 0){
-        res.status(204).send({
-          "message" : "delete error"
-        });
-
-        return;
-      }
-
       // 해당 글을 공유한 글도 함께 삭제
-      let deleteboardsharedSql = 'DELETE FROM board WHERE shared = ?';
+      let deleteboardsharedSql =
+      `
+      DELETE
+      FROM board
+      WHERE shared = ?
+      `;
       let deleteboardsharedQuery = await db.queryParamCnt_Arr(deleteboardsharedSql, [b_id]);
     }
     else{
-      res.status(401).send({
-        "message" : "Different User"
-      });
+      return next("401");
+      // res.status(401).send({
+      //   "message" : "Different User"
+      // });
     }
 
 		res.status(200).send({
-			"message" : "Successfully delete board posting"
+			"message" : "Success"
 	 	});
 
 
   }catch(err){
   	console.log(err);
-  	res.status(500).send({
-  		"message" : "Internal Server Error"
-  	});
+    return next("500");
+  	// res.status(500).send({
+  	// 	"message" : "Internal Server Error"
+  	// });
   }
 });
 

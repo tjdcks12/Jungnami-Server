@@ -11,11 +11,12 @@ router.post('/', async(req, res) => {
 	const chkToken = jwt.verify(req.headers.authorization);
 
 	if(chkToken == -1) {
-		res.status(401).send({
-			message : "Access Denied"
-		});
-
-		return;
+		return next("1401");
+		// res.status(401).send({
+		// 	message : "Access Denied"
+		// });
+		//
+		// return;
 	}
 
 	var userid = chkToken.id;
@@ -23,29 +24,29 @@ router.post('/', async(req, res) => {
 	try{
 
 		if(!(req.body.contents_id && userid && req.body.content)){
-			res.status(403).send({
-				message : "please input contents id & use rid & content"
-			});
+			return next("1403");
+			// res.status(403).send({
+			// 	message : "please input contents id & use rid & content"
+			// });
 		}else{
-			let contentsmakecommentQuery = 'INSERT INTO myjungnami.contentsComment(id, cc_contents_id, cc_user_id, content) VALUES (null, ?, ?, ?)';
+			let contentsmakecommentQuery =
+			`
+			INSERT INTO
+			myjungnami.contentsComment(id, cc_contents_id, cc_user_id, content)
+			VALUES (null, ?, ?, ?)
+			`;
 			let data = await db.queryParamCnt_Arr(contentsmakecommentQuery, [req.body.contents_id, userid, req.body.content]);
-			if(data == undefined){
-				res.status(204).send({
-					"message" : "fail insert"
-				});
-
-				return;
-			}
 
 			res.status(201).send({
-				"message" : "insert contents' comment success"
+				message : "Success"
 			});
 		}
 	}catch(err){
-		console.log(err);
-		res.status(500).send({
-			"message" : "Server error"
-		});
+		return next("500");
+		// console.log(err);
+		// res.status(500).send({
+		// 	"message" : "Server error"
+		// });
 	}
 })
 

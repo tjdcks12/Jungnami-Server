@@ -12,15 +12,14 @@ module.exports = (app) => {
     // 서버측 에러
     // 에러가 숫자일 경우
     if(isNaN(err)){
-      err = 500; // internal server error
+      err = 500;
     }
 
     var error = errors[err];
     console.log(moment().format('YYYY.MM.DD h:mm:ss a ]') + " >> " + error.code + " : " + error.description);
 
     var result = {
-      "message" : error.message,
-      "data" : error.data
+      "message" : error.message
     }
     return res.status(error.status).json(result);
   });

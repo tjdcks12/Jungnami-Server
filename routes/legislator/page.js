@@ -25,24 +25,24 @@ router.get('/:l_id', async(req, res, next) => {
   let l_id =+ req.params.l_id;
 
   try {
-    let rankingSql = "SELECT * FROM legislator LEFT OUTER JOIN "
-        rankingSql += "(SELECT lv_legislator_id, count(*) as score FROM legislatorVote "
-        rankingSql += "WHERE islike=? GROUP BY lv_legislator_id) as lv "
-        rankingSql += "ON legislator.id = lv.lv_legislator_id ORDER BY lv.score DESC;"
+    let rankingSql =
+    `
+    SELECT *
+    FROM legislator
+    LEFT OUTER JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike=? GROUP BY lv_legislator_id) as lv
+    ON legislator.id = lv.lv_legislator_id
+    ORDER BY lv.score DESC;
+    `
 
     let likeRankingQuery = await db.queryParamCnt_Arr(rankingSql,[1]);
     let unlikeRankingQuery = await db.queryParamCnt_Arr(rankingSql,[0]);
 
     if(likeRankingQuery.length == 0 || unlikeRankingQuery.length == 0){
-      console.log("query not ok")
-
-      res.status(300).send({
-        message: "No Data"
-      });
-      return;
-
-    }else{
-      console.log("query ok");
+      return next("1204");
+      // res.status(300).send({
+      //   message: "No Data"
+      // });
+      // return;
     }
 
 
@@ -139,7 +139,14 @@ router.get('/:l_id', async(req, res, next) => {
 
     // 의원 관련 컨텐츠 가져오기
     // 컨텐츠id, 썸네일, 타이틀, 카테고리, 타임
-    let select_contents = 'SELECT contents.id as id, thumbnail_url, title, category, contents_type, writingtime FROM contents LEFT JOIN hash ON contents.id = hash.h_contents_id WHERE hash.h_legislator_id = ?';
+    let select_contents =
+    `
+    SELECT contents.id as id, thumbnail_url, title, category, contents_type, writingtime
+    FROM contents
+    LEFT JOIN hash
+    ON contents.id = hash.h_contents_id
+    WHERE hash.h_legislator_id = ?
+    `;
     let result_contents = await db.queryParamCnt_Arr(select_contents,[l_id]);
 
     var contents = [];
@@ -157,14 +164,15 @@ router.get('/:l_id', async(req, res, next) => {
     result.contents = contents;
 
     res.status(200).send({
-        message : "Select Data Success",
+        message : "Success",
         data : result
       });
 
   } catch(error) {
-    res.status(500).send({
-        message : "Internal Server Error"
-      });
+    return next("500");
+    // res.status(500).send({
+    //     message : "Internal Server Error"
+    //   });
   }
 });
 

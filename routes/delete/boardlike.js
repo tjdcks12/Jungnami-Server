@@ -15,34 +15,34 @@ router.delete('/:boardid', async(req, res, next) => {
   const chkToken = jwt.verify(req.headers.authorization);
 
   if(chkToken == -1) {
-      res.status(401).send({
-          message : "Access Denied"
-      });
-      return;
+    return next("401");
+      // res.status(401).send({
+      //     message : "Access Denied"
+      // });
+      // return;
   }
 
   let userid = chkToken.id;
 
   try{
-    let delete_like = 'DELETE FROM boardLike WHERE bl_board_id = ? AND bl_user_id = ?';
+    let delete_like =
+    `
+    DELETE
+    FROM boardLike
+    WHERE bl_board_id = ? AND bl_user_id = ?
+    `;
     let result_delete = await db.queryParamCnt_Arr(delete_like,[req.params.boardid, userid]);
-    if(result_delete <= 0){
-      res.status(204).send({
-        "message" : "No data"
-      });
-
-      return;
-    }
 
     res.status(200).send({
-      "message" : "Successfully cancel"
+      "message" : "Success"
     });
 
   }catch(err){
 		console.log(err);
-		res.status(500).send({
-			"message" : "syntax error"
-		});
+    return next("500");
+		// res.status(500).send({
+		// 	"message" : "syntax error"
+		// });
 	}
 
 });

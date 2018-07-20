@@ -14,17 +14,23 @@ router.get('/', async(req, res, next) => {
     const chkToken = jwt.verify(req.headers.authorization);
 
     if(chkToken == -1) {
-        res.status(401).send({
-            message : "Access Denied"
-        });
-
-        return;
+      return next("401");
+        // res.status(401).send({
+        //     message : "Access Denied"
+        // });
+        //
+        // return;
     }
 
     let id = chkToken.id;
 
     // 유저 투표권 수 가져오기
-    let select_point = "SELECT coin FROM user WHERE id = ?";
+    let select_point =
+    `
+    SELECT coin
+    FROM user
+    WHERE id = ?
+    `
     let result_point = await db.queryParamCnt_Arr(select_point,[id]);
 
     res.status(200).send({
@@ -33,9 +39,10 @@ router.get('/', async(req, res, next) => {
     });
 
   } catch(error) {
-    res.status(500).send({
-        message : "Internal Server Error"
-      });
+    return next("500");
+    // res.status(500).send({
+    //     message : "Internal Server Error"
+    //   });
   }
 });
 

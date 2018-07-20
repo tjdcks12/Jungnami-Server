@@ -16,10 +16,11 @@ router.get('/', async(req, res, next) => {
   const chkToken = jwt.verify(req.headers.authorization);
 
   if(chkToken == -1) {
-    res.status(401).send({
-      message : "Access Denied"
-    });
-    return;
+    return next("401");
+    // res.status(401).send({
+    //   message : "Access Denied"
+    // });
+    // return;
   }
 
   let u_id = chkToken.id;
@@ -27,19 +28,24 @@ router.get('/', async(req, res, next) => {
   try {
 
     // 나의 푸시알림 목록
-    let pushsql = "SELECT * FROM push WHERE p_user_id = ? ORDER BY id DESC";
+    let pushsql =
+    `
+    SELECT *
+    FROM push
+    WHERE p_user_id = ?
+    ORDER BY id DESC
+    `;
     let pushdata = await db.queryParamCnt_Arr(pushsql,[u_id]);
 
-        if(pushdata.length == 0){
-          console.log("query not ok");
-
-          res.status(300).json({
-            message : "no push data"
-          });
-          return;
-        }else{
-          console.log("query ok");
-        }
+    if(pushdata.length == 0){
+      return next("1204");
+      // console.log("query not ok");
+      //
+      // res.status(300).json({
+      //   message : "no push data"
+      // });
+      // return;
+    }
 
     var result = [];
     for (var i=0; i<pushdata.length; i++) {
@@ -50,7 +56,12 @@ router.get('/', async(req, res, next) => {
 
         // 팔로우 관련
         if(pushdata[i].p_follower_id != null) {
-          let followerinfosql = "SELECT id, nickname, img_url FROM user WHERE id = ?;";
+          let followerinfosql =
+          `
+          SELECT id, nickname, img_url
+          FROM user
+          WHERE id = ?
+          `;
           let followerinfoquery = await db.queryParamCnt_Arr(followerinfosql,[pushdata[i].p_follower_id]);
 
           r.id = followerinfoquery[0].id;
@@ -59,7 +70,12 @@ router.get('/', async(req, res, next) => {
           r.actionmessage = "님이 팔로우 했습니다.";
 
           // 내가 그 사람을 팔로잉 하고 있는지
-          let followersql = "SELECT * FROM follow WHERE f_follower_id = ? AND f_following_id = ?;";
+          let followersql =
+          `
+          SELECT *
+          FROM follow
+          WHERE f_follower_id = ? AND f_following_id = ?
+          `;
           let followerdata = await db.queryParamCnt_Arr(followersql,[u_id, r.id]);
 
           if(followerdata.length == 0) {
@@ -68,7 +84,12 @@ router.get('/', async(req, res, next) => {
             r.button = "팔로잉"; // 팔로잉 중이다
           }
 
-          let followingtimesql = "SELECT time FROM follow WHERE f_follower_id = ? AND f_following_id = ?;";
+          let followingtimesql =
+          `
+          SELECT time
+          FROM follow
+          WHERE f_follower_id = ? AND f_following_id = ?
+          `;
           let followingtimedata = await db.queryParamCnt_Arr(followingtimesql,[r.id, u_id]);
 
           r.time = checktime.checktime(followingtimedata[0].time);
@@ -76,12 +97,22 @@ router.get('/', async(req, res, next) => {
         } // 보드 댓글 관련
         else if (pushdata[i].p_boardComment_id != null) {
 
-          let boardcommentinfosql = "SELECT bc_user_id, writingtime FROM boardComment WHERE id = ?;"
+          let boardcommentinfosql =
+          `
+          SELECT bc_user_id, writingtime
+          FROM boardComment
+          WHERE id = ?
+          `
           let boardcommentinfodata = await db.queryParamCnt_Arr(boardcommentinfosql,[pushdata[i].p_boardComment_id]);
 
           r.id = boardcommentinfodata[0].bc_user_id;
 
-          let boardcommentusersql = "SELECT nickname, img_url FROM user WHERE id = ?;"
+          let boardcommentusersql =
+          `
+          SELECT nickname, img_url
+          FROM user
+          WHERE id = ?
+          `
           let boardcommentuserdata = await db.queryParamCnt_Arr(boardcommentusersql,[r.id]);
 
           r.img_url = boardcommentuserdata[0].img_url;
@@ -92,12 +123,22 @@ router.get('/', async(req, res, next) => {
         } // 보드 좋아요 관련
         else if (pushdata[i].p_boardLike_id != null) {
 
-          let boardlikeinfosql = "SELECT bl_user_id, time FROM boardLike WHERE id = ?;"
+          let boardlikeinfosql =
+          `
+          SELECT bl_user_id, time
+          FROM boardLike
+          WHERE id = ?
+          `
           let boardlikeinfodata = await db.queryParamCnt_Arr(boardlikeinfosql,[pushdata[i].p_boardLike_id]);
 
           r.id = boardlikeinfodata[0].bl_user_id;
 
-          let boardlikeusersql = "SELECT nickname, img_url FROM user WHERE id = ?;"
+          let boardlikeusersql =
+          `
+          SELECT nickname, img_url
+          FROM user
+          WHERE id = ?
+          `
           let boardlikeuserdata = await db.queryParamCnt_Arr(boardlikeusersql,[r.id]);
 
           r.img_url = boardlikeuserdata[0].img_url;
@@ -108,12 +149,21 @@ router.get('/', async(req, res, next) => {
         }// 보드 댓글 좋아요 관련
         else if(pushdata[i].p_boardCommentLike_id != null){
 
-          let boardcommentlikeinfosql = "SELECT bcl_user_id, time FROM boardCommentLike WHERE id = ?;"
+          let boardcommentlikeinfosql =
+          `
+          SELECT bcl_user_id, time
+          FROM boardCommentLike
+          WHERE id = ?
+          `
           let boardcommentlikeinfodata = await db.queryParamCnt_Arr(boardcommentlikeinfosql,[pushdata[i].p_boardCommentLike_id]);
 
           r.id = boardcommentlikeinfodata[0].bcl_user_id;
 
-          let boardcommentlikeusersql = "SELECT nickname, img_url FROM user WHERE id = ?;"
+          let boardcommentlikeusersql =
+          `SELECT nickname, img_url
+          FROM user
+          WHERE id = ?
+          `
           let boardcommentlikeuserdata = await db.queryParamCnt_Arr(boardcommentlikeusersql,[r.id]);
 
           r.img_url = boardcommentlikeuserdata[0].img_url;
@@ -124,12 +174,22 @@ router.get('/', async(req, res, next) => {
         }// 컨텐츠 댓글 좋아요 관련
         else if(pushdata[i].p_contentsCommentLike_id != null){
 
-          let contentscommentlikeinfosql = "SELECT ccl_user_id, time FROM contentsCommentLike WHERE id = ?;"
+          let contentscommentlikeinfosql =
+          `
+          SELECT ccl_user_id, time
+          FROM contentsCommentLike
+          WHERE id = ?
+          `
           let contentscommentlikeinfodata = await db.queryParamCnt_Arr(contentscommentlikeinfosql,[pushdata[i].p_contentsCommentLike_id]);
 
           r.id = contentscommentlikeinfodata[0].ccl_user_id;
 
-          let contentscommentlikeusersql = "SELECT nickname, img_url FROM user WHERE id = ?;"
+          let contentscommentlikeusersql =
+          `
+          SELECT nickname, img_url
+          FROM user
+          WHERE id = ?
+          `
           let contentscommentlikeuserdata = await db.queryParamCnt_Arr(contentscommentlikeusersql,[r.id]);
 
           r.img_url = contentscommentlikeuserdata[0].img_url;
@@ -148,25 +208,26 @@ router.get('/', async(req, res, next) => {
       }
     }
 
-    let updatepushsql = "UPDATE push SET ischecked = true WHERE p_user_id = ?;"
+    let updatepushsql =
+    `
+    UPDATE push
+    SET ischecked = true
+    WHERE p_user_id = ?
+    `
     let updatepushdata = await db.queryParamCnt_Arr(updatepushsql,[u_id]);
 
-    if (updatepushdata.affectedRows < 1) {
-      res.status(204).json({
-        message : "Update Error"
-      });
-      return;
-    } else {
-      res.status(200).send({
-        message : "Successfully Get Push List",
-        data : result
-      });
-    }
+
+    res.status(200).send({
+      message : "Success",
+      data : result
+    });
+
 
   } catch(error) {
-    res.status(500).send({
-      message : "Internal Server Error"
-    });
+    return next("500");
+    // res.status(500).send({
+    //   message : "Internal Server Error"
+    // });
   }
 
 });

@@ -15,24 +15,30 @@ router.get('/', async(req, res, next) => {
   const chkToken = jwt.verify(req.headers.authorization);
 
   if(chkToken == -1) {
-      res.status(401).send({
-          message : "Access Denied"
-      });
-
-      return;
+    return next("401");
+      // res.status(401).send({
+      //     message : "Access Denied"
+      // });
+      //
+      // return;
   }
 
   try{
     let u_id = chkToken.id;
-    let selectSql = "SELECT coin FROM user WHERE id = ?;"
+    let selectSql =
+    `
+    SELECT coin
+    FROM user
+    WHERE id = ?
+    `
     let selectQuery = await db.queryParamCnt_Arr(selectSql,[u_id]);
 
     if(selectQuery.length == 0){
-
-      res.status(300).send({
-          message: "No Data"
-        });
-        return;
+      return next("1204");
+      // res.status(300).send({
+      //     message: "No Data"
+      //   });
+      //   return;
 
     }else{
 
@@ -40,15 +46,17 @@ router.get('/', async(req, res, next) => {
       data.user_coin = selectQuery[0].coin;
 
       res.status(200).send({
-          message : "Select Data Success",
+          message : "Success",
           data : data
         });
     }
 
   } catch(error) {
-        res.status(500).send({
-          message : "Internal Server Error"
-        });
+    console.log(error);
+    return next("500");
+        // res.status(500).send({
+        //   message : "Internal Server Error"
+        // });
   }
 
 });

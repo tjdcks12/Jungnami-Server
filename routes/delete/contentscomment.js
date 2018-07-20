@@ -15,44 +15,51 @@ router.delete('/:contentscommentid', async(req, res, next) => {
   const chkToken = jwt.verify(req.headers.authorization);
 
   if(chkToken == -1) {
-      res.status(401).send({
-          message : "Access Denied"
-      });
-      return;
+    return next("401");
+      // res.status(401).send({
+      //     message : "Access Denied"
+      // });
+      // return;
   }
 
   let userid = chkToken.id;
 
   try{
     // contents comment 정보 가져오기
-    let select_comment = 'SELECT * FROM contentsComment WHERE id = ?';
+    let select_comment =
+    `
+    SELECT *
+    FROM contentsComment
+    WHERE id = ?
+    `;
     let result_comment = await db.queryParamCnt_Arr(select_comment,[req.params.contentscommentid]);
 
     // id 비교
     if(userid == result_comment[0].cc_user_id){
-      let delete_comment = 'DELETE FROM contentsComment WHERE id = ?';
+      let delete_comment =
+      `
+      DELETE
+      FROM contentsComment
+      WHERE id = ?
+      `;
       let result_delete = await db.queryParamCnt_Arr(delete_comment,[req.params.contentscommentid]);
-      if(result_delete <= 0){
-        res.status(204).send({
-          "message" : "No data"
-        });
-        return;
-      }
 
       res.status(200).send({
-        "message" : "Successfully cancel board like"
+        "message" : "Successful"
       });
     }
     else{
-      res.status(401).send({
-        "message" : "Different User"
-      });
+      return next("401");
+      // res.status(401).send({
+      //   "message" : "Different User"
+      // });
     }
   }catch(err){
 		console.log(err);
-		res.status(500).send({
-			"message" : "syntax error"
-		});
+    return next("500");
+		// res.status(500).send({
+		// 	"message" : "syntax error"
+		// });
 	}
 
 });

@@ -32,21 +32,41 @@ router.post('/', async(req, res) => {
 			// 	message : "please input board recomment_id and user id"
 			// });
 		}else{
-			let postrecommentlikeQuery = 'INSERT INTO myjungnami.boardRecommentLike(id, brl_boardRecomment_id, brl_user_id) VALUES (null, ?, ?)';
+			let postrecommentlikeQuery =
+			`
+			INSERT INTO
+			myjungnami.boardRecommentLike(id, brl_boardRecomment_id, brl_user_id)
+			VALUES (null, ?, ?)
+			`;
 			let data = await db.queryParamCnt_Arr(postrecommentlikeQuery, [req.body.recomment_id, userid]);
 
 			// 게시글 작성자 데이터 가져오기
-			let select_find = 'SELECT * FROM boardRecomment WHERE id = ?'
+			let select_find =
+			`
+			SELECT *
+			FROM boardRecomment
+			WHERE id = ?
+			`
 			let result_find = await db.queryParamCnt_Arr(select_find, [req.body.recomment_id] );
 
 			// 유저이름 가져오기
-			let select_user = 'SELECT * FROM user WHERE id = ?'
+			let select_user =
+			`
+			SELECT *
+			FROM user
+			WHERE id = ?
+			`
 			let result_user = await db.queryParamCnt_Arr(select_user, [userid] );
 
 			var pushmsg = (result_user[0].nickname += '님이 회원님의 댓글을 좋아합니다.');
 
 			// client fcmToken 가져오기
-			let select_fcmtoken = 'SELECT fcmToken FROM user WHERE id = ?';
+			let select_fcmtoken =
+			`
+			SELECT fcmToken
+			FROM user
+			WHERE id = ?
+			`;
 			let result_fcmtoken = await db.queryParamCnt_Arr(select_fcmtoken, [result_find[0].br_user_id]);
 
 			if(result_fcmtoken[0].fcmToken != null){

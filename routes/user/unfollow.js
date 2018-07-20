@@ -13,30 +13,36 @@ const jwt = require('../../module/jwt.js');
 router.delete('/:f_id', async(req, res, next) => {
 
   try {
-
     const chkToken = jwt.verify(req.headers.authorization);
 
     if(chkToken == -1) {
-        res.status(401).send({
-            message : "Access Denied"
-        });
-        return;
+      return next("401");
+        // res.status(401).send({
+        //     message : "Access Denied"
+        // });
+        // return;
     }
 
     let follower_id = chkToken.id;
     let following_id = req.params.f_id;
 
-    let insertSql = "DELETE FROM follow WHERE f_follower_id = ? AND f_following_id = ?;"
+    let insertSql =
+    `
+    DELETE
+    FROM follow
+    WHERE f_follower_id = ? AND f_following_id = ?
+    `
     let insertQuery = await db.queryParamCnt_Arr(insertSql,[follower_id, following_id]);
 
     res.status(200).send({
-      message : "Delete Data Success"
+      message : "Success"
     });
 
   } catch(error) {
-    res.status(500).send({
-        message : "Internal Server Error"
-      });
+    return next("500");
+    // res.status(500).send({
+    //     message : "Internal Server Error"
+    //   });
   }
 
 });

@@ -9,7 +9,7 @@ const jwt = require('../../module/jwt.js');
 const errors = require('../../errors');
 
 router.get('/', async(req, res, next) => {
-  return next(404);
+  return next("1204");
 });
 
 module.exports = router;

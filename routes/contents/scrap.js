@@ -16,35 +16,34 @@ router.post('/',  async (req, res) => {
     const chkToken = jwt.verify(req.headers.authorization);
 
     if(chkToken == -1) {
-        res.status(401).send({
-            message : "Access Denied"
-        });
-        return;
+      return next("401");
+        // res.status(401).send({
+        //     message : "Access Denied"
+        // });
+        // return;
     }
 
     let userid = chkToken.id;
 
-    let insert_scrap = 'INSERT INTO scrap (s_contents_id, s_user_id) VALUES (?,?)';
+    let insert_scrap =
+    `
+    INSERT INTO
+    scrap (s_contents_id, s_user_id)
+    VALUES (?,?)
+    `
     let result_scrap = await db.queryParamCnt_Arr(insert_scrap,[req.body.contentsid, userid]);
 
-    if(result_scrap == undefined){
-      res.status(204).send({
-  			"message" : "fail insert"
-  	 	});
-
-      return;
-    }
-
 		res.status(201).send({
-			"message" : "Successfully scrap"
+			"message" : "Success"
 	 	});
 
 
   }catch(err){
   	console.log(err);
-  	res.status(500).send({
-  		"message" : "Internal Server Error"
-  	});
+    return next("500");
+  	// res.status(500).send({
+  	// 	"message" : "Internal Server Error"
+  	// });
   }
 });
 

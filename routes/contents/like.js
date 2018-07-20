@@ -28,7 +28,12 @@ router.post('/', async(req, res) => {
 			// 	message : "please input contents' id and user id"
 			// });
 		}else{
-			let postcontentslikeQuery = 'INSERT INTO myjungnami.contentsLike(id, cl_contents_id, cl_user_id) VALUES (null, ?, ?)';
+			let postcontentslikeQuery =
+			`
+			INSERT INTO
+			myjungnami.contentsLike(id, cl_contents_id, cl_user_id)
+			VALUES (null, ?, ?)
+			`;
 			let data = await db.queryParamCnt_Arr(postcontentslikeQuery, [req.body.contents_id, userid]);
 
 			res.status(201).send({

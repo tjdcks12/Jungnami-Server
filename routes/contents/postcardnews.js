@@ -18,45 +18,36 @@ router.post('/', upload.array('cardnews'), async(req, res) => {
 
   try{
 
-    let orderSql = "SELECT count(*) as ord FROM contentsImg WHERE ci_contentsid = ?;"
+    let orderSql =
+    `
+    SELECT count(*) as ord
+    FROM contentsImg
+    WHERE ci_contentsid = ?;
+    `
     let orderQuery = await db.queryParamCnt_Arr(orderSql, [c_id]);
 
     let order = orderQuery[0].ord; // 지금까지 order 장 올렸다!
 
-    if(myprofileQuery.length == 0){
-      console.log("query not ok");
-
-      res.status(300).send({
-            message: "No Data"
-      });
-      return;
-    }
-
     // contentImg table에 cardnews 저장
-    let insertcardnewsSql = "INSERT INTO contentsImg (ci_contents_id, order, img_url) VALUES (?, ?, ?);";
+    let insertcardnewsSql =
+    `
+    INSERT INTO
+    contentsImg (ci_contents_id, order, img_url)
+    VALUES (?, ?, ?);
+    `;
     let insertcardnewsQuery = await db.queryParamCnt_Arr(insertcardnewsSql, [c_id, order + 1, cardnews]);
 
-    if(insertcardnewsQuery == undefined){
-      res.status(204).send({
-        "message" : "Insert cardnews error"
-      });
-
-      return;
-    }
-
     res.status(201).send({
-      message : "Successfully posting contents"
+      message : "Success"
     });
-      
+
   } catch (error) {
-    res.status(500).send({
-        message : "Internal Server Error"
-      });
+    return next("500");
+    // res.status(500).send({
+    //     message : "Internal Server Error"
+    //   });
   }
-
-
 });
 
 
 module.exports = router;
-

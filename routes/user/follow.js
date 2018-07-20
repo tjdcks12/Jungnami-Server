@@ -19,34 +19,26 @@ router.post('/', async(req, res, next) => {
     const chkToken = jwt.verify(req.headers.authorization);
 
     if(chkToken == -1) {
-        res.status(401).send({
-            message : "Access Denied"
-        });
-        return;
+      return next("401");
+        // res.status(401).send({
+        //     message : "Access Denied"
+        // });
+        // return;
     }
 
     let follower_id = chkToken.id;
     let following_id = req.body.following_id;
 
-    let insertfollowSql = "INSERT INTO follow (f_follower_id, f_following_id) VALUES (?, ?);"
+    let insertfollowSql = `
+    INSERT INTO
+    follow (f_follower_id, f_following_id)
+    VALUES (?, ?)
+    `
     let insertfollowQuery = await db.queryParamCnt_Arr(insertfollowSql,[follower_id, following_id]);
-    if(insertfollowQuery == undefined){
-      res.status(204).send({
-        "message" : "fail insert"
-      });
-
-      return;
-    }
 
     let pushSql = "INSERT INTO push (p_follower_id, p_user_id) VALUES (?, ?);"
     let pushQuery = await db.queryParamCnt_Arr(pushSql,[follower_id, following_id]);
-    if(pushQuery == undefined){
-      res.status(204).send({
-        "message" : "fail insert"
-      });
 
-      return;
-    }
 
     let selectfollowerSql = "SELECT nickname FROM user WHERE id = ?;"
     let selectfollowerQuery = await db.queryParamCnt_Arr(selectfollowerSql,[follower_id]);
@@ -58,18 +50,6 @@ router.post('/', async(req, res, next) => {
     // client fcmToken 가져오기
     let select_fcmtoken = 'SELECT fcmToken FROM user WHERE id = ?';
     let result_fcmtoken = await db.queryParamCnt_Arr(select_fcmtoken, [following_id]);
-    if(result_fcmtoken.length == 0){
-      console.log("query not ok");
-
-      res.status(300).send({
-            message: "No Data"
-      });
-      return;
-
-    }else{
-      console.log("query ok");
-
-    }
 
     if(result_fcmtoken[0].fcmToken != null){
       var push_data = await get_pushdata.get_pushdata(result_fcmtoken[0].fcmToken, p_text);
@@ -93,14 +73,15 @@ router.post('/', async(req, res, next) => {
     // 푸쉬알람 끝
 
     res.status(201).send({
-      message : "Insert Data Success"
+      message : "Success"
     });
 
   } catch(error) {
     console.log(error);
-    res.status(500).send({
-        message : "Internal Server Error"
-      });
+    return next("500");
+    // res.status(500).send({
+    //     message : "Internal Server Error"
+    //   });
   }
 
 });

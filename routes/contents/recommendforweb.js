@@ -20,11 +20,21 @@ router.get('/', async (req, res) => {
 
   try{
     // 푸쉬알람 카운트 가져오기
-    let pushcntSql = "SELECT count(*) as pushcnt FROM push WHERE p_user_id = ? AND ischecked = false"
+    let pushcntSql =
+    `
+    SELECT count(*) as pushcnt
+    FROM push
+    WHERE p_user_id = ? AND ischecked = false
+    `
     let pushcntQuery = await db.queryParamCnt_Arr(pushcntSql,[userid]);
 
     // 추천 컨텐츠 다가져오기
-    var select_contents = 'SELECT * FROM contents ORDER BY score DESC LIMIT 20';
+    var select_contents =
+    `SELECT *
+    FROM contents
+    ORDER BY score DESC
+    LIMIT 20
+    `
     var result_contents = await db.queryParamCnt_Arr(select_contents);
 
     var recommend = [];
@@ -49,7 +59,14 @@ router.get('/', async (req, res) => {
     }
 
     // TMI 가져오기
-    select_contents = "SELECT * FROM contents WHERE category = 'TMI' ORDER BY writingtime DESC LIMIT 20";
+    select_contents =
+    `
+    SELECT *
+    FROM contents
+    WHERE category = 'TMI'
+    ORDER BY writingtime DESC
+    LIMIT 20
+    `
     result_contents = await db.queryParamCnt_Arr(select_contents);
 
     var tmi = [];
@@ -74,7 +91,14 @@ router.get('/', async (req, res) => {
     }
 
     // 스토리 가져오기
-    select_contents = "SELECT * FROM contents WHERE category = '스토리' ORDER BY writingtime DESC LIMIT 20";
+    select_contents =
+    `
+    SELECT *
+    FROM contents
+    WHERE category = '스토리'
+    ORDER BY writingtime DESC
+    LIMIT 20
+    `
     result_contents = await db.queryParamCnt_Arr(select_contents);
 
     var story = [];
@@ -100,7 +124,7 @@ router.get('/', async (req, res) => {
 
 
     res.status(200).send({
-      "message" : "Successfully get posting view",
+      "message" : "Success",
       "data" : {
         recommend : recommend,
         tmi : tmi,
@@ -111,9 +135,10 @@ router.get('/', async (req, res) => {
 
   }catch(err){
     console.log(err);
-    res.status(500).send({
-      "message" : "Server error"
-    });
+    return next("500");
+    // res.status(500).send({
+    //   "message" : "Server error"
+    // });
   }
 });
 

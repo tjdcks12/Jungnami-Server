@@ -32,11 +32,23 @@ router.get('/:keyword', async(req, res, next) => {
   let searcher = new hangul.Searcher(searchWord);
 
   try{
-    let select_content = "SELECT board.id as id, user.id as user_id, nickname, user.img_url as user_img_url, content, writingtime, board.img_url as img_url FROM board JOIN user ON board.b_user_id = user.id ORDER BY writingtime DESC";
+    let select_content =
+    `
+    SELECT board.id as id, user.id as user_id, nickname, user.img_url as user_img_url, content, writingtime, board.img_url as img_url
+    FROM board
+    JOIN user
+    ON board.b_user_id = user.id
+    ORDER BY writingtime DESC
+    `;
     let result_content = await db.queryParamCnt_Arr(select_content);
 
     // 좋아요한 글 가져오기
-    var select_check = 'SELECT bl_board_id FROM boardLike WHERE bl_user_id = ?'
+    var select_check =
+    `
+    SELECT bl_board_id
+    FROM boardLike
+    WHERE bl_user_id = ?
+    `
     var result_check = await db.queryParamCnt_Arr(select_check, [userid]);
 
     // return할 result
@@ -71,12 +83,22 @@ router.get('/:keyword', async(req, res, next) => {
         data.writingtime = checktime.checktime(writingtime);
 
         // 좋아요 수
-        let select_like = "SELECT * FROM boardLike WHERE bl_board_id = ?";
+        let select_like =
+        `
+        SELECT *
+        FROM boardLike
+        WHERE bl_board_id = ?
+        `;
         let result_like = await db.queryParamCnt_Arr(select_like, result_content[i].id);
         data.likecnt = result_like.length;
 
         // 댓글 수
-        let select_comment = "SELECT * FROM boardComment WHERE bc_board_id = ?";
+        let select_comment =
+        `
+        SELECT *
+        FROM boardComment
+        WHERE bc_board_id = ?
+        `;
         let result_comment = await db.queryParamCnt_Arr(select_comment, result_content[i].id);
         data.commentcnt = result_comment.length;
 
@@ -85,10 +107,11 @@ router.get('/:keyword', async(req, res, next) => {
     }
 
     if(result.length == 0){
-      res.status(300).json({
-        message : "No data"
-      });
-      return;
+      return next("1204");
+      // res.status(300).json({
+      //   message : "No data"
+      // });
+      // return;
     }
 
     res.status(200).json({
@@ -98,9 +121,10 @@ router.get('/:keyword', async(req, res, next) => {
 
   }catch(error) {
     console.log(error);
-    res.status(500).send({
-      message : "Internal Server Error"
-    });
+    return next("500");
+    // res.status(500).send({
+    //   message : "Internal Server Error"
+    // });
   }
 });
 

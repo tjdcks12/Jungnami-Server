@@ -13,35 +13,35 @@ router.post('/', async(req, res, next) => {
   try {
     const chkToken = jwt.verify(req.headers.authorization);
     if(chkToken == -1) {
-        res.status(401).send({
-            message : "Access Denied"
-        });
-
-        return;
+      return next("401");
+        // res.status(401).send({
+        //     message : "Access Denied"
+        // });
+        //
+        // return;
     }
 
     let id = chkToken.id;
     let coin = req.body.coin;
 
     // 유저 코인 추가하기
-    let select_addcoin = "UPDATE user SET coin = coin + ? WHERE id = ?";
+    let select_addcoin =
+    `
+    UPDATE user
+    SET coin = coin + ?
+    WHERE id = ?
+    `;
     let result_addcoin = await db.queryParamCnt_Arr(select_addcoin,[coin, id]);
-    if(result_addcoin <= 0){
-      res.status(204).send({
-        "message" : "No data"
-      });
-
-      return;
-    }
 
     res.status(201).send({
-      message : "Update value Success"
+      message : "Success"
     });
 
   } catch(error) {
-    res.status(500).send({
-        message : "Internal Server Error"
-      });
+    return next("500");
+    // res.status(500).send({
+    //     message : "Internal Server Error"
+    //   });
   }
 });
 

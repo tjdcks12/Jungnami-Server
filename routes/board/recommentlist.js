@@ -28,13 +28,27 @@ router.get('/:comment_id', async(req, res) => {
 		}else{
 			// 유저 대댓글 좋아요 여부
 			var islike = [];
-			let select_islike = 'SELECT brl_boardRecomment_id FROM boardRecommentLike WHERE brl_user_id = ?';
+			let select_islike =
+			`
+			SELECT brl_boardRecomment_id
+			FROM boardRecommentLike
+			WHERE brl_user_id = ?
+			`;
 			let result_islike = await db.queryParamCnt_Arr(select_islike, [userid])
 			for(var i=0; i<result_islike.length; i++){
 				islike[i] = result_islike[i].brl_boardRecomment_id;
 			}
 
-			let getrecommentlistQuery = 'select * from boardRecomment left join (SELECT brl_boardRecomment_id, count(*) as cnt from boardRecommentLike GROUP BY brl_boardRecomment_id) as brl on boardRecomment.id = brl.brl_boardRecomment_id  where br_boardComment_id = ? order by brl.cnt desc, writingtime desc';
+			let getrecommentlistQuery =
+			`
+			select *
+			from boardRecomment
+			left join (SELECT brl_boardRecomment_id, count(*) as cnt
+			from boardRecommentLike GROUP BY brl_boardRecomment_id) as brl
+			on boardRecomment.id = brl.brl_boardRecomment_id
+			where br_boardComment_id = ?
+			order by brl.cnt desc, writingtime desc
+			`;
 			let recommenttableInfo = await db.queryParamCnt_Arr(getrecommentlistQuery, [req.params.comment_id]);
 
 			let resultArry = [];
@@ -49,11 +63,21 @@ router.get('/:comment_id', async(req, res) => {
 				let timeset = checktime.checktime(recommenttableInfo[i].writingtime);
 
 				//유저닉네임이랑 이미지 사진
-				let getuserinfoQuery = "select nickname, img_url from myjungnami.user where id = ?";
+				let getuserinfoQuery =
+				`
+				select nickname, img_url
+				from myjungnami.user
+				where id = ?
+				`;
 				userinfoObj = await db.queryParamCnt_Arr(getuserinfoQuery, [recommenttableInfo[i].br_user_id]);
 
 				//좋아요 수
-				let getlikecntQuery = "select count(*) as recommentlikeCnt from myjungnami.boardRecommentLike where brl_boardRecomment_id = ?";
+				let getlikecntQuery =
+				`
+				select count(*) as recommentlikeCnt
+				from myjungnami.boardRecommentLike
+				where brl_boardRecomment_id = ?
+				`;
 				recommentlikeCnt = await db.queryParamCnt_Arr(getlikecntQuery, [recommenttableInfo[i].id]);
 
 				subresultObj.content = recommenttableInfo[i].content;
@@ -75,7 +99,7 @@ router.get('/:comment_id', async(req, res) => {
 			}
 
 			res.status(200).send({
-				"message" : "Successfully get board recomment",
+				"message" : "Success",
 				"data" : resultArry
 			});
 		}

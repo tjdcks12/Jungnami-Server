@@ -22,11 +22,12 @@ router.post('/', async(req, res, next) => {
   // 카카오톡 access token
   let accessToken = req.body.accessToken;
   if(!accessToken){
-    res.status(401).send({
-        message : "Access Denied"
-    });
-
-    return;
+    return next("401");
+    // res.status(401).send({
+    //     message : "Access Denied"
+    // });
+    //
+    // return;
   }
   // push 알람 클라이언트 토큰
   let fcmToken = req.body.fcmToken;
@@ -89,7 +90,7 @@ router.post('/', async(req, res, next) => {
             id : id,
             token : token
           },
-          message : "success"
+          message : "Success"
         });
       } else { // 토큰이 만료된 경우 재발급
         console.log("기간이 만료되었습니다. 재발급 합니다");
@@ -99,7 +100,7 @@ router.post('/', async(req, res, next) => {
             id : id,
             token : token
           },
-          message : "success"
+          message : "Success"
         })
       }
     } else{ // 토큰이 없는 경우
@@ -116,7 +117,7 @@ router.post('/', async(req, res, next) => {
             id : id,
             token : token
           },
-          message : "success"
+          message : "Success"
         });
       } else{ // 다른 기기이고 회원이 아닐때
         console.log("비회원입니다.")
@@ -130,7 +131,7 @@ router.post('/', async(req, res, next) => {
             id : id,
             token : token
           },
-          message : "success"
+          message : "Success"
         })
       }
     }

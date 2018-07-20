@@ -26,42 +26,46 @@ router.get('/:f_id', async(req, res, next) => {
 
     let follower_id = req.params.f_id;
 
-    let followinglistSql = "SELECT f_following_id, nickname, img_url FROM follow, user "
-        followinglistSql += "WHERE follow.f_following_id = user.id AND f_follower_id = ?;"
+    let followinglistSql =
+    `
+    SELECT f_following_id, nickname, img_url
+    FROM follow, user
+    WHERE follow.f_following_id = user.id AND f_follower_id = ?
+    `
 
     let followinglistQuery = await db.queryParamCnt_Arr(followinglistSql,[follower_id]);
 
     if(followinglistQuery.length == 0){
-      console.log("query not ok");
-
-      res.status(300).send({
-            message: "No Data"
-      });
-      return;
-
-    }else{
-      console.log("query ok");
-
+      return next("1204");
+      // console.log("query not ok");
+      //
+      // res.status(300).send({
+      //       message: "No Data"
+      // });
+      // return;
     }
 
 
-    let followingSelectSql = "SELECT f_following_id FROM follow WHERE f_follower_id = ?"
+    let followingSelectSql =
+    `
+    SELECT f_following_id
+    FROM follow
+    WHERE f_follower_id = ?
+    `
     let followingSelectQuery = await db.queryParamCnt_Arr(followingSelectSql,[u_id]);
 
     var result = []; // following_id, following_nickname, following_img_url, isMyFollowing
 
 
     if(u_id != '' && followingSelectQuery == undefined) { // 로그인이 되어있는데 팔로우정보도 못가져오면
-      console.log("query not ok");
-
-      res.status(300).send({
-            message: "No Data"
-      });
-      return;
-
+      return next("1204");
+      // console.log("query not ok");
+      //
+      // res.status(300).send({
+      //       message: "No Data"
+      // });
+      // return;
     }else{
-      console.log("query ok");
-
       for (var i=0; i<followinglistQuery.length; i++) {
         var r = {};
 
@@ -96,14 +100,15 @@ router.get('/:f_id', async(req, res, next) => {
     }
 
     res.status(200).send({
-        message : "Select Data Success",
+        message : "Success",
         data : result
       });
 
   } catch(error) {
-    res.status(500).send({
-        message : "Internal Server Error"
-      });
+    return next("500");
+    // res.status(500).send({
+    //     message : "Internal Server Error"
+    //   });
   }
 });
 

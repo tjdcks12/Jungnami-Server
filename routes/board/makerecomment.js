@@ -31,20 +31,40 @@ router.post('/', async(req, res) => {
 			// 	message : "please input board comment id & user id & content"
 			// });
 		}else{
-			let postmakerecommentQuery = 'INSERT INTO myjungnami.boardRecomment(id, br_boardComment_id, br_user_id, content) VALUES (null, ?, ?, ?)';
+			let postmakerecommentQuery =
+			`
+			INSERT INTO
+			myjungnami.boardRecomment(id, br_boardComment_id, br_user_id, content)
+			VALUES (null, ?, ?, ?)
+			`;
 			let data = await db.queryParamCnt_Arr(postmakerecommentQuery, [req.body.comment_id, userid, req.body.content]);
 
 			// 게시글 작성자 데이터 가져오기
-			let select_find = 'SELECT * FROM boardComment WHERE id = ?'
+			let select_find =
+			`
+			SELECT *
+			FROM boardComment
+			WHERE id = ?
+			`
 			let result_find = await db.queryParamCnt_Arr(select_find, [req.body.comment_id] );
 
 			// 유저이름 가져오기
-			let select_user = 'SELECT * FROM user WHERE id = ?'
+			let select_user =
+			`
+			SELECT *
+			FROM user
+			WHERE id = ?
+			`
 			let result_user = await db.queryParamCnt_Arr(select_user, [userid] );
 
 			var pushmsg = (result_user[0].nickname  + '님이 회원님의 댓글에 답글을 남겼습니다.');
 			// client fcmToken 가져오기
-			let select_fcmtoken = 'SELECT fcmToken FROM user WHERE id = ?';
+			let select_fcmtoken =
+			`
+			SELECT fcmToken
+			FROM user
+			WHERE id = ?
+			`;
 			let result_fcmtoken = await db.queryParamCnt_Arr(select_fcmtoken, [result_find[0].bc_user_id]);
 
 			if(result_fcmtoken[0].fcmToken != null){
