@@ -7,7 +7,7 @@
   "1401" : {
     "status" : 401,
     "description" : "로그인이 필요한 서비스입니다.",
-    "message" : "Acess Denied"
+    "message" : "Access Denied"
   },
   "1402" : {
     "status" : 401,
