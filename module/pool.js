@@ -1,10 +1,6 @@
-
 const async = require('async');
 const pool = require('../config/dbPool.js');
 
-/*
- Modularize DB Connection
-*/
 module.exports = {
   queryParamCnt_None : async (...args) => {
     const query = args[0];
@@ -40,5 +36,39 @@ module.exports = {
       pool.releaseConnection(connection);
       return result;
     }
+  },
+  Transaction : async (...args) => {
+    try{
+      var connection = await pool.getConnection();
+      await connection.beginTransaction();
+
+      const result = await args[0](connection, ...args);
+    }
+    catch(err){
+      await connection.rollback();
+      pool.releaseConnection(connection);
+
+      console.log("mysql error! err log =>" + err);
+      next(err);
+    }
+    finally {
+      await connection.commit();
+      pool.releaseConnection(connection);
+      return result;
+    }
   }
 };
+
+
+/* Transaction 사용 예시
+const db = require('../module/pool.js');
+
+db.Transaction( async (connection) => {
+  await connection.query(query1, [data]);
+  await connection.query(query2, [data]);
+})
+*/
+
+/*
+트랜잭션 추가 해야할 사항 check
+*/

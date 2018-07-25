@@ -2,7 +2,6 @@ const errors = require('./errors');
 const moment = require('moment');
 
 module.exports = (app) => {
-
   app.use((err, req, res, next) => {
     if(err == 404){
       console.log("test")
