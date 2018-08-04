@@ -14,11 +14,6 @@ router.post('/', async(req, res, next) => {
     const chkToken = jwt.verify(req.headers.authorization);
     if(chkToken == -1) {
       return next("401");
-        // res.status(401).send({
-        //     message : "Access Denied"
-        // });
-        //
-        // return;
     }
 
     let id = chkToken.id;
@@ -32,6 +27,9 @@ router.post('/', async(req, res, next) => {
     WHERE id = ?
     `;
     let result_addcoin = await db.queryParamCnt_Arr(select_addcoin,[coin, id]);
+    if(!result_addcoin){
+      return next("500");
+    }
 
     res.status(201).send({
       message : "Success"
@@ -39,9 +37,6 @@ router.post('/', async(req, res, next) => {
 
   } catch(error) {
     return next("500");
-    // res.status(500).send({
-    //     message : "Internal Server Error"
-    //   });
   }
 });
 

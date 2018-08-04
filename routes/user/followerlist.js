@@ -11,9 +11,7 @@ const jwt = require('../../module/jwt.js');
 /*  팔로워 리스트 보여주기  */
 /*  /user/followerlist/:f_id  */
 router.get('/:f_id', async(req, res, next) => {
-
   try {
-
     const chkToken = jwt.verify(req.headers.authorization);
 
     let u_id;
@@ -37,12 +35,6 @@ router.get('/:f_id', async(req, res, next) => {
 
     if(followerlistQuery.length == 0){
       return next("1204");
-      // console.log("query not ok");
-      //
-      // res.status(300).send({
-      //       message: "No Data"
-      // });
-      // return;
     }
 
 
@@ -60,13 +52,6 @@ router.get('/:f_id', async(req, res, next) => {
 
     if(u_id != '' && followingSelectQuery == undefined) { // 로그인이 되어있는데 팔로우정보도 못가져오면
       return next("1204");
-      // console.log("query not ok");
-      //
-      // res.status(300).send({
-      //       message: "No Data"
-      // });
-      // return;
-
     }else{
       for (var i=0; i<followerlistQuery.length; i++) {
         var r = {};
@@ -103,9 +88,6 @@ router.get('/:f_id', async(req, res, next) => {
 
   } catch(error) {
     return next("500");
-    // res.status(500).send({
-    //     message : "Internal Server Error"
-    //   });
   }
 });
 

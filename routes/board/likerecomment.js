@@ -16,38 +16,45 @@ router.post('/', async(req, res) => {
 
 	if(chkToken == -1) {
 		return next("401");
-		// res.status(401).send({
-		// 	message : "Access Denied"
-		// });
-		//
-		// return;
 	}
 
 	var userid = chkToken.id;
 
 	try{
-		if(req.body.recomment_id == undefined){
-			return next("1403");
-			// res.status(403).send({
-			// 	message : "please input board recomment_id and user id"
-			// });
-		}else{
-			let postrecommentlikeQuery =
+		let postrecommentlikeQuery =
+		`
+		INSERT INTO
+		myjungnami.boardRecommentLike(id, brl_boardRecomment_id, brl_user_id)
+		VALUES (null, ?, ?)
+		`;
+		let data = await db.queryParamCnt_Arr(postrecommentlikeQuery, [req.body.recomment_id, userid]);
+		if(!data){
+			return next("500");
+		}
+
+		// 게시글 작성자 데이터 가져오기
+		let select_find =
+		`
+		SELECT *
+		FROM boardRecomment
+		WHERE id = ?
+		`
+		let result_find = await db.queryParamCnt_Arr(select_find, [req.body.recomment_id] );
+
+		if(userid != result_find[0].br_user_id){
+			// push table에 insert
+			brl_id = data.insertId;
+
+			let pushSql =
 			`
 			INSERT INTO
-			myjungnami.boardRecommentLike(id, brl_boardRecomment_id, brl_user_id)
-			VALUES (null, ?, ?)
-			`;
-			let data = await db.queryParamCnt_Arr(postrecommentlikeQuery, [req.body.recomment_id, userid]);
-
-			// 게시글 작성자 데이터 가져오기
-			let select_find =
+			push (p_user_id, p_boardRecommentLike_id)
+			VALUES (?, ?);
 			`
-			SELECT *
-			FROM boardRecomment
-			WHERE id = ?
-			`
-			let result_find = await db.queryParamCnt_Arr(select_find, [req.body.recomment_id] );
+			let pushQuery = await db.queryParamCnt_Arr(pushSql,[result_find[0].br_user_id, brl_id]);
+			if(!pushQuery){
+				return next("500");
+			}
 
 			// 유저이름 가져오기
 			let select_user =
@@ -57,7 +64,6 @@ router.post('/', async(req, res) => {
 			WHERE id = ?
 			`
 			let result_user = await db.queryParamCnt_Arr(select_user, [userid] );
-
 			var pushmsg = (result_user[0].nickname += '님이 회원님의 댓글을 좋아합니다.');
 
 			// client fcmToken 가져오기
@@ -87,13 +93,11 @@ router.post('/', async(req, res) => {
 				console.log("No fcmToken");
 			}
 			// 푸쉬알람 끝
-
-			res.status(201).send({
-				"message" : "Success"
-			});
 		}
-
-
+		
+		res.status(201).send({
+			"message" : "Success"
+		});
 	}catch(err){
 		console.log(err);
 		return next("500");

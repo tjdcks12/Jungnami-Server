@@ -29,9 +29,6 @@ router.get('/', async(req, res, next) => {
     });
   } catch(error) {
     return next("500");
-    // res.status(500).send({
-    //   message : "Internal Server Error"
-    // });
   }
 });
 

@@ -21,10 +21,10 @@ router.get('/:f_id/:keyword', async(req, res, next) => {
     const chkToken = jwt.verify(req.headers.authorization);
 
     if(chkToken == -1) {
-        res.status(401).send({
-            message : "Access Denied"
-        });
-        return;
+      res.status(401).send({
+        message : "Access Denied"
+      });
+      return;
     }
 
     let u_id = chkToken.id;
@@ -44,10 +44,6 @@ router.get('/:f_id/:keyword', async(req, res, next) => {
 
     if(followinglistQuery.length == 0){
       return next("1204");
-      // res.status(300).send({
-      //   message: "No Data"
-      // });
-      // return;
     }
 
     let followingSelectSql =
@@ -63,10 +59,6 @@ router.get('/:f_id/:keyword', async(req, res, next) => {
 
     if(followingSelectQuery.length == 0) {
       return next("1204");
-      // res.status(300).send({
-      //   message: "No Data"
-      // });
-      // return;
     }else{
       for (var i=0; i<followinglistQuery.length; i++) {
         var r = {};
@@ -81,9 +73,9 @@ router.get('/:f_id/:keyword', async(req, res, next) => {
           // 내가 이 사람을 팔로잉 중이에요
           if(followinglistQuery[i].f_following_id == followingSelectQuery[j].f_following_id) {
             if (follower_id == u_id) // 나의 팔로잉 목록이라면, 팔로잉 취소할래?
-              r.isMyFollowing = "취소";
+            r.isMyFollowing = "취소";
             else
-              r.isMyFollowing = "팔로잉";
+            r.isMyFollowing = "팔로잉";
             break;
           } // 나다!
           else if (followinglistQuery[i].f_following_id == u_id) {
@@ -97,22 +89,19 @@ router.get('/:f_id/:keyword', async(req, res, next) => {
 
     var searchResult = [];
     for(var i=0; i<result.length; i++){
-          if(searcher.search(result[i].following_nickname) >= 0){
+      if(searcher.search(result[i].following_nickname) >= 0){
 
-            searchResult.push(result[i]);
+        searchResult.push(result[i]);
       }
     }
 
     res.status(200).send({
-        message : "Success",
-        data : searchResult
-      });
+      message : "Success",
+      data : searchResult
+    });
 
   }catch(error) {
     return next("500");
-    // res.status(500).send({
-    //     message : "Internal Server Error"
-    //   });
   }
 });
 

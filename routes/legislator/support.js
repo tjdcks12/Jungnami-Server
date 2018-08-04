@@ -16,11 +16,6 @@ router.get('/', async(req, res, next) => {
 
   if(chkToken == -1) {
     return next("401");
-      // res.status(401).send({
-      //     message : "Access Denied"
-      // });
-      //
-      // return;
   }
 
   try{
@@ -33,30 +28,19 @@ router.get('/', async(req, res, next) => {
     `
     let selectQuery = await db.queryParamCnt_Arr(selectSql,[u_id]);
 
-    if(selectQuery.length == 0){
-      return next("1204");
-      // res.status(300).send({
-      //     message: "No Data"
-      //   });
-      //   return;
 
-    }else{
+    let data = {};
+    data.user_coin = selectQuery[0].coin;
 
-      let data = {};
-      data.user_coin = selectQuery[0].coin;
+    res.status(200).send({
+      message : "Success",
+      data : data
+    });
 
-      res.status(200).send({
-          message : "Success",
-          data : data
-        });
-    }
 
   } catch(error) {
     console.log(error);
     return next("500");
-        // res.status(500).send({
-        //   message : "Internal Server Error"
-        // });
   }
 
 });
@@ -66,9 +50,13 @@ router.get('/', async(req, res, next) => {
 /*  의원에게 후원 완료하고 나서  */
 /*  /legislator/support  */
 router.post('/', async(req, res, next) => {
+  const chkToken = jwt.verify(req.headers.authorization);
+
+  if(chkToken == -1) {
+    return next("401");
+  }
 
   try {
-
     const chkToken = jwt.verify(req.headers.authorization);
 
     let u_id = chkToken.id;
@@ -82,49 +70,32 @@ router.post('/', async(req, res, next) => {
     let usercoinSql = "SELECT coin FROM user WHERE id = ?;"
     let usercoinQuery = await db.queryParamCnt_Arr(usercoinSql,[u_id]);
 
-    if(usercoinQuery.length == 0){
-      console.log("query not ok");
-    }else{
-      console.log("query ok");
+    user_coin =+ usercoinQuery[0].coin;
 
-      user_coin =+ usercoinQuery[0].coin;
-    }
-
-/*
-    // 의원의 코인 현황
-    let legislatorpointSql = "SELECT point FROM legislator WHERE id = ?;"
-    let legislaotrpointQuery = await db.queryParamCnt_Arr(userpointSql,[l_id]);
-
-    if(legislaotrpointQuery.length == 0){
-      console.log("query not ok");
-    }else{
-      console.log("query ok");
-
-      legislator_point =+ legislaotrpointQuery[0].point;
-    }
-*/
     // update point
     if (user_coin >= coin) {
 
       let supportSql = "UPDATE legislator SET coin = coin + ? WHERE id = ?;"
       let supportQuery = await db.queryParamCnt_Arr(supportSql,[coin, l_id]);
+      if(!supportQuery){
+        return next("500");
+      }
 
       let updateSql = "UPDATE user SET coin = coin - ? WHERE id = ?;"
       let updateQuery = await db.queryParamCnt_Arr(updateSql,[coin, u_id]);
+      if(!updateQuery){
+        return next("500");
+      }
 
       res.status(201).send({
-        message : "Update Data Success"
+        message : "Success"
       });
     } else { // 정나미 포인트가 부족해요
-      res.status(401).send({
-        message : "I don't have enough point"
-      });
+      next("1402");
     }
 
   } catch(error) {
-    res.status(500).send({
-        message : "Internal Server Error"
-      });
+    return next("500");
   }
 
 });

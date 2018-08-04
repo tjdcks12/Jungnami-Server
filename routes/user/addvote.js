@@ -15,11 +15,6 @@ router.post('/', async(req, res, next) => {
 
     if(chkToken == -1) {
       return next("401");
-      // res.status(401).send({
-      //   message : "Access Denied"
-      // });
-      //
-      // return;
     }
 
     let id = chkToken.id;
@@ -37,10 +32,6 @@ router.post('/', async(req, res, next) => {
     // 코인이 부족한 경우
     if(vote > result_coin[0].coin){
       return next("1402");
-      // res.status(401).send({
-      //   message : "No coin"
-      // });
-      // return;
     }
 
     // 유저 투표권 추가하기
@@ -51,6 +42,9 @@ router.post('/', async(req, res, next) => {
     WHERE id = ?
     `;
     var result_addvote = await db.queryParamCnt_Arr(select_addvote,[vote, id]);
+    if(!result_addvote){
+      return next("500");
+    }
 
     // 유저 코인 감소시키기
     let select_subcoin =
@@ -60,6 +54,9 @@ router.post('/', async(req, res, next) => {
     WHERE id = ?
     `;
     let result_subcoin = await db.queryParamCnt_Arr(select_subcoin,[vote, id]);
+    if(!result_subcoin){
+      return next("500");
+    }
 
     res.status(201).send({
       message : "Success"

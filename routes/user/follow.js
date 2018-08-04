@@ -20,10 +20,6 @@ router.post('/', async(req, res, next) => {
 
     if(chkToken == -1) {
       return next("401");
-        // res.status(401).send({
-        //     message : "Access Denied"
-        // });
-        // return;
     }
 
     let follower_id = chkToken.id;
@@ -35,9 +31,15 @@ router.post('/', async(req, res, next) => {
     VALUES (?, ?)
     `
     let insertfollowQuery = await db.queryParamCnt_Arr(insertfollowSql,[follower_id, following_id]);
+    if(!insertfollowQuery){
+      return next("500");
+    }
 
     let pushSql = "INSERT INTO push (p_follower_id, p_user_id) VALUES (?, ?);"
     let pushQuery = await db.queryParamCnt_Arr(pushSql,[follower_id, following_id]);
+    if(!pushQuery){
+      return next("500");
+    }
 
 
     let selectfollowerSql = "SELECT nickname FROM user WHERE id = ?;"
@@ -79,9 +81,6 @@ router.post('/', async(req, res, next) => {
   } catch(error) {
     console.log(error);
     return next("500");
-    // res.status(500).send({
-    //     message : "Internal Server Error"
-    //   });
   }
 
 });

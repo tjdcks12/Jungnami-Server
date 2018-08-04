@@ -37,12 +37,6 @@ router.get('/:f_id', async(req, res, next) => {
 
     if(followinglistQuery.length == 0){
       return next("1204");
-      // console.log("query not ok");
-      //
-      // res.status(300).send({
-      //       message: "No Data"
-      // });
-      // return;
     }
 
 
@@ -59,12 +53,6 @@ router.get('/:f_id', async(req, res, next) => {
 
     if(u_id != '' && followingSelectQuery == undefined) { // 로그인이 되어있는데 팔로우정보도 못가져오면
       return next("1204");
-      // console.log("query not ok");
-      //
-      // res.status(300).send({
-      //       message: "No Data"
-      // });
-      // return;
     }else{
       for (var i=0; i<followinglistQuery.length; i++) {
         var r = {};

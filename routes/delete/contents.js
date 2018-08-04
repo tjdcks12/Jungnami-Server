@@ -21,6 +21,9 @@ router.delete('/:contentsid',  async (req, res) => {
     WHERE id = ?
     `;
     let deletecontentsQuery = await db.queryParamCnt_Arr(deletecontentsSql, [c_id]);
+    if(!deletecontentsQuery){
+      return next("500");
+    }
 
     // database 확인
     // 해당 컨텐츠를 스크랩한 것도 함께 삭제
@@ -31,7 +34,9 @@ router.delete('/:contentsid',  async (req, res) => {
     WHERE s_contents_id = ?
     `;
     let deletecotentsscrapQuery = await db.queryParamCnt_Arr(deletecotentsscrapsharedSql, [c_id]);
-
+    if(!deletecotentsscrapQuery){
+      return next("500");
+    }
 
 		res.status(200).send({
 			"message" : "Success"
@@ -40,9 +45,6 @@ router.delete('/:contentsid',  async (req, res) => {
   }catch(err){
   	console.log(err);
     return next("500");
-  	// res.status(500).send({
-  	// 	"message" : "Internal Server Error"
-  	// });
   }
 });
 

@@ -11,7 +11,7 @@ module.exports = {
     }
     catch(err) {
       console.log("mysql error! err log =>" + err);
-      next(err);
+      next("500");
       return;
     }
     finally {
@@ -30,7 +30,8 @@ module.exports = {
     }
     catch(err) {
       console.log("mysql error! err log =>" + err);
-      next(err);
+      next("500");
+      return;
     }
     finally {
       pool.releaseConnection(connection);
@@ -38,18 +39,21 @@ module.exports = {
     }
   },
   Transaction : async (...args) => {
+    let result;
+
     try{
       var connection = await pool.getConnection();
       await connection.beginTransaction();
 
-      const result = await args[0](connection, ...args);
+      result = await args[0](connection, ...args);
     }
     catch(err){
       await connection.rollback();
       pool.releaseConnection(connection);
 
       console.log("mysql error! err log =>" + err);
-      next(err);
+      next("500");
+      return;
     }
     finally {
       await connection.commit();

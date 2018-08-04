@@ -12,15 +12,10 @@ const db = require('../../module/pool.js');
 
 router.post('/',  async (req, res) => {
   try{
-
     const chkToken = jwt.verify(req.headers.authorization);
 
     if(chkToken == -1) {
       return next("401");
-        // res.status(401).send({
-        //     message : "Access Denied"
-        // });
-        // return;
     }
 
     let userid = chkToken.id;
@@ -32,6 +27,9 @@ router.post('/',  async (req, res) => {
     VALUES (?,?)
     `
     let result_scrap = await db.queryParamCnt_Arr(insert_scrap,[req.body.contentsid, userid]);
+    if(!result_scrap){
+      return next("500");
+    }
 
 		res.status(201).send({
 			"message" : "Success"
@@ -41,9 +39,6 @@ router.post('/',  async (req, res) => {
   }catch(err){
   	console.log(err);
     return next("500");
-  	// res.status(500).send({
-  	// 	"message" : "Internal Server Error"
-  	// });
   }
 });
 

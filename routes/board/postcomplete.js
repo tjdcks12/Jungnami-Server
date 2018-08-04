@@ -14,11 +14,6 @@ router.post('/', upload.array('image'), async(req, res) => {
 
     if(chkToken == -1) {
       return next("401");
-      // res.status(401).send({
-      //   message : "Access Denied"
-      // });
-      //
-      // return;
     }
 
     var userid = chkToken.id;
@@ -44,7 +39,9 @@ router.post('/', upload.array('image'), async(req, res) => {
     VALUES (?, ?, ?, ?)
     `;
     let data = await db.queryParamCnt_Arr(postboardQuery, [userid, content, image, shared]);
-
+    if(!data){
+      return next("500");
+    }
 
     res.status(201).send({
       "message" : "Success",
@@ -52,9 +49,6 @@ router.post('/', upload.array('image'), async(req, res) => {
   }catch(err){
     console.log(err);
     return next("500");
-    // res.status(500).send({
-    //   "message" : "Server error"
-    // });
   }
 })
 

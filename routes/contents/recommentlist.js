@@ -48,7 +48,7 @@ router.get('/:comment_id', async(req, res) => {
 			let recommenttableInfo = await db.queryParamCnt_Arr(getrecommentlistQuery, [req.params.comment_id]);
 			//댓글 테이블에서 댓글 목록 받아와서
 			if(recommenttableInfo.length == 0){
-				return next("1403");
+				return next("1204");
 			}
 
 			let resultArry = []

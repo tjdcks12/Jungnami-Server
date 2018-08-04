@@ -36,14 +36,6 @@ router.get('/', async (req, res) => {
     ORDER BY score DESC
     `
     var result_contents = await db.queryParamCnt_Arr(select_contents, [req.params.category]);
-    if(result_contents.length == 0){
-      return next("1204");
-      // res.status(300).send({
-      //   "message" : "NO data"
-      // });
-      //
-      // return;
-    }
 
     var result = [];
     for(var i=0; i<result_contents.length; i++){
@@ -77,9 +69,6 @@ router.get('/', async (req, res) => {
   }catch(err){
     console.log(err);
     return next("500");
-    // res.status(500).send({
-    //   "message" : "Server error"
-    // });
   }
 });
 

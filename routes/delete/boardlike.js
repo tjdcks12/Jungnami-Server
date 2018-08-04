@@ -16,10 +16,6 @@ router.delete('/:boardid', async(req, res, next) => {
 
   if(chkToken == -1) {
     return next("401");
-      // res.status(401).send({
-      //     message : "Access Denied"
-      // });
-      // return;
   }
 
   let userid = chkToken.id;
@@ -32,6 +28,9 @@ router.delete('/:boardid', async(req, res, next) => {
     WHERE bl_board_id = ? AND bl_user_id = ?
     `;
     let result_delete = await db.queryParamCnt_Arr(delete_like,[req.params.boardid, userid]);
+    if(!result_delete){
+      return next("500");
+    }
 
     res.status(200).send({
       "message" : "Success"
@@ -40,9 +39,6 @@ router.delete('/:boardid', async(req, res, next) => {
   }catch(err){
 		console.log(err);
     return next("500");
-		// res.status(500).send({
-		// 	"message" : "syntax error"
-		// });
 	}
 
 });

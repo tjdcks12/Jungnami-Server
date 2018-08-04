@@ -19,10 +19,6 @@ router.get('/', async(req, res, next) => {
 
     if(chkToken == -1) {
       return next("401");
-        // res.status(401).send({
-        //     message : "Access Denied"
-        // });
-        // return;
     }
 
     let u_id = chkToken.id;
@@ -43,9 +39,6 @@ router.get('/', async(req, res, next) => {
 
   } catch(error) {
     return next("500");
-    // res.status(500).send({
-    //     message : "Internal Server Error"
-    //   });
   }
 });
 
@@ -61,9 +54,6 @@ router.post('/', upload.array('img_url'), async(req, res, next) => {
 
     if(chkToken == -1) {
       return next("401");
-        // res.status(401).send({
-        //     message : "Access Denied"
-        // });
     }
 
     let u_id = chkToken.id;
@@ -79,6 +69,9 @@ router.post('/', upload.array('img_url'), async(req, res, next) => {
     WHERE id = ?
     `
     let updateQuery = await db.queryParamCnt_Arr(updateSql,[nickname, img_url, u_id]);
+    if(!updateQuery){
+      return next("500");
+    }
 
     res.status(201).send({
       message : "Success"
@@ -86,9 +79,6 @@ router.post('/', upload.array('img_url'), async(req, res, next) => {
 
   } catch(error) {
     return next("500");
-    // res.status(500).send({
-    //     message : "Internal Server Error"
-    //   });
   }
 
 });

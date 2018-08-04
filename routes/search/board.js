@@ -108,10 +108,6 @@ router.get('/:keyword', async(req, res, next) => {
 
     if(result.length == 0){
       return next("1204");
-      // res.status(300).json({
-      //   message : "No data"
-      // });
-      // return;
     }
 
     res.status(200).json({
@@ -122,9 +118,6 @@ router.get('/:keyword', async(req, res, next) => {
   }catch(error) {
     console.log(error);
     return next("500");
-    // res.status(500).send({
-    //   message : "Internal Server Error"
-    // });
   }
 });
 

@@ -23,12 +23,8 @@ router.post('/', async(req, res, next) => {
   let accessToken = req.body.accessToken;
   if(!accessToken){
     return next("401");
-    // res.status(401).send({
-    //     message : "Access Denied"
-    // });
-    //
-    // return;
   }
+
   // push 알람 클라이언트 토큰
   let fcmToken = req.body.fcmToken;
 
@@ -51,7 +47,6 @@ router.post('/', async(req, res, next) => {
     var nickname = kakaoResult.properties.nickname;
     var img_url = kakaoResult.properties.thumbnail_image;
 
-    //console.log(kakaoResult.kakao_account.has_email + " : " + kakaoResult.kakao_account.email);
     var id = kakaoResult.id;
     var token;
 
@@ -60,9 +55,6 @@ router.post('/', async(req, res, next) => {
       chkToken = jwt.verify(req.headers.authorization);
     }
 
-    // console.log()
-    // console.log(chkToken);
-    // console.log(jwt.verify(chkToken));
 
     let checkidQuery =
     `
@@ -109,6 +101,9 @@ router.post('/', async(req, res, next) => {
       if(checkid.length != 0){ // 기기를 변경했을 경우
         // fcm token update
         let updatefcmToken = await db.queryParamCnt_Arr(updateToken, [fcmToken, id]);
+        if(!updatefcmToken){
+          return next("500");
+        }
 
         console.log("다른기기에서 접속했습니다");
         token = jwt.sign(id);
@@ -123,6 +118,9 @@ router.post('/', async(req, res, next) => {
         console.log("비회원입니다.")
 
         let insertResult = await db.queryParamCnt_Arr(insertQuery,[id, nickname ,img_url, fcmToken]);
+        if(!insertResult){
+          return next("500");
+        }
 
         token = jwt.sign(id);
 
@@ -147,8 +145,3 @@ router.post('/', async(req, res, next) => {
 });
 
 module.exports = router;
-
-
-// test kakaotalk accessToken
-// 2boHtx7R8VbqhnWNE_pcIUvFX4RLNsAKD8eQSQo8BVUAAAFkaVQVfQ
-// H2ACd2WBP9T2HiuqNQxueKIWuxsSk-idgEyhSQo8BZUAAAFkaO2ToA

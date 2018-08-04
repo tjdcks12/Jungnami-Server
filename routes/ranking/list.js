@@ -41,13 +41,6 @@ router.get('/:islike', async(req, res, next) => {
 
     if(listQuery.length == 0){
       return next("1204");
-      // console.log("query not ok");
-      //
-      // res.status(300).send({
-      //   message: "No Data"
-      // });
-      // return;
-
     } else {
       var result = [];
       for(var i=0; i<listQuery.length; i++){
@@ -108,9 +101,6 @@ router.get('/:islike', async(req, res, next) => {
     }
   } catch(error) {
     return next("500");
-    // res.status(500).send({
-    //     message : "Internal Server Error"
-    //   });
   }
 });
 

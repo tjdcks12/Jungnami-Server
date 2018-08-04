@@ -31,7 +31,7 @@ router.get('/:islike/:p_name', async(req, res, next) => {
     let select_rank = `
     SELECT id, score
     FROM legislator
-    LEFT JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = ? GROUP BY lv_legislator_id) as lv 
+    LEFT JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = ? GROUP BY lv_legislator_id) as lv
     ON legislator.id = lv.lv_legislator_id
     `;
     let result_rank = await db.queryParamCnt_Arr(select_rank, [req.params.islike]);
@@ -121,10 +121,6 @@ router.get('/:islike/:p_name', async(req, res, next) => {
 
     if(result.length == 0){
       return next("1204");
-      // res.status(300).json({
-      //   message : "No data"
-      // });
-      // return;
     }
 
     res.status(200).json({
@@ -133,9 +129,6 @@ router.get('/:islike/:p_name', async(req, res, next) => {
     });
   } catch(error) {
     return next("500");
-    // res.status(500).send({
-    //   message : "Internal Server Error"
-    // });
   }
 });
 

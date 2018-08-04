@@ -50,14 +50,7 @@ router.get('/', async (req, res, next) => {
     `
 
     var result_board = await db.queryParamCnt_Arr(select_board);
-    if(result_board == 0){
-      return next("1204");
-      // res.status(300).send({
-      //   "message" : "NO data"
-      // });
-      //
-      // return;
-    }
+
 
     // 좋아요한 글 가져오기
     var select_like =
@@ -80,14 +73,7 @@ router.get('/', async (req, res, next) => {
       `
 
       var result_user = await db.queryParamCnt_Arr(select_user, [result_board[i].b_user_id]);
-      if(result_user == 0){
-        return next("1204");
-        // res.status(300).send({
-        //   "message" : "NO data"
-        // });
-        //
-        // return;
-      }
+
       data.boardid = result_board[i].id;
 
       // 유저 정보
@@ -143,10 +129,6 @@ router.get('/', async (req, res, next) => {
 
   }catch(err){
     return next(err);
-    // console.log(err);
-    // res.status(500).send({
-    //   "message" : "Server error"
-    // });
   }
 });
 

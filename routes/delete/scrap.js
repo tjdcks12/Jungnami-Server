@@ -15,10 +15,6 @@ router.delete('/:contentsid',  async (req, res) => {
 
     if(chkToken == -1) {
       return next("401");
-        // res.status(401).send({
-        //     message : "Access Denied"
-        // });
-        // return;
     }
 
     let userid = chkToken.id;
@@ -44,6 +40,9 @@ router.delete('/:contentsid',  async (req, res) => {
         WHERE id = ?
         `;
         let deleteboardQuery = await db.queryParamCnt_Arr(deleteboardSql, [result_contentsid[i].id]);
+        if(!deleteboardQuery){
+          return next("500");
+        }
 
         break;
       }
@@ -57,9 +56,6 @@ router.delete('/:contentsid',  async (req, res) => {
   }catch(err){
   	console.log(err);
     return next("501");
-  	// res.status(500).send({
-  	// 	"message" : "Internal Server Error"
-  	// });
   }
 });
 

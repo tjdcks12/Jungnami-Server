@@ -21,10 +21,6 @@ router.get('/:f_id/:keyword', async(req, res, next) => {
 
     if(chkToken == -1) {
       return next("401");
-        // res.status(401).send({
-        //     message : "Access Denied"
-        // });
-        // return;
     }
 
     let u_id = chkToken.id;
@@ -44,10 +40,6 @@ router.get('/:f_id/:keyword', async(req, res, next) => {
 
     if(followerlistQuery.length == 0){
       return next("1204");
-      // res.status(300).send({
-      //   message: "No Data"
-      // });
-      // return;
     }
 
     let followingSelectSql =
@@ -62,10 +54,6 @@ router.get('/:f_id/:keyword', async(req, res, next) => {
 
     if(followingSelectQuery.length == 0) {
       return next("1204");
-      // res.status(300).send({
-      //   message: "No Data"
-      // });
-      // return;
     }else{
       for (var i=0; i<followerlistQuery.length; i++) {
         var r = {};

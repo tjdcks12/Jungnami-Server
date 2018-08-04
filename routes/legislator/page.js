@@ -39,13 +39,7 @@ router.get('/:l_id', async(req, res, next) => {
 
     if(likeRankingQuery.length == 0 || unlikeRankingQuery.length == 0){
       return next("1204");
-      // res.status(300).send({
-      //   message: "No Data"
-      // });
-      // return;
     }
-
-
 
     // 호감 순 줄 세우기
     var likeRresult = [];
@@ -148,6 +142,9 @@ router.get('/:l_id', async(req, res, next) => {
     WHERE hash.h_legislator_id = ?
     `;
     let result_contents = await db.queryParamCnt_Arr(select_contents,[l_id]);
+    if(result_contents.length == 0){
+      return next("1204");
+    }
 
     var contents = [];
     for(var i=0; i<result_contents.length; i++){

@@ -17,22 +17,22 @@ router.delete('/:f_id', async(req, res, next) => {
 
     if(chkToken == -1) {
       return next("401");
-        // res.status(401).send({
-        //     message : "Access Denied"
-        // });
-        // return;
     }
 
     let follower_id = chkToken.id;
     let following_id = req.params.f_id;
 
-    let insertSql =
+    let deleteSql =
     `
     DELETE
     FROM follow
     WHERE f_follower_id = ? AND f_following_id = ?
     `
-    let insertQuery = await db.queryParamCnt_Arr(insertSql,[follower_id, following_id]);
+    let result_delete = await db.queryParamCnt_Arr(deleteSql,[follower_id, following_id]);
+
+    if(!result_delete){
+      return next("500");
+    }
 
     res.status(200).send({
       message : "Success"
@@ -40,9 +40,6 @@ router.delete('/:f_id', async(req, res, next) => {
 
   } catch(error) {
     return next("500");
-    // res.status(500).send({
-    //     message : "Internal Server Error"
-    //   });
   }
 
 });

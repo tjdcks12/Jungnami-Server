@@ -28,9 +28,6 @@ router.get('/', async(req, res, next) => {
 
   } catch(error) {
     return next("500");
-    // res.status(500).send({
-    //     message : "Internal Server Error"
-    //   });
   }
 });
 
@@ -62,6 +59,9 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     VALUES (?, ?, ?, ?, ?);
     `;
     var postResult = await db.queryParamCnt_Arr(postSql,[title, subtitle, thumbnail, category, contents_type]);
+    if(!postResult){
+      return next("500");
+    }
 
     let c_id = postResult.insertId;
 
@@ -122,9 +122,6 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
   } catch (error) {
     console.log(error);
     return next("500");
-    // res.status(500).send({
-    //     message : "Internal Server Error"
-    //   });
   }
 });
 

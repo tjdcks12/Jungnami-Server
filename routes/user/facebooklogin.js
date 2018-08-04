@@ -24,13 +24,8 @@ router.post('/', async(req, res, next) => {
   let accessToken = req.body.accessToken;
   if(!accessToken){
     return next("401");
-    // res.status(401).send({
-    //     message : "Access Denied"
-    // });
-    //
-    // return;
   }
-  //let accessToken = 'EAAOrNfcR65ABANc1JsTRhLRO1PAP0SHucq9zrPtZAmEwAXgGhdvB2dGhswrq9vkA6ePJw8da2mb7DZBi7n2bWMMCuEuWDbhZAW6WU2OEW8ZArJf78bGZCFocApmgvcPnUqPqWbJ9JP7uBketGU38ZCUTztduGUejZBivgOCD3cau8aInxDdpFAQeiF0v5TovQ9oDCqh1mWIEYbPrZA1uSOFNQ1bd7MRH458ZD';
+
   // push 알람 클라이언트 토큰
   let fcmToken = req.body.fcmToken;
 
@@ -42,8 +37,6 @@ router.post('/', async(req, res, next) => {
     //   'Authorization': "Bearer " +  accessToken
     // }
   }
-
-  // https://graph.facebook.com/{userid}/picture?type=large&width=720&height=720
 
   try {
     let facebookResult = await request(option);
@@ -57,18 +50,12 @@ router.post('/', async(req, res, next) => {
     var nickname = facebookResult.name;
     var img_url = "https://graph.facebook.com/" + id + "/picture?type=large&width=720&height=720";
 
-    //console.log(cacaoResult.kakao_account.has_email + " : " + cacaoResult.kakao_account.email);
-
     var token;
 
     var chkToken;
     if(req.headers.authorization != undefined){
       chkToken = jwt.verify(req.headers.authorization);
     }
-
-    // console.log()
-    // console.log(chkToken);
-    // console.log(jwt.verify(chkToken));
 
     let checkidQuery =
     `
@@ -115,6 +102,10 @@ router.post('/', async(req, res, next) => {
       if(checkid.length != 0){ // 기기를 변경했을 경우
         // fcm token update
         let updatefcmToken = await db.queryParamCnt_Arr(updateToken, [fcmToken, id]);
+        if(!updatefcmToken){
+          return next("500");
+        }
+
         token = jwt.sign(id);
         console.log("다른기기에서 접속했습니다");
         res.status(201).send({
@@ -128,6 +119,9 @@ router.post('/', async(req, res, next) => {
         console.log("비회원입니다.")
 
         let insertResult = await db.queryParamCnt_Arr(insertQuery,[id, nickname ,img_url, fcmToken]);
+        if(!insertResult){
+          return next("500");
+        }
 
         token = jwt.sign(id);
 
@@ -152,7 +146,3 @@ router.post('/', async(req, res, next) => {
 });
 
 module.exports = router;
-
-
-// test facebook accessToken
-// EAAOrNfcR65ABAHZCceCrjflTQ8GhA9fwrBtgb5TCeYFXs6cZAeSkMFiZBkdq8JoITyWOUHARF2ZCwZBVW36ewmSwD2nJZASHEgi9SJXZAZAZAdbR4qdtpRR3hxjYZB9no69sIJS6ZAjUdxvhhAHV1AZC2xin5uDuzTZBhEBi9SMzfrZBJfMS4S5rT4kPgnxfCH9p48akCL61dvSEAnldcf0GZBZA9G5qOQhZBpLUW0FAZD

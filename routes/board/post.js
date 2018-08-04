@@ -12,11 +12,6 @@ router.get('/',  async (req, res) => {
     const chkToken = jwt.verify(req.headers.authorization);
     if(chkToken == -1) {
       return next("401");
-      // res.status(401).send({
-      //   message : "Access Denied"
-      // });
-      //
-      // return;
     }
 
     var userid = chkToken.id;
@@ -39,9 +34,6 @@ router.get('/',  async (req, res) => {
   }catch(err){
     console.log(err);
     return next("500");
-    // res.status(500).send({
-    //   "message" : "Server error"
-    // });
   }
 });
 

@@ -2,22 +2,22 @@
   "1204" : {
     "status" : 200,
     "description" : "데이터가 없습니다.",
-    "message" : "NO data"
+    "message" : "No data"
   },
-  "1401" : {
+  "401" : {
     "status" : 401,
-    "description" : "로그인이 필요한 서비스입니다.",
+    "description" : "허가 제한",
     "message" : "Access Denied"
   },
   "1402" : {
     "status" : 401,
     "description" : "코인이 부족합니다.",
-    "meesage" : "NO coin"
+    "meesage" : "No coin"
   },
   "1403" : {
-    "status" : 403,
-    "description" : "파라미터가 없습니다.",
-    "message" : "NO parameter"
+    "status" : 401,
+    "description" : "투표권 부족합니다.",
+    "meesage" : "No vote"
   },
   "500" : {
     "status" : 500,

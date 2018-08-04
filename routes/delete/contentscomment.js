@@ -16,10 +16,6 @@ router.delete('/:contentscommentid', async(req, res, next) => {
 
   if(chkToken == -1) {
     return next("401");
-      // res.status(401).send({
-      //     message : "Access Denied"
-      // });
-      // return;
   }
 
   let userid = chkToken.id;
@@ -43,6 +39,9 @@ router.delete('/:contentscommentid', async(req, res, next) => {
       WHERE id = ?
       `;
       let result_delete = await db.queryParamCnt_Arr(delete_comment,[req.params.contentscommentid]);
+      if(!result_delete){
+        return next("500");
+      }
 
       res.status(200).send({
         "message" : "Successful"
@@ -50,16 +49,10 @@ router.delete('/:contentscommentid', async(req, res, next) => {
     }
     else{
       return next("401");
-      // res.status(401).send({
-      //   "message" : "Different User"
-      // });
     }
   }catch(err){
 		console.log(err);
     return next("500");
-		// res.status(500).send({
-		// 	"message" : "syntax error"
-		// });
 	}
 
 });

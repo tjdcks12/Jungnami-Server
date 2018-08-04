@@ -17,16 +17,11 @@ router.get('/', async(req, res, next) => {
 
   if(chkToken == -1) {
     return next("401");
-    // res.status(401).send({
-    //   message : "Access Denied"
-    // });
-    // return;
   }
 
   let u_id = chkToken.id;
 
   try {
-
     // 나의 푸시알림 목록
     let pushsql =
     `
@@ -39,12 +34,6 @@ router.get('/', async(req, res, next) => {
 
     if(pushdata.length == 0){
       return next("1204");
-      // console.log("query not ok");
-      //
-      // res.status(300).json({
-      //   message : "no push data"
-      // });
-      // return;
     }
 
     var result = [];
@@ -225,9 +214,6 @@ router.get('/', async(req, res, next) => {
 
   } catch(error) {
     return next("500");
-    // res.status(500).send({
-    //   message : "Internal Server Error"
-    // });
   }
 
 });
