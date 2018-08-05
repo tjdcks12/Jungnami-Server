@@ -31,12 +31,11 @@ module.exports = {
     }
     finally {
       pool.releaseConnection(connection);
-      console.log(result);
       return result;
     }
   },
   Transaction : async (...args) => {
-    let result;
+    let result = "Success";
 
     try{
       var connection = await pool.getConnection();
@@ -48,10 +47,11 @@ module.exports = {
     catch(err){
       await connection.rollback();
       console.log("mysql error! err log =>" + err);
+      result = undefined;
     }
     finally {
       pool.releaseConnection(connection);
-      return "Success";
+      return result;
     }
   }
 };
