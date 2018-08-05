@@ -74,16 +74,23 @@ router.post('/', async(req, res, next) => {
 
     // update point
     if (user_coin >= coin) {
-
       let supportSql = "UPDATE legislator SET coin = coin + ? WHERE id = ?;"
-      let supportQuery = await db.queryParamCnt_Arr(supportSql,[coin, l_id]);
-      if(!supportQuery){
-        return next("500");
-      }
 
       let updateSql = "UPDATE user SET coin = coin - ? WHERE id = ?;"
-      let updateQuery = await db.queryParamCnt_Arr(updateSql,[coin, u_id]);
-      if(!updateQuery){
+
+      let Transaction = await db.Transaction( async (connection) => {
+        let supportQuery = await connection.query(supportSql,[coin, l_id]);
+        if(!supportQuery){
+          return next("500");
+        }
+
+        let updateQuery = await connection.query(updateSql,[coin, u_id]);
+        if(!updateQuery){
+          return next("500");
+        }
+      })
+
+      if(!Transaction){
         return next("500");
       }
 

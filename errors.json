@@ -12,12 +12,12 @@
   "1402" : {
     "status" : 401,
     "description" : "코인이 부족합니다.",
-    "meesage" : "No coin"
+    "message" : "No coin"
   },
   "1403" : {
     "status" : 401,
     "description" : "투표권 부족합니다.",
-    "meesage" : "No vote"
+    "message" : "No vote"
   },
   "500" : {
     "status" : 500,

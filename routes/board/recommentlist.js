@@ -92,7 +92,6 @@ router.get('/:comment_id', async(req, res) => {
 			}
 
 			resultArry.push(subresultObj);
-
 		}
 
 		res.status(200).send({

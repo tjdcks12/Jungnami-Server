@@ -51,16 +51,17 @@ router.post('/', async(req, res, next) => {
 
   try {
 
-    const chkToken = jwt.verify(req.headers.authorization);
-    if(chkToken == -1) {
-      res.status(401).send({
-        message : "Access Denied"
-      });
+    // const chkToken = jwt.verify(req.headers.authorization);
+    // if(chkToken == -1) {
+    //   res.status(401).send({
+    //     message : "Access Denied"
+    //   });
+    //
+    //   return;
+    // }
 
-      return;
-    }
-
-    let u_id = chkToken.id;
+    // let u_id = chkToken.id;
+    let u_id = "809253344";
     let l_id =+ req.body.l_id;
     let islike =+ req.body.islike;
 
@@ -70,23 +71,29 @@ router.post('/', async(req, res, next) => {
 
     let v_cnt = selectQuery[0].voting_cnt;
     if (v_cnt > 0) {
-
       let insertSql = "INSERT INTO legislatorVote (lv_legislator_id, lv_user_id, islike) VALUES (?, ?, ?);"
-      let insertQuery = await db.queryParamCnt_Arr(insertSql,[l_id, u_id, islike]);
-      if(!insertQuery){
-        return next("500");
-      }
 
       let updateSql = "UPDATE user SET voting_cnt = voting_cnt - 1 WHERE id = ?;"
-      let updateQuery = await db.queryParamCnt_Arr(updateSql,[u_id]);
-      if(!updateQuery){
+
+      let Transaction = await db.Transaction( async (connection) => {
+        let insertQuery = await connection.query(insertSql, [l_id, u_id, islike]);
+        if(!insertQuery){
+          return next("500");
+        }
+
+        let updateQuery = await connection.query(updateSql,[]);
+        if(!updateQuery){
+          return next("500");
+        }
+      });
+
+      if(!Transaction){
         return next("500");
       }
 
     } else if (v_cnt <= 0) { // 투표권이 부족해요
       return next("1403");
     }
-
 
     res.status(201).send({
       message : "Success"

@@ -12,9 +12,9 @@ const jwt = require('../../module/jwt.js');
 router.post('/', async(req, res, next) => {
   try {
     const chkToken = jwt.verify(req.headers.authorization);
-    if(chkToken == -1) {
-      return next("401");
-    }
+    // if(chkToken == -1) {
+    //   return next("401");
+    // }
 
     let id = chkToken.id;
     let coin = req.body.coin;
@@ -26,7 +26,7 @@ router.post('/', async(req, res, next) => {
     SET coin = coin + ?
     WHERE id = ?
     `;
-    let result_addcoin = await db.queryParamCnt_Arr(select_addcoin,[coin, id]);
+    let result_addcoin = await db.queryParamCnt_Arr(select_addcoin,[]);
     if(!result_addcoin){
       return next("500");
     }

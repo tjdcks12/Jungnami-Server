@@ -18,8 +18,6 @@ const db = require('../../module/pool.js');
 const request = require('request-promise');
 
 router.post('/', async(req, res, next) => {
-  console.log("===insert_userinfo.js ::: router('/')===");
-
   // facebook access token
   let accessToken = req.body.accessToken;
   if(!accessToken){

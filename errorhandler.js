@@ -15,7 +15,7 @@ module.exports = (app) => {
     }
 
     var error = errors[err];
-    console.log(moment().format('YYYY.MM.DD h:mm:ss a ]') + " >> " + error.code + " : " + error.description);
+    console.log(moment().format('YYYY.MM.DD h:mm:ss a ]') + " >> " + error.status + " : " + error.description);
 
     var result = {
       "message" : error.message

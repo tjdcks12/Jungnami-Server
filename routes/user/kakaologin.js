@@ -18,7 +18,6 @@ const db = require('../../module/pool.js');
 const request = require('request-promise');
 
 router.post('/', async(req, res, next) => {
-  console.log("===insert_userinfo.js ::: router('/')===");
   // 카카오톡 access token
   let accessToken = req.body.accessToken;
   if(!accessToken){
@@ -67,7 +66,7 @@ router.post('/', async(req, res, next) => {
     INSERT INTO user (id, nickname, img_url, fcmToken)
     VALUES (?, ?, ?, ?);
     `;
-    let updateToken =
+    let updateQuery =
     `
     UPDATE user SET fcmToken = ? WHERE id = ?;
     `;
@@ -100,8 +99,8 @@ router.post('/', async(req, res, next) => {
 
       if(checkid.length != 0){ // 기기를 변경했을 경우
         // fcm token update
-        let updatefcmToken = await db.queryParamCnt_Arr(updateToken, [fcmToken, id]);
-        if(!updatefcmToken){
+        let updateResult = await db.queryParamCnt_Arr(updateQuery, [fcmToken, id]);
+        if(!updateResult){
           return next("500");
         }
 

@@ -10,7 +10,7 @@ const db = require('../../module/pool.js');
 
 /*  커뮤니티 게시글 삭제하기  */
 /*  /board/delete  */
-router.delete('/:boardid',  async (req, res) => {
+router.delete('/:boardid',  async (req, res, next) => {
   try{
     const chkToken = jwt.verify(req.headers.authorization);
 
@@ -36,10 +36,6 @@ router.delete('/:boardid',  async (req, res) => {
       FROM board
       WHERE id = ?
       `;
-      let deleteboardQuery = await db.queryParamCnt_Arr(deleteboardSql, [b_id]);
-      if(!deleteboardQuery){
-        return next("500");
-      }
 
       // 해당 글을 공유한 글도 함께 삭제
       let deleteboardsharedSql =
@@ -48,10 +44,23 @@ router.delete('/:boardid',  async (req, res) => {
       FROM board
       WHERE shared = ?
       `;
-      let deleteboardsharedQuery = await db.queryParamCnt_Arr(deleteboardsharedSql, [b_id]);
-      if(!deleteboardQuery){
+
+      let Transaction = await db.Transaction( async (connection) => {
+        let deleteboardQuery = await connection.query(deleteboardSql, [b_id]);
+        if(!deleteboardQuery){
+          return next("500");
+        }
+
+        let deleteboardsharedQuery = await connection.query(deleteboardsharedSql, [b_id]);
+        if(!deleteboardQuery){
+          return next("500");
+        }
+      });
+
+      if(!Transaction){
         return next("500");
       }
+      
     }
     else{
       return next("401");

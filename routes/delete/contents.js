@@ -11,7 +11,6 @@ const db = require('../../module/pool.js');
 /*  /contents/c_delete  */
 router.delete('/:contentsid',  async (req, res) => {
   try{
-
     let c_id = req.params.contentsid;
 
     let deletecontentsSql =
@@ -20,10 +19,6 @@ router.delete('/:contentsid',  async (req, res) => {
     FROM cotents
     WHERE id = ?
     `;
-    let deletecontentsQuery = await db.queryParamCnt_Arr(deletecontentsSql, [c_id]);
-    if(!deletecontentsQuery){
-      return next("500");
-    }
 
     // database 확인
     // 해당 컨텐츠를 스크랩한 것도 함께 삭제
@@ -33,8 +28,20 @@ router.delete('/:contentsid',  async (req, res) => {
     FROM scrap
     WHERE s_contents_id = ?
     `;
-    let deletecotentsscrapQuery = await db.queryParamCnt_Arr(deletecotentsscrapsharedSql, [c_id]);
-    if(!deletecotentsscrapQuery){
+
+    let Transaction = await db.Transaction( async (connection) => {
+      let deletecontentsQuery = await connection.query(deletecontentsSql, [c_id]);
+      if(!deletecontentsQuery){
+        return next("500");
+      }
+
+      let deletecotentsscrapQuery = await connection.query(deletecotentsscrapsharedSql, [c_id]);
+      if(!deletecotentsscrapQuery){
+        return next("500");
+      }
+    });
+
+    if(!Transaction){
       return next("500");
     }
 

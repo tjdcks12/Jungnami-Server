@@ -41,10 +41,6 @@ router.post('/', async(req, res, next) => {
     SET voting_cnt = voting_cnt + ?
     WHERE id = ?
     `;
-    var result_addvote = await db.queryParamCnt_Arr(select_addvote,[vote, id]);
-    if(!result_addvote){
-      return next("500");
-    }
 
     // 유저 코인 감소시키기
     let select_subcoin =
@@ -53,8 +49,20 @@ router.post('/', async(req, res, next) => {
     SET coin = coin - ?
     WHERE id = ?
     `;
-    let result_subcoin = await db.queryParamCnt_Arr(select_subcoin,[vote, id]);
-    if(!result_subcoin){
+
+    let Transaction = await db.Transaction( async (connection) => {
+      var result_addvote = await connection.query(select_addvote,[vote, id]);
+      if(!result_addvote){
+        return next("500");
+      }
+
+      let result_subcoin = await connection.query(select_subcoin,[vote, id]);
+      if(!result_subcoin){
+        return next("500");
+      }
+    })
+
+    if(!Transaction){
       return next("500");
     }
 
@@ -65,9 +73,6 @@ router.post('/', async(req, res, next) => {
   } catch(error) {
     console.log(error);
     return next("500");
-    // res.status(500).send({
-    //   message : "Internal Server Error"
-    // });
   }
 });
 

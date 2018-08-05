@@ -28,7 +28,6 @@ router.get('/', async (req, res, next) => {
   }
 
   try{
-
     // 푸쉬알람 카운트 가져오기
     let pushcntSql =
     `

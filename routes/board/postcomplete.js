@@ -9,7 +9,6 @@ const upload = require('../../module/multer_board_img.js');
 
 router.post('/', upload.array('image'), async(req, res) => {
   try{
-
     const chkToken = jwt.verify(req.headers.authorization);
 
     if(chkToken == -1) {
