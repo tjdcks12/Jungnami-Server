@@ -10,7 +10,6 @@ const jwt = require('../../module/jwt.js');
 const hangul = require('hangul-js');
 
 
-
 /*  팔로잉 검색하기  */
 /*  /search/following  */
 
