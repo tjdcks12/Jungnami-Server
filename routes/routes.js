@@ -27,7 +27,7 @@ router.use('/legislator', require('./legislator/legislator_routes'));
 router.use('/delete', require('./delete/delete_routes'));
 
 // Test
-router.use('/test', require('./test/test_routes'));
+//router.use('/test', require('./test/test_routes'));
 
 
 module.exports = router;
