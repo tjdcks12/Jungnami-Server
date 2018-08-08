@@ -18,6 +18,8 @@ const db = require('../../module/pool.js');
 const request = require('request-promise');
 
 router.post('/', async(req, res, next) => {
+  console.log(req.useragent);
+  
   // 카카오톡 access token
   let accessToken = req.body.accessToken;
   if(!accessToken){
@@ -99,9 +101,12 @@ router.post('/', async(req, res, next) => {
 
       if(checkid.length != 0){ // 기기를 변경했을 경우
         // fcm token update
-        let updateResult = await db.queryParamCnt_Arr(updateQuery, [fcmToken, id]);
-        if(!updateResult){
-          return next("500");
+        // 모바일일 경우
+        if(req.useragent.isMobile()){
+          let updateResult = await db.queryParamCnt_Arr(updateQuery, [fcmToken, id]);
+          if(!updateResult){
+            return next("500");
+          }
         }
 
         console.log("다른기기에서 접속했습니다");
