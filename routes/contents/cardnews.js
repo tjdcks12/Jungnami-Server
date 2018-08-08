@@ -10,7 +10,7 @@ const checktime = require('../../module/checktime.js');
 //contents에서 받아오는 id 로  title좋아요 수 , 댓글 수, 시간, cate
 //contents_id로 contentsimg 테이블에서 사진 20개 받아오기
 
-router.get('/:contents_id',  async (req, res) => {
+router.get('/:contents_id',  async (req, res, next) => {
 
 
   const chkToken = jwt.verify(req.headers.authorization);

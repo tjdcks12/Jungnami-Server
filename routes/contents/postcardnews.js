@@ -11,7 +11,7 @@ const upload = require('../../module/multer_contents_cardnews.js');
 
 /*  컨텐츠 카드뉴스 등록  */
 /*  /contents/postcardnews  */
-router.post('/', upload.array('cardnews'), async(req, res) => {
+router.post('/', upload.array('cardnews'), async(req, res, next) => {
 
   let c_id = req.body.contents_id; // contents_id
   let cardnews = req.files[0].location; // cardnews

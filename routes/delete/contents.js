@@ -9,7 +9,7 @@ const db = require('../../module/pool.js');
 
 /*  컨텐츠 게시글 삭제하기  */
 /*  /contents/c_delete  */
-router.delete('/:contentsid',  async (req, res) => {
+router.delete('/:contentsid',  async (req, res, next) => {
   try{
     let c_id = req.params.contentsid;
 

@@ -5,7 +5,7 @@ const async = require('async');
 const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 
-router.post('/', async(req, res) => {
+router.post('/', async(req, res, next) => {
 	var id; // 사용자 email
 
 	const chkToken = jwt.verify(req.headers.authorization);

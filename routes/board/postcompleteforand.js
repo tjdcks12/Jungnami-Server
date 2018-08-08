@@ -7,7 +7,7 @@ const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 const upload = require('../../module/multer_board_img.js');
 
-router.post('/', upload.array('image'), async(req, res) => {
+router.post('/', upload.array('image'), async(req, res, next) => {
   try{
     const chkToken = jwt.verify(req.headers.authorization);
 
@@ -43,7 +43,7 @@ router.post('/', upload.array('image'), async(req, res) => {
     if(!data){
       return next("500");
     }
-    
+
     res.status(201).send({
       "message" : "Success",
     });

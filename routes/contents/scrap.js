@@ -10,7 +10,7 @@ const jwt = require('../../module/jwt.js');
 const db = require('../../module/pool.js');
 
 
-router.post('/',  async (req, res) => {
+router.post('/',  async (req, res, next) => {
   try{
     const chkToken = jwt.verify(req.headers.authorization);
 

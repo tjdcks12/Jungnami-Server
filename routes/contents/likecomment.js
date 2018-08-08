@@ -10,7 +10,7 @@ var FCM = require('fcm-node');
 const get_pushdata = require('../../module/pushdata.js');
 const serverKey = require('../../config/fcmKey.js').key;
 
-router.post('/', async(req, res) => {
+router.post('/', async(req, res, next) => {
 	const chkToken = jwt.verify(req.headers.authorization);
 
 	if(chkToken == -1) {

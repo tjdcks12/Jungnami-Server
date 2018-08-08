@@ -7,7 +7,7 @@ const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 
 /* GET home page. */
-router.get('/',  async (req, res) => {
+router.get('/',  async (req, res, next) => {
   try{
     const chkToken = jwt.verify(req.headers.authorization);
     if(chkToken == -1) {

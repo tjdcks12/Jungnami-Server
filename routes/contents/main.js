@@ -6,7 +6,7 @@ const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 const checktime = require('../../module/checktime.js');
 
-router.get('/:category', async (req, res) => {
+router.get('/:category', async (req, res, next) => {
 
   const chkToken = jwt.verify(req.headers.authorization);
 

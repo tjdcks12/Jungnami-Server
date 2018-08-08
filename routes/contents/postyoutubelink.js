@@ -10,7 +10,7 @@ const db = require('../../module/pool.js');
 
 /*  컨텐츠 영상 링크 등록  */
 /*  /contents/postyoutubelink  */
-router.post('/', async(req, res) => {
+router.post('/', async(req, res, next) => {
 
   let c_id = req.body.contents_id; // contents_id
   let youtubelink = req.body.youtubelink; // youtubelink

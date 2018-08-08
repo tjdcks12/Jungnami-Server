@@ -9,7 +9,7 @@ const db = require('../../module/pool.js');
 
 /*  스크랩 삭제  */
 /*  /delete/scrap  */
-router.delete('/:contentsid',  async (req, res) => {
+router.delete('/:contentsid',  async (req, res, next) => {
   try{
     const chkToken = jwt.verify(req.headers.authorization);
 

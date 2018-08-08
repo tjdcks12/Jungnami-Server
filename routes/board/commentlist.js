@@ -7,7 +7,7 @@ const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 const checktime = require('../../module/checktime');
 
-router.get('/:board_id', async(req, res) => {
+router.get('/:board_id', async(req, res, next) => {
 	const chkToken = jwt.verify(req.headers.authorization);
 
 	var userid;
@@ -105,7 +105,7 @@ router.get('/:board_id', async(req, res) => {
 
 			resultArry.push(subresultObj);
 		}
-		
+
 		res.status(200).send({
 			"message" : "Success",
 			"data" : resultArry

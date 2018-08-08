@@ -9,7 +9,7 @@ var FCM = require('fcm-node');
 const get_pushdata = require('../../module/pushdata.js');
 const serverKey = require('../../config/fcmKey.js').key;
 
-router.post('/', async(req, res) => {
+router.post('/', async(req, res, next) => {
 	const chkToken = jwt.verify(req.headers.authorization);
 
 	if(chkToken == -1) {
@@ -31,7 +31,7 @@ router.post('/', async(req, res) => {
 		if(!data){
 			return next("500");
 		}
-		
+
 		// 게시글 작성자 데이터 가져오기
 		let select_find =
 		`
