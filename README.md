@@ -43,6 +43,8 @@
 
 * [multer](https://github.com/expressjs/multer)
 
+* [express-useragent](https://www.npmjs.com/package/express-useragent) : device detection
+
 
 
 # Security

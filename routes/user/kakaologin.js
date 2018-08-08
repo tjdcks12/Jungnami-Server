@@ -19,7 +19,7 @@ const request = require('request-promise');
 
 router.post('/', async(req, res, next) => {
   console.log(req.useragent);
-  
+
   // 카카오톡 access token
   let accessToken = req.body.accessToken;
   if(!accessToken){
@@ -101,8 +101,8 @@ router.post('/', async(req, res, next) => {
 
       if(checkid.length != 0){ // 기기를 변경했을 경우
         // fcm token update
-        // 모바일일 경우
-        if(req.useragent.isMobile()){
+        // 모바일일 경우 푸쉬알람 토큰 업데이트
+        if(req.useragent.isMobile){
           let updateResult = await db.queryParamCnt_Arr(updateQuery, [fcmToken, id]);
           if(!updateResult){
             return next("500");
@@ -145,7 +145,6 @@ router.post('/', async(req, res, next) => {
   finally {
     console.log('finally');
   }
-
 });
 
 module.exports = router;

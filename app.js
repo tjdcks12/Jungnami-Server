@@ -29,7 +29,7 @@ var bodyParser = require('body-parser');
 // 파일 용량
 //app.use(express.limit('20mb'));
 
-//test
+// device detection
 var useragent = require('express-useragent');
 app.use(useragent.express());
 
