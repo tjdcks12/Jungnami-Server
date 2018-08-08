@@ -37,7 +37,7 @@ router.get('/:p_name/:l_name', async(req, res, next) => {
     `
     SELECT lv_legislator_id
     FROM legislatorVote
-    WHERE lv_user_id = ?"
+    WHERE lv_user_id = ?
     `;
     let result_vote = await db.queryParamCnt_Arr(select_vote, id);
     votedLegislator = result_vote;

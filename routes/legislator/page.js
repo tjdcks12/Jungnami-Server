@@ -142,9 +142,6 @@ router.get('/:l_id', async(req, res, next) => {
     WHERE hash.h_legislator_id = ?
     `;
     let result_contents = await db.queryParamCnt_Arr(select_contents,[l_id]);
-    if(result_contents.length == 0){
-      return next("1204");
-    }
 
     var contents = [];
     for(var i=0; i<result_contents.length; i++){

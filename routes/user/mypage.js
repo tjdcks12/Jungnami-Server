@@ -25,7 +25,6 @@ router.get('/:mypage_id', async(req, res, next) => {
   let mypage_id = req.params.mypage_id; // 해당 계정 주인
 
   try {
-
     // 스크랩 수, 내 피드 수, 팔로워 수, 팔로잉 수
     let scrapSql =
     `
@@ -67,12 +66,6 @@ router.get('/:mypage_id', async(req, res, next) => {
     var result = {};
     if(selectQuery.length == 0){
       return next("1204");
-      // console.log("query not ok");
-      //
-      // res.status(300).send({
-      //       message: "Select user Error"
-      // });
-      // return;
     }else{
       result.mypage_id = mypage_id;
       result.nickname = selectQuery[0].nickname;
@@ -289,9 +282,6 @@ router.get('/:mypage_id', async(req, res, next) => {
   } catch(error) {
     console.log(error)
     return next("500");
-    // res.status(500).send({
-    //     message : "Internal Server Error"
-    //   });
   }
 });
 

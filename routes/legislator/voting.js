@@ -12,7 +12,6 @@ const jwt = require('../../module/jwt.js');
 /*  /legislator/voting/  */
 router.get('/', async(req, res, next) => {
   try {
-
     const chkToken = jwt.verify(req.headers.authorization);
 
     if(chkToken == -1) {
@@ -51,17 +50,16 @@ router.post('/', async(req, res, next) => {
 
   try {
 
-    // const chkToken = jwt.verify(req.headers.authorization);
-    // if(chkToken == -1) {
-    //   res.status(401).send({
-    //     message : "Access Denied"
-    //   });
-    //
-    //   return;
-    // }
+    const chkToken = jwt.verify(req.headers.authorization);
+    if(chkToken == -1) {
+      res.status(401).send({
+        message : "Access Denied"
+      });
+    
+      return;
+    }
 
-    // let u_id = chkToken.id;
-    let u_id = "809253344";
+    let u_id = chkToken.id;
     let l_id =+ req.body.l_id;
     let islike =+ req.body.islike;
 
@@ -81,7 +79,7 @@ router.post('/', async(req, res, next) => {
           return next("500");
         }
 
-        let updateQuery = await connection.query(updateSql,[]);
+        let updateQuery = await connection.query(updateSql,[u_id]);
         if(!updateQuery){
           return next("500");
         }
