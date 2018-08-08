@@ -18,8 +18,6 @@ const db = require('../../module/pool.js');
 const request = require('request-promise');
 
 router.post('/', async(req, res, next) => {
-  console.log(req.useragent);
-
   // 카카오톡 access token
   let accessToken = req.body.accessToken;
   if(!accessToken){
