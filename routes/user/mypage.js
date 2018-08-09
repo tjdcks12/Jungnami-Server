@@ -89,8 +89,7 @@ router.get('/:mypage_id', async(req, res, next) => {
       else{
         result.isfollow = 1;
       }
-
-
+      
       if (u_id == mypage_id) {  // 내가 내 계정에 들어온거라면
 
         result.point = selectQuery[0].point;
