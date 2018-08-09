@@ -37,10 +37,6 @@ router.get('/:l_id', async(req, res, next) => {
     let likeRankingQuery = await db.queryParamCnt_Arr(rankingSql,[1]);
     let unlikeRankingQuery = await db.queryParamCnt_Arr(rankingSql,[0]);
 
-    if(likeRankingQuery.length == 0 || unlikeRankingQuery.length == 0){
-      return next("1204");
-    }
-
     // 호감 순 줄 세우기
     var likeRresult = [];
     for(var i=0; i<likeRankingQuery.length; i++){

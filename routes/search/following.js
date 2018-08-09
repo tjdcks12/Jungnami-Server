@@ -94,6 +94,10 @@ router.get('/:f_id/:keyword', async(req, res, next) => {
       }
     }
 
+    if(searchResult.length == 0){
+      return next("1204");
+    }
+
     res.status(200).send({
       message : "Success",
       data : searchResult

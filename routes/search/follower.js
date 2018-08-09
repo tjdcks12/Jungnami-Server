@@ -79,17 +79,20 @@ router.get('/:f_id/:keyword', async(req, res, next) => {
 
     var searchResult = [];
     for(var i=0; i<result.length; i++){
-          if(searcher.search(result[i].follower_nickname) >= 0){
+      if(searcher.search(result[i].follower_nickname) >= 0){
 
-            searchResult.push(result[i]);
+        searchResult.push(result[i]);
       }
     }
 
+    if(searchResult.length == 0){
+      return next("1204");
+    }
 
     res.status(200).send({
-        message : "Select Data Success",
-        data : searchResult
-      });
+      message : "Select Data Success",
+      data : searchResult
+    });
 
   } catch(error) {
     return next("500");

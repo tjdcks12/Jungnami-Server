@@ -32,10 +32,6 @@ router.get('/', async(req, res, next) => {
     `;
     let pushdata = await db.queryParamCnt_Arr(pushsql,[u_id]);
 
-    if(pushdata.length == 0){
-      return next("1204");
-    }
-
     var result = [];
     for (var i=0; i<pushdata.length; i++) {
       var r = {};

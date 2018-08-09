@@ -146,10 +146,6 @@ router.get('/:islike/:city', async(req, res, next) => {
 
 
 
-    if(result.length == 0){
-      return next("1204");
-    }
-
     res.status(200).json({
       data : result,
       message : "Success"

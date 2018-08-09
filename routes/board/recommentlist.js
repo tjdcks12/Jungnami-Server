@@ -44,9 +44,6 @@ router.get('/:comment_id', async(req, res, next) => {
 		order by brl.cnt desc, writingtime desc
 		`;
 		let recommenttableInfo = await db.queryParamCnt_Arr(getrecommentlistQuery, [req.params.comment_id]);
-		if(recommenttableInfo.length == 0){
-			return next("1204");
-		}
 
 		let resultArry = [];
 

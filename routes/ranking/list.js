@@ -39,66 +39,64 @@ router.get('/:islike', async(req, res, next) => {
 
     let listQuery = await db.queryParamCnt_Arr(listSql,[islike]);
 
-    if(listQuery.length == 0){
-      return next("1204");
-    } else {
-      var result = [];
-      for(var i=0; i<listQuery.length; i++){
-        var rankingInfo = {};
 
-        rankingInfo.l_id = listQuery[i].id;
-        rankingInfo.l_name = listQuery[i].name;
-        rankingInfo.party_name = listQuery[i].l_party_name;
-        rankingInfo.position = listQuery[i].position;
-        rankingInfo.score = listQuery[i].score;
+    var result = [];
+    for(var i=0; i<listQuery.length; i++){
+      var rankingInfo = {};
 
-        if (rankingInfo.score == null){
-          rankingInfo.scoretext = "0 표";
-        } else {
-          rankingInfo.scoretext = addComma.addComma(rankingInfo.score) + " 표";
-        }
+      rankingInfo.l_id = listQuery[i].id;
+      rankingInfo.l_name = listQuery[i].name;
+      rankingInfo.party_name = listQuery[i].l_party_name;
+      rankingInfo.position = listQuery[i].position;
+      rankingInfo.score = listQuery[i].score;
 
-        rankingInfo.profileimg = listQuery[i].profile_img_url;
-        rankingInfo.mainimg = listQuery[i].main_img_url;
-
-        result.push(rankingInfo);
+      if (rankingInfo.score == null){
+        rankingInfo.scoretext = "0 표";
+      } else {
+        rankingInfo.scoretext = addComma.addComma(rankingInfo.score) + " 표";
       }
 
-      // 순위 뽑기 + 막대그래프 길이
-      var w = 0;
-      for(var i=0; i<result.length; i++) {
+      rankingInfo.profileimg = listQuery[i].profile_img_url;
+      rankingInfo.mainimg = listQuery[i].main_img_url;
 
-        if (result[i].score == null) {
-            result[i].score = 0;
-            result[i].ranking = "-"
-            result[i].width = 0;
-
-        } else {
-
-          if (i==0) {
-            w = result[i].score; // 최대 득표수
-            result[i].ranking = 1;
-          } else {
-
-            if(result[i].score == result[i-1].score) {
-              result[i].ranking = result[i-1].ranking;
-              result[i].width = result[i-1].width;
-              continue;
-            } else if (result[i].score < result[i-1].score) {
-              result[i].ranking = i+1;
-            }
-          }
-
-          result[i].ranking = (result[i].ranking).toString();
-          result[i].width =+ (result[i].score / w).toFixed(2);
-        }
-      }
-
-      res.status(200).send({
-          message : "Success",
-          data : result
-        });
+      result.push(rankingInfo);
     }
+
+    // 순위 뽑기 + 막대그래프 길이
+    var w = 0;
+    for(var i=0; i<result.length; i++) {
+
+      if (result[i].score == null) {
+        result[i].score = 0;
+        result[i].ranking = "-"
+        result[i].width = 0;
+
+      } else {
+
+        if (i==0) {
+          w = result[i].score; // 최대 득표수
+          result[i].ranking = 1;
+        } else {
+
+          if(result[i].score == result[i-1].score) {
+            result[i].ranking = result[i-1].ranking;
+            result[i].width = result[i-1].width;
+            continue;
+          } else if (result[i].score < result[i-1].score) {
+            result[i].ranking = i+1;
+          }
+        }
+
+        result[i].ranking = (result[i].ranking).toString();
+        result[i].width =+ (result[i].score / w).toFixed(2);
+      }
+    }
+
+    res.status(200).send({
+      message : "Success",
+      data : result
+    });
+
   } catch(error) {
     return next("500");
   }

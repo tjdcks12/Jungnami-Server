@@ -33,11 +33,6 @@ router.get('/:f_id', async(req, res, next) => {
 
     let followerlistQuery = await db.queryParamCnt_Arr(followerlistSql,[following_id]);
 
-    if(followerlistQuery.length == 0){
-      return next("1204");
-    }
-
-
     let followingSelectSql =
     `
     SELECT f_following_id
@@ -50,41 +45,39 @@ router.get('/:f_id', async(req, res, next) => {
     var result = []; // follower_id, follower_nickname, follower_img_url, isMyFollowing
 
 
-    if(u_id != '' && followingSelectQuery == undefined) { // 로그인이 되어있는데 팔로우정보도 못가져오면
-      return next("1204");
-    }else{
-      for (var i=0; i<followerlistQuery.length; i++) {
-        var r = {};
 
-        r.follower_id = followerlistQuery[i].f_follower_id;
-        r.follower_nickname = followerlistQuery[i].nickname;
-        r.follower_img_url = followerlistQuery[i].img_url;
-        r.isMyFollowing = ''; // 로그인 안 되어 있을때 -> button 안만들어줘도 됨
+    for (var i=0; i<followerlistQuery.length; i++) {
+      var r = {};
 
-        if (u_id != '') { // 로그인 되어있을 때에는?
+      r.follower_id = followerlistQuery[i].f_follower_id;
+      r.follower_nickname = followerlistQuery[i].nickname;
+      r.follower_img_url = followerlistQuery[i].img_url;
+      r.isMyFollowing = ''; // 로그인 안 되어 있을때 -> button 안만들어줘도 됨
 
-          r.isMyFollowing = "팔로우"; // 팔로우 하세요
+      if (u_id != '') { // 로그인 되어있을 때에는?
 
-          for (var j=0; j<followingSelectQuery.length; j++) {
+        r.isMyFollowing = "팔로우"; // 팔로우 하세요
 
-            if(followerlistQuery[i].f_follower_id == followingSelectQuery[j].f_following_id) {
-              r.isMyFollowing = "팔로잉"; // 팔로잉 중이에요
-              break;
-            } else if (followerlistQuery[i].f_follower_id == u_id) {
-              r.isMyFollowing = "나"; // 나다!
-              break;
-            }
+        for (var j=0; j<followingSelectQuery.length; j++) {
+
+          if(followerlistQuery[i].f_follower_id == followingSelectQuery[j].f_following_id) {
+            r.isMyFollowing = "팔로잉"; // 팔로잉 중이에요
+            break;
+          } else if (followerlistQuery[i].f_follower_id == u_id) {
+            r.isMyFollowing = "나"; // 나다!
+            break;
           }
         }
-
-        result.push(r);
       }
+
+      result.push(r);
     }
 
+
     res.status(200).send({
-        message : "Success",
-        data : result
-      });
+      message : "Success",
+      data : result
+    });
 
   } catch(error) {
     return next("500");

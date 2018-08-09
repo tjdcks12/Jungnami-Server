@@ -43,9 +43,6 @@ router.get('/:board_id', async(req, res, next) => {
 		`;
 		let commenttableInfo = await db.queryParamCnt_Arr(getcommentlistQuery, [req.params.board_id]);
 		//댓글 테이블에서 댓글 목록 받아와서
-		if(commenttableInfo.length == 0){
-			return next("1204");
-		}
 
 		let resultArry = [];
 
