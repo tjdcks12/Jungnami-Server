@@ -39,7 +39,7 @@ router.delete('/:boardcommentid', async(req, res, next) => {
       WHERE id = ?
       `;
       let result_delete = await db.queryParamCnt_Arr(delete_comment,[req.params.boardcommentid]);
-      if(result_delete){
+      if(!result_delete){
         return next("500");
       }
 
