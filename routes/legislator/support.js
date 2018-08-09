@@ -61,16 +61,14 @@ router.post('/', async(req, res, next) => {
 
     let u_id = chkToken.id;
     let l_id =+ req.body.l_id;
-    let point =+ req.body.point; // 몇 코인 후원할 것인지
+    let point =+ req.body.point; // 몇 포인트 후원할 것인지
 
 
-    // 유저의 코인 현황
+    // 유저의 포인트 현황
     let userpointSql = "SELECT point FROM user WHERE id = ?;"
     let userpointQuery = await db.queryParamCnt_Arr(userpointSql,[u_id]);
 
     var user_point =+ userpointQuery[0].point;
-
-    console.log(user_point)
 
     // update point
     if (user_point >= point) {
