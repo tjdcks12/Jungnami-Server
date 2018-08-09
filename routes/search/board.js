@@ -2,6 +2,7 @@
 /*  /search/board */
 /* 종찬 */
 
+
 var express = require('express');
 const router = express.Router();
 
@@ -14,16 +15,19 @@ const hangul = require('hangul-js');
 const checktime = require('../../module/checktime.js');
 
 router.get('/:keyword', async(req, res, next) => {
-  const chkToken = jwt.verify(req.headers.authorization);
 
-  var userid;
-  var user_img_url;
-  if(chkToken == -1){
-    userid = "";
+  var user_id, user_img_url; // 사용자 id와 image url
+
+  const chkToken = jwt.verify(req.headers.authorization);
+  if(chkToken == -1) {
+    user_id = "";
+    user_img_url = "";
   }
   else{
-    userid = chkToken.id;
+    id = chkToken.id;
   }
+
+
   // 현재시간
   var currentTime = new Date();
 
@@ -49,7 +53,7 @@ router.get('/:keyword', async(req, res, next) => {
     FROM boardLike
     WHERE bl_user_id = ?
     `
-    var result_check = await db.queryParamCnt_Arr(select_check, [userid]);
+    var result_check = await db.queryParamCnt_Arr(select_check, [user_id]);
 
     // return할 result
     var result = [];

@@ -16,6 +16,16 @@ const checktime = require('../../module/checktime.js');
 
 router.get('/:keyword', async(req, res, next) => {
 
+  var id; // 사용자 id
+
+  const chkToken = jwt.verify(req.headers.authorization);
+  if(chkToken == -1) {
+    id = "";
+  }
+  else{
+    id = chkToken.id;
+  }
+
   // 현재시간
   var currentTime = new Date();
 
