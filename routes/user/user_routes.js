@@ -30,13 +30,13 @@ router.use('/followerlist', require('./followerlist'));
 router.use('/followinglist', require('./followinglist'));
 
 // 코인 충전 페이지
-router.use('/coin', require('./coin'));
+router.use('/point', require('./point'));
 
 // 투표권 충전 페이지
 router.use('/vote', require('./vote'));
 
 // 코인 충전 하기
-router.use('/addcoin', require('./addcoin'));
+router.use('/addpoint', require('./addpoint'));
 
 // 투표권 충전 하기
 router.use('/addvote', require('./addvote'));

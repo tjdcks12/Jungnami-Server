@@ -12,7 +12,7 @@
   "1402" : {
     "status" : 401,
     "description" : "코인이 부족합니다.",
-    "message" : "No coin"
+    "message" : "No point"
   },
   "1403" : {
     "status" : 401,
