@@ -1,5 +1,5 @@
-/* 코인 충전 페이지 */
-/* /user/coin */
+/* 포인트 충전 페이지 */
+/* /user/point */
 /* 종찬 */
 
 var express = require('express');
@@ -20,13 +20,13 @@ router.get('/', async(req, res, next) => {
     let id = chkToken.id;
 
     // 유저 포인트 가져오기
-    let select_coin =
+    let select_point =
     `
-    SELECT coin
+    SELECT point
     FROM user
     WHERE id = ?
     `;
-    let result_coin = await db.queryParamCnt_Arr(select_coin,[id]);
+    let result_point = await db.queryParamCnt_Arr(select_point,[id]);
 
     // return할 데이터
     var result = [];
@@ -40,7 +40,7 @@ router.get('/', async(req, res, next) => {
     let result_exchange = await db.queryParamCnt_Arr(select_exchange,[]);
 
     var result = {};
-    result.coin = result_coin[0].coin;
+    result.point = result_point[0].point;
     result.exchange = result_exchange;
 
     res.status(200).send({

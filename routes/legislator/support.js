@@ -22,7 +22,7 @@ router.get('/', async(req, res, next) => {
     let u_id = chkToken.id;
     let selectSql =
     `
-    SELECT coin
+    SELECT point
     FROM user
     WHERE id = ?
     `
@@ -30,7 +30,7 @@ router.get('/', async(req, res, next) => {
 
 
     let data = {};
-    data.user_coin = selectQuery[0].coin;
+    data.user_point = selectQuery[0].point;
 
     res.status(200).send({
       message : "Success",
@@ -61,36 +61,39 @@ router.post('/', async(req, res, next) => {
 
     let u_id = chkToken.id;
     let l_id =+ req.body.l_id;
-    let coin =+ req.body.coin; // 몇 코인 후원할 것인지
-
-    var user_coin, legislator_coin;
+    let point =+ req.body.point; // 몇 코인 후원할 것인지
 
 
     // 유저의 코인 현황
-    let usercoinSql = "SELECT coin FROM user WHERE id = ?;"
-    let usercoinQuery = await db.queryParamCnt_Arr(usercoinSql,[u_id]);
+    let userpointSql = "SELECT point FROM user WHERE id = ?;"
+    let userpointQuery = await db.queryParamCnt_Arr(userpointSql,[u_id]);
 
-    user_coin =+ usercoinQuery[0].coin;
+    var user_point =+ userpointQuery[0].point;
+
+    console.log(user_point)
 
     // update point
-    if (user_coin >= coin) {
-      let supportSql = "UPDATE legislator SET coin = coin + ? WHERE id = ?;"
+    if (user_point >= point) {
+      let supportSql = "UPDATE legislator SET point = point + ? WHERE id = ?;"
 
-      let updateSql = "UPDATE user SET coin = coin - ? WHERE id = ?;"
+      let updateSql = "UPDATE user SET point = point - ? WHERE id = ?;"
 
       let Transaction = await db.Transaction( async (connection) => {
-        let supportQuery = await connection.query(supportSql,[coin, l_id]);
+        let supportQuery = await connection.query(supportSql,[point, l_id]);
         if(!supportQuery){
+          console.log("의원 + 실패")
           return next("500");
         }
 
-        let updateQuery = await connection.query(updateSql,[coin, u_id]);
+        let updateQuery = await connection.query(updateSql,[point, u_id]);
         if(!updateQuery){
+          console.log("유저 - 실패")
           return next("500");
         }
       })
 
       if(!Transaction){
+        console.log("트랜잭션 실패")
         return next("500");
       }
 
@@ -102,6 +105,7 @@ router.post('/', async(req, res, next) => {
     }
 
   } catch(error) {
+    console.log("잉 서버에러")
     return next("500");
   }
 
