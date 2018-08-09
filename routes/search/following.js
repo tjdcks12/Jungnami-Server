@@ -20,10 +20,7 @@ router.get('/:f_id/:keyword', async(req, res, next) => {
     const chkToken = jwt.verify(req.headers.authorization);
 
     if(chkToken == -1) {
-      res.status(401).send({
-        message : "Access Denied"
-      });
-      return;
+      return next("401");
     }
 
     let u_id = chkToken.id;
@@ -103,7 +100,7 @@ router.get('/:f_id/:keyword', async(req, res, next) => {
       data : searchResult
     });
 
-  }catch(error) {
+  } catch(error) {
     return next("500");
   }
 });

@@ -93,11 +93,11 @@ router.get('/:mypage_id', async(req, res, next) => {
 
       if (u_id == mypage_id) {  // 내가 내 계정에 들어온거라면
 
-        result.coin = selectQuery[0].coin;
+        result.point = selectQuery[0].point;
         result.votingcnt = selectQuery[0].voting_cnt;
 
       } else {
-        result.coin = 0;
+        result.point = 0;
         result.votingcnt = 0;
       }
 

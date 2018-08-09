@@ -1,5 +1,5 @@
-/* 코인 충전 하기 */
-/* /user/addcoin */
+/* 투표권 충전 하기 */
+/* /user/addpoint */
 /* 종찬 */
 
 var express = require('express');
@@ -18,19 +18,19 @@ router.post('/', async(req, res, next) => {
     }
 
     let id = chkToken.id;
-    let vote = req.body.coin;
+    let vote = req.body.point;
 
-    // 유저 코인 가져오기
-    let select_coin =
+    // 유저 포인트 가져오기
+    let select_point =
     `
-    SELECT coin
+    SELECT point
     FROM user
     WHERE id = ?
     `;
-    var result_coin= await db.queryParamCnt_Arr(select_coin, [id]);
+    var result_point= await db.queryParamCnt_Arr(select_point, [id]);
 
-    // 코인이 부족한 경우
-    if(vote > result_coin[0].coin){
+    // 포인트이 부족한 경우
+    if(vote > result_point[0].point){
       return next("1402");
     }
 
@@ -42,11 +42,11 @@ router.post('/', async(req, res, next) => {
     WHERE id = ?
     `;
 
-    // 유저 코인 감소시키기
-    let select_subcoin =
+    // 유저 포인트 감소시키기
+    let select_subpoint =
     `
     UPDATE user
-    SET coin = coin - ?
+    SET point = point - ?
     WHERE id = ?
     `;
 
@@ -56,8 +56,8 @@ router.post('/', async(req, res, next) => {
         return next("500");
       }
 
-      let result_subcoin = await connection.query(select_subcoin,[vote, id]);
-      if(!result_subcoin){
+      let result_subpoint = await connection.query(select_subpoint,[vote, id]);
+      if(!result_subpoint){
         return next("500");
       }
     })

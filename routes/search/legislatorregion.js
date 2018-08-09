@@ -1,5 +1,5 @@
 /* 지역 별 호감/비호감 의원 탭에서 검색 */
-/*  /search/legislatorparty */
+/*  /search/legislatorregion */
 /* 종찬 */
 
 var express = require('express');
@@ -23,8 +23,8 @@ router.get('/:city/:l_name', async(req, res, next) => {
   }
 
   // 자음, 모음까지 검색 되도록 하기 위해 사용
-  let searchWord = req.params.keyword;
-  let searcher = new hangul.Searcher(req.params.l_name);
+  let searchWord = req.params.l_name;
+  let searcher = new hangul.Searcher(searchWord);
 
   var data = []; // 응답할 데이터
   var ranklike = []; // 의원별 호감 랭킹 정보 저장
@@ -43,10 +43,10 @@ router.get('/:city/:l_name', async(req, res, next) => {
     votedLegislator = result_vote;
 
     // 호감 랭킹 계산하기
-    let select_ranklike =
-    `SELECT id, score
+    let select_ranklike = `
+    SELECT id, score
     FROM legislator
-    LEFT JOIN (SELECT  lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = 1 GROUP BY lv_legislator_id) as lv
+    LEFT JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = 1 GROUP BY lv_legislator_id) as lv
     ON legislator.id = lv.lv_legislator_id
     `;
     let result_ranklike = await db.queryParamCnt_Arr(select_ranklike, []);
@@ -91,14 +91,16 @@ router.get('/:city/:l_name', async(req, res, next) => {
     }
 
     //의원정보 가져오기
+    let filteringWord = req.params.city;
+
     let select_legislator =
     `
     SELECT id, l_party_name, name, region_city, region_state, profile_img_url, isPpresident, isLpresident, isPPpresident, score, position
     FROM legislator
     LEFT JOIN (SELECT  lv_legislator_id, count(*) as score FROM legislatorVote GROUP BY lv_legislator_id) as lv
-    ON legislator.id = lv.lv_legislator_id ORDER BY score DESC
+    ON legislator.id = lv.lv_legislator_id WHERE region_city = ? ORDER BY score DESC
     `
-    let result_legislator = await db.queryParamCnt_Arr(select_legislator,[req.params.city]);
+    let result_legislator = await db.queryParamCnt_Arr(select_legislator, [filteringWord]);
 
 
     // return할 result

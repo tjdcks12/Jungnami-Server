@@ -1,5 +1,5 @@
-/* 코인 충전 하기 */
-/* /user/addcoin */
+/* 포인트 충전 하기 */
+/* /user/addpoint */
 /* 종찬 */
 
 var express = require('express');
@@ -17,17 +17,17 @@ router.post('/', async(req, res, next) => {
     }
 
     let id = chkToken.id;
-    let coin = req.body.coin;
+    let point = req.body.point;
 
-    // 유저 코인 추가하기
-    let select_addcoin =
+    // 유저 포인트 추가하기
+    let select_addpoint =
     `
     UPDATE user
-    SET coin = coin + ?
+    SET point = point + ?
     WHERE id = ?
     `;
-    let result_addcoin = await db.queryParamCnt_Arr(select_addcoin,[]);
-    if(!result_addcoin){
+    let result_addpoint = await db.queryParamCnt_Arr(select_addpoint,[]);
+    if(!result_addpoint){
       return next("500");
     }
 

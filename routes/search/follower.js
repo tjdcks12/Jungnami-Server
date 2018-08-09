@@ -10,9 +10,9 @@ const jwt = require('../../module/jwt.js');
 const hangul = require('hangul-js');
 
 
-
 /*  팔로워 검색하기  */
 /*  /search/follower  */
+
 router.get('/:f_id/:keyword', async(req, res, next) => {
 
   try {
@@ -90,15 +90,12 @@ router.get('/:f_id/:keyword', async(req, res, next) => {
     }
 
     res.status(200).send({
-      message : "Select Data Success",
+      message : "Success",
       data : searchResult
     });
 
   } catch(error) {
     return next("500");
-    // res.status(500).send({
-    //     message : "Internal Server Error"
-    //   });
   }
 });
 
