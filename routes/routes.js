@@ -2,6 +2,10 @@
 const express = require('express');
 const router = express.Router();
 
+/** uri 중간에 params 있는 코드에 삽입해야 함. **/
+// var router = express.Router({mergeParams : true});
+
+
 // board
 router.use('/board', require('./board/board_routes'));
 
@@ -27,7 +31,7 @@ router.use('/legislator', require('./legislator/legislator_routes'));
 router.use('/delete', require('./delete/delete_routes'));
 
 // Test
-//router.use('/test', require('./test/test_routes'));
+router.use('/test', require('./test/test_routes'));
 
 
 module.exports = router;

@@ -45,11 +45,8 @@ router.get('/:islike/:pre/:number', async(req, res, next) => {
       ON legislator.id = lv.lv_legislator_id
       ORDER BY lv.score DESC) as l1;
     `
-
     let setQuery = await db.queryParamCnt_Arr(setSql,[]);
     let listQuery = await db.queryParamCnt_Arr(listSql,[islike]);
-
-    console.log(listQuery)
 
     var result = [];
     for(var i=0; i<listQuery.length; i++){
