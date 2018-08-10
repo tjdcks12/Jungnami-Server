@@ -1,4 +1,4 @@
-/* KIM JI YEON */
+/*  KIM JI YEON  */
 
 var express = require('express');
 const router = express.Router();
@@ -50,6 +50,7 @@ router.get('/', async(req, res, next) => {
 /*  의원에게 후원 완료하고 나서  */
 /*  /legislator/support  */
 router.post('/', async(req, res, next) => {
+
   const chkToken = jwt.verify(req.headers.authorization);
 
   if(chkToken == -1) {
@@ -72,26 +73,36 @@ router.post('/', async(req, res, next) => {
 
     // update point
     if (user_point >= point) {
-      let supportSql = "UPDATE legislator SET point = point + ? WHERE id = ?;"
+      let supportSql = 
+      `
+      UPDATE legislator
+      SET point = point + ?
+      WHERE id = ?;
+      `;
 
-      let updateSql = "UPDATE user SET point = point - ? WHERE id = ?;"
+      let updateSql = 
+      `
+      UPDATE user 
+      SET point = point - ? 
+      WHERE id = ?;
+      `
 
       let Transaction = await db.Transaction( async (connection) => {
         let supportQuery = await connection.query(supportSql,[point, l_id]);
         if(!supportQuery){
-          console.log("의원 + 실패")
+          console.log("update legislator error");
           return next("500");
         }
 
         let updateQuery = await connection.query(updateSql,[point, u_id]);
         if(!updateQuery){
-          console.log("유저 - 실패")
+          console.log("update user error");
           return next("500");
         }
       })
 
       if(!Transaction){
-        console.log("트랜잭션 실패")
+        console.log("transaction error"); // 수진이 여기서 에러남
         return next("500");
       }
 
@@ -103,7 +114,7 @@ router.post('/', async(req, res, next) => {
     }
 
   } catch(error) {
-    console.log("잉 서버에러")
+    console.log("server error");
     return next("500");
   }
 

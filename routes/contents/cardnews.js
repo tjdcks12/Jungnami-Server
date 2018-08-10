@@ -1,4 +1,6 @@
-//컨텐츠물 클릭시 카드뉴스 시작 화면
+/*  컨텐츠물 클릭시 카드뉴스 시작 화면  */
+/*  /contents/cardnews  */
+
 var express = require('express');
 var router = express.Router();
 const async = require('async');
@@ -7,11 +9,13 @@ const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 const checktime = require('../../module/checktime.js');
 
-//contents에서 받아오는 id 로  title좋아요 수 , 댓글 수, 시간, cate
-//contents_id로 contentsimg 테이블에서 사진 20개 받아오기
+
+
+
+// contents에서 받아오는 id 로  title 좋아요 수, 댓글 수, 시간, category
+// contents_id로 contentsimg 테이블에서 사진 20개 받아오기
 
 router.get('/:contents_id',  async (req, res, next) => {
-
 
   const chkToken = jwt.verify(req.headers.authorization);
 
@@ -24,6 +28,7 @@ router.get('/:contents_id',  async (req, res, next) => {
   }
 
   try{
+    let contents_id =+ req.params.contents_id;
     let resultdata = new Object();
 
     //컨텐츠물 작성시간, 카테고리
@@ -33,7 +38,7 @@ router.get('/:contents_id',  async (req, res, next) => {
     from myjungnami.contents
     where id = ?
     `;
-    let contentsinfo = await db.queryParamCnt_Arr(getcontentinfoQuery, [req.params.contents_id]);
+    let contentsinfo = await db.queryParamCnt_Arr(getcontentinfoQuery, [contents_id]);
 
     //카드뉴스 이미지 배열
     let getcardnewsQuery =
@@ -42,7 +47,7 @@ router.get('/:contents_id',  async (req, res, next) => {
     from myjungnami.contentsImg
     where ci_contents_id = ?
     `;
-    let imageArry = await db.queryParamCnt_Arr(getcardnewsQuery, [req.params.contents_id]);
+    let imageArry = await db.queryParamCnt_Arr(getcardnewsQuery, [contents_id]);
 
     //컨텐츠물 좋아요 개수
     let getlikecntQuery =
@@ -51,7 +56,7 @@ router.get('/:contents_id',  async (req, res, next) => {
     from myjungnami.contentsLike
     where cl_contents_id = ?
     `;
-    let contentslikeCnt = await db.queryParamCnt_Arr(getlikecntQuery, [req.params.contents_id]);
+    let contentslikeCnt = await db.queryParamCnt_Arr(getlikecntQuery, [contents_id]);
 
     //컨텐츠물 댓글 갯수
     let getcommentcntQuery =
@@ -60,8 +65,9 @@ router.get('/:contents_id',  async (req, res, next) => {
     from myjungnami.contentsComment
     where cc_contents_id = ?
     `;
-    let contentscommentCnt = await db.queryParamCnt_Arr(getcommentcntQuery, [req.params.contents_id]);
+    let contentscommentCnt = await db.queryParamCnt_Arr(getcommentcntQuery, [contents_id]);
 
+    // 내가 스크랩한 글 가져오기
     let check_scrap =
     `
     SELECT s_contents_id
@@ -70,7 +76,7 @@ router.get('/:contents_id',  async (req, res, next) => {
     `;
     let check_result = await db.queryParamCnt_Arr(check_scrap, [u_id]);
 
-    // 컨텐츠 스크랩 여부
+    // 해당 컨텐츠 스크랩 여부
     resultdata.isscrap = 0;
     for(var j=0; j<check_result.length; j++){
       if(check_result[j].s_contents_id == contentsinfo[0].id){
@@ -78,7 +84,7 @@ router.get('/:contents_id',  async (req, res, next) => {
         break;
       }
     }
-
+    
     resultdata.title = contentsinfo[0].title;
     resultdata.thumbnail = contentsinfo[0].thumbnail_url;
     resultdata.text = contentsinfo[0].category + " · " + contentsinfo[0].writingtime.toLocaleString();
@@ -110,20 +116,20 @@ router.get('/:contents_id',  async (req, res, next) => {
       }
     }
 
+    // 조회 수 증가
     var update_views =
     `
     UPDATE contents
     SET views = views + 1
     WHERE id = ?
     `;
-    var result_views = await db.queryParamCnt_Arr(update_views, [req.params.contents_id]);
+    var result_views = await db.queryParamCnt_Arr(update_views, [contents_id]);
 
     res.status(200).send({
       "message" : "Success",
       "data" : resultdata
     });
   }catch(err){
-    console.log(err);
     return next("500");
   }
 });

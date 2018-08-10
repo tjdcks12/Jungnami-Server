@@ -1,4 +1,6 @@
-/* KIM JI YEON */
+/*  호감, 비호감 순 리스트  */
+/*  /ranking/list/:islike/:pre/:number  */
+/*  KIM JI YEON  */
 
 var express = require('express');
 const router = express.Router();
@@ -9,9 +11,7 @@ const jwt = require('../../module/jwt.js');
 const addComma = require('../../module/addComma.js');
 
 
-/*  호감, 비호감 순 리스트  */
-/*  /ranking/list/:islike  */
-router.get('/:islike', async(req, res, next) => {
+router.get('/:islike/:pre/:number', async(req, res, next) => {
 
   const chkToken = jwt.verify(req.headers.authorization);
 
@@ -23,22 +23,33 @@ router.get('/:islike', async(req, res, next) => {
     u_id = chkToken.id;
   }
 
-  let islike =+ req.params.islike;
+  let islike = req.params.islike;
+  let pre =+ req.params.pre;
+  let number =+ req.params.number;
 
   try {
+    let setSql =
+    `
+    SET @row_num:=0;
+    `
+
     let listSql =
     `
-    SELECT *
-    FROM legislator
-    LEFT OUTER JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote
-    WHERE islike=?
-    GROUP BY lv_legislator_id) as lv
-    ON legislator.id = lv.lv_legislator_id
-    ORDER BY lv.score DESC;
+    SELECT *, @row_num := @row_num + 1 as row_number
+    FROM
+      (SELECT *
+      FROM legislator
+      LEFT OUTER JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote
+      WHERE islike = ?
+      GROUP BY lv_legislator_id) as lv
+      ON legislator.id = lv.lv_legislator_id
+      ORDER BY lv.score DESC) as l1;
     `
 
+    let setQuery = await db.queryParamCnt_Arr(setSql,[]);
     let listQuery = await db.queryParamCnt_Arr(listSql,[islike]);
 
+    console.log(listQuery)
 
     var result = [];
     for(var i=0; i<listQuery.length; i++){
@@ -92,9 +103,15 @@ router.get('/:islike', async(req, res, next) => {
       }
     }
 
+    let returnResult = [];
+    for(var i=pre; i<pre+number; i++){
+      returnResult.push(result[i]);
+    }
+
+
     res.status(200).send({
       message : "Success",
-      data : result
+      data : returnResult
     });
 
   } catch(error) {

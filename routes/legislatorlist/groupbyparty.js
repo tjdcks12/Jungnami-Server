@@ -10,7 +10,7 @@ const async = require('async');
 const jwt = require('../../module/jwt.js');
 const db = require('../../module/pool.js');
 
-router.get('/:islike/:p_name', async(req, res, next) => {
+router.get('/:islike/:p_name/:pre/:number', async(req, res, next) => {
   var id; // 사용자 id
 
   const chkToken = jwt.verify(req.headers.authorization);
@@ -20,6 +20,11 @@ router.get('/:islike/:p_name', async(req, res, next) => {
   else{
     id = chkToken.id;
   }
+
+  let islike = req.params.islike;
+  let p_name = req.params.p_name;
+  let pre =+ req.params.pre;
+  let number =+ req.params.number;
 
   var data = []; // 응답할 데이터
   var rank = []; // 의원별 랭킹 정보 저장
@@ -33,7 +38,8 @@ router.get('/:islike/:p_name', async(req, res, next) => {
     LEFT JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = ? GROUP BY lv_legislator_id) as lv
     ON legislator.id = lv.lv_legislator_id
     `;
-    let result_rank = await db.queryParamCnt_Arr(select_rank, [req.params.islike]);
+    let result_rank = await db.queryParamCnt_Arr(select_rank, [islike]);
+    
     for(var i=0; i<result_rank.length; i++){
       var r = 1;
       for(var j=0; j<result_rank.length; j++){
@@ -54,12 +60,14 @@ router.get('/:islike/:p_name', async(req, res, next) => {
     `
     SELECT id, name, l_party_name, region_city, region_state, profile_img_url, isPpresident, isLpresident, isPPpresident, score, position
     FROM legislator
-    LEFT JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote
-    WHERE islike = ? GROUP BY lv_legislator_id) as lv
-    ON legislator.id = lv.lv_legislator_id where legislator.l_party_name = ? ORDER BY score DESC
-    `
+    LEFT JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = ? GROUP BY lv_legislator_id) as lv
+    ON legislator.id = lv.lv_legislator_id
+    WHERE legislator.l_party_name = ?
+    ORDER BY score DESC
+    LIMIT ?, ?;
+    `;
 
-    let result_legislator = await db.queryParamCnt_Arr(select_legislator,[req.params.islike, req.params.p_name]);
+    let result_legislator = await db.queryParamCnt_Arr(select_legislator,[islike, p_name, pre, number]);
 
     // return할 result
     let result = [];

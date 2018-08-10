@@ -19,7 +19,7 @@ router.post('/', async(req, res, next) => {
 	var userid = chkToken.id;
 
 	try{
-		//로그인 되었을 때
+		// 로그인 되었을 때
 		let postcommentlikeQuery =
 		`
 		INSERT INTO

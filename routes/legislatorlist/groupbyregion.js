@@ -10,7 +10,7 @@ const async = require('async');
 const jwt = require('../../module/jwt.js');
 const db = require('../../module/pool.js');
 
-router.get('/:islike/:city', async(req, res, next) => {
+router.get('/:islike/:city/:pre/:number', async(req, res, next) => {
 
   var id; // 사용자 id
 
@@ -21,6 +21,11 @@ router.get('/:islike/:city', async(req, res, next) => {
   else{
     id = chkToken.id;
   }
+
+  let islike = req.params.islike;
+  let city = req.params.city;
+  let pre =+ req.params.pre;
+  let number =+ req.params.number;
 
   var data = []; // 응답할 데이터
   var rank = []; // 의원별 랭킹 정보 저장
@@ -34,7 +39,8 @@ router.get('/:islike/:city', async(req, res, next) => {
     LEFT JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = ? GROUP BY lv_legislator_id) as lv
     ON legislator.id = lv.lv_legislator_id
     `;
-    let result_rank = await db.queryParamCnt_Arr(select_rank, [req.params.islike]);
+    let result_rank = await db.queryParamCnt_Arr(select_rank, [islike]);
+    
     for(var i=0; i<result_rank.length; i++){
       var r = 1;
       for(var j=0; j<result_rank.length; j++){
@@ -57,11 +63,12 @@ router.get('/:islike/:city', async(req, res, next) => {
     FROM legislator
     LEFT JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = ? GROUP BY lv_legislator_id) as lv
     ON legislator.id = lv.lv_legislator_id
-    where legislator.region_city = ?
+    WHERE legislator.region_city = ?
     ORDER BY score DESC
-    `
+    LIMIT ?, ?;
+    `;
 
-    let result_legislator = await db.queryParamCnt_Arr(select_legislator, [req.params.islike, req.params.city]);
+    let result_legislator = await db.queryParamCnt_Arr(select_legislator, [islike, city, pre, number]);
 
     // return할 result
     let result = [];
@@ -144,14 +151,12 @@ router.get('/:islike/:city', async(req, res, next) => {
       }
     }
 
-
-
     res.status(200).json({
       data : result,
       message : "Success"
     });
+
   } catch(error) {
-    console.log(error);
     return next("500");
   }
 });
