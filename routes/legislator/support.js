@@ -58,8 +58,6 @@ router.post('/', async(req, res, next) => {
   }
 
   try {
-    const chkToken = jwt.verify(req.headers.authorization);
-
     let u_id = chkToken.id;
     let l_id =+ req.body.l_id;
     let point =+ req.body.point; // 몇 포인트 후원할 것인지
@@ -73,17 +71,17 @@ router.post('/', async(req, res, next) => {
 
     // update point
     if (user_point >= point) {
-      let supportSql = 
+      let supportSql =
       `
       UPDATE legislator
       SET point = point + ?
       WHERE id = ?;
       `;
 
-      let updateSql = 
+      let updateSql =
       `
-      UPDATE user 
-      SET point = point - ? 
+      UPDATE user
+      SET point = point - ?
       WHERE id = ?;
       `
 
