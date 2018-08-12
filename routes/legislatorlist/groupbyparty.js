@@ -1,16 +1,16 @@
-/* 정당별 호감/비호감 의원 리스트 */
-/*  /legislatorlist/groupbyparty */
-/* 종찬 */
+/*  정당별 호감/비호감 의원 리스트  */
+/*  /legislatorlist/groupbyparty  */
+/*  종찬  */
 
 var express = require('express');
 const router = express.Router();
 
 const async = require('async');
-
 const jwt = require('../../module/jwt.js');
 const db = require('../../module/pool.js');
 
-router.get('/:islike/:p_name/:pre/:number', async(req, res, next) => {
+router.get('/:islike/:p_name/:pre', async(req, res, next) => {
+
   var id; // 사용자 id
 
   const chkToken = jwt.verify(req.headers.authorization);
@@ -24,7 +24,7 @@ router.get('/:islike/:p_name/:pre/:number', async(req, res, next) => {
   let islike = req.params.islike;
   let p_name = req.params.p_name;
   let pre =+ req.params.pre;
-  let number =+ req.params.number;
+  let number = 15;
 
   var data = []; // 응답할 데이터
   var rank = []; // 의원별 랭킹 정보 저장
@@ -56,23 +56,31 @@ router.get('/:islike/:p_name/:pre/:number', async(req, res, next) => {
     }
 
     //의원정보 가져오기
+    let setSql =
+    `
+    SET @row_num:=0;
+    `
     let select_legislator =
     `
-    SELECT id, name, l_party_name, region_city, region_state, profile_img_url, isPpresident, isLpresident, isPPpresident, score, position
-    FROM legislator
-    LEFT JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = ? GROUP BY lv_legislator_id) as lv
-    ON legislator.id = lv.lv_legislator_id
-    WHERE legislator.l_party_name = ?
-    ORDER BY score DESC
-    LIMIT ?, ?;
+    SELECT *, @row_num := @row_num + 1 as row_number
+    FROM
+      (SELECT id, name, l_party_name, region_city, region_state, profile_img_url, isPpresident, isLpresident, isPPpresident, score, position
+      FROM legislator
+      LEFT JOIN (SELECT lv_legislator_id, count(*) as score FROM legislatorVote WHERE islike = ? GROUP BY lv_legislator_id) as lv
+      ON legislator.id = lv.lv_legislator_id
+      WHERE legislator.l_party_name = ?
+      ORDER BY score DESC) as l1;
     `;
-
-    let result_legislator = await db.queryParamCnt_Arr(select_legislator,[islike, p_name, pre, number]);
+    let setQuery = await db.queryParamCnt_Arr(setSql,[]);
+    let result_legislator = await db.queryParamCnt_Arr(select_legislator, [islike, p_name]);
 
     // return할 result
     let result = [];
     for(var i=0; i<result_legislator.length; i++){
       var data = {};
+
+      // 의원 순서
+      data.row_number = result_legislator[i].row_number;
 
       // 의원 id
       data.id = result_legislator[i].id;
@@ -149,10 +157,16 @@ router.get('/:islike/:p_name/:pre/:number', async(req, res, next) => {
       }
     }
 
+    let returnResult = [];
+    for(var i=pre; i<pre+number; i++){
+      returnResult.push(result[i]);
+    }
+
     res.status(200).json({
-      data : result,
-      message : "Success"
+      message : "Success",
+      data : returnResult
     });
+
   } catch(error) {
     return next("500");
   }

@@ -24,8 +24,8 @@ router.get('/', async(req, res, next) => {
     let result = await db.queryParamCnt_Arr(selectQuery,[]);
 
     res.json({
-      data : result,
-      message : "Success"
+      message : "Success",
+      data : result
     });
   } catch(error) {
     return next("500");

@@ -1,3 +1,6 @@
+/*  커뮤니티 댓글 리스트  */
+/*  /board/commentlist  */
+
 //커뮤니티 글에 달린 댓글 리스트 보여주기 - OK
 var express = require('express');
 var router = express.Router();
@@ -7,10 +10,13 @@ const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 const checktime = require('../../module/checktime');
 
-router.get('/:board_id', async(req, res, next) => {
+router.get('/:board_id/:pre', async(req, res, next) => {
 	const chkToken = jwt.verify(req.headers.authorization);
 
 	var userid;
+	let pre =+ req.params.pre;  // commentid
+	let number = 3;
+
 	if(chkToken == -1){
 		userid = "";
 	}
@@ -55,6 +61,15 @@ router.get('/:board_id', async(req, res, next) => {
 			let subresultObj = {};
 			let timeset = checktime.checktime(commenttableInfo[i].writingtime);
 
+
+			console.log(commenttableInfo[i].id)
+			if(number <= 0)
+				break;
+			else if(commenttableInfo[i].id >= pre)
+				continue;
+		
+			console.log(number)
+			number--;
 
 			//유저닉네임이랑 이미지 사진
 			let getuserinfoQuery =

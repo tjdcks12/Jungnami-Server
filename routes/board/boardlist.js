@@ -1,4 +1,6 @@
-//커뮤니티 탭 들어오면 메인 화면 -> 페이스북 뉴스피드
+/*  커뮤니티 리스트  */
+/*  /board/boardlist  */
+
 var express = require('express');
 var router = express.Router();
 const async = require('async');
@@ -7,27 +9,31 @@ const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 const checktime = require('../../module/checktime.js');
 
-//board_id, b_user_id, content, imgurl writing time, shared,
-//user의 profile_url, board_id의 like_cnt, comment_cnt
 
-router.get('/', async (req, res, next) => {
+router.get('/:pre', async (req, res, next) => {
   const chkToken = jwt.verify(req.headers.authorization);
 
   var userid;
   var user_img_url;
+  let pre =+ req.params.pre;  // boardid
+  let number = 10;
+ 
   if(chkToken == -1){
     userid = "";
   }
   else{
     userid = chkToken.id;
-    var select_img = `SELECT img_url FROM user WHERE id = ?`;
-    var result_img = await db.queryParamCnt_Arr(select_img, userid);
-    if(result_img.length != 0){
-      user_img_url = result_img[0].img_url;
-    }
   }
 
   try{
+
+    var select_img = `SELECT img_url FROM user WHERE id = ?`;
+    var result_img = await db.queryParamCnt_Arr(select_img, userid);
+
+    if(result_img.length != 0){
+      user_img_url = result_img[0].img_url;
+    }
+
     // 푸쉬알람 카운트 가져오기
     let pushcntSql =
     `
@@ -39,14 +45,14 @@ router.get('/', async (req, res, next) => {
     let pushcntQuery = await db.queryParamCnt_Arr(pushcntSql,[userid]);
 
 
-    // 게시글 불러오기 ( 공유뺴고, 시간순)
+    // 게시글 불러오기 (공유뺴고, 시간순)
     var select_board =
     `
     SELECT *
     FROM board
     WHERE shared = 0
     ORDER BY writingtime DESC
-    `
+    `;
 
     var result_board = await db.queryParamCnt_Arr(select_board);
 
@@ -57,30 +63,37 @@ router.get('/', async (req, res, next) => {
     SELECT bl_board_id
     FROM boardLike
     WHERE bl_user_id = ?
-    `
+    `;
     var result_like = await db.queryParamCnt_Arr(select_like, [userid]);
 
     var result = [];
     for(var i=0; i<result_board.length; i++){
       var data = {};
+      
+      if(number <= 0)
+        break;
+      else if(result_board[i].id >= pre)
+        continue;
 
-      // 닉네임
-      var select_user = `
-      SELECT *
-      FROM user
-      WHERE id=?
-      `
+      number--;
 
-      var result_user = await db.queryParamCnt_Arr(select_user, [result_board[i].b_user_id]);
-
+      // 글 인덱스
       data.boardid = result_board[i].id;
 
-      // 유저 정보
+      // 글 작성자 정보
+      var select_user = 
+      `
+      SELECT *
+      FROM user
+      WHERE id = ?
+      `;
+      var result_user = await db.queryParamCnt_Arr(select_user, [result_board[i].b_user_id]);
+
       data.user_id = result_user[0].id;
       data.nickname = result_user[0].nickname;
       data.userimg = result_user[0].img_url;
 
-      // 보드 정보
+      // 글 정보
       data.img = result_board[i].img_url;
       data.writingtime = checktime.checktime(result_board[i].writingtime);
       data.content = result_board[i].content;

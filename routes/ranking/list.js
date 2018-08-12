@@ -11,7 +11,7 @@ const jwt = require('../../module/jwt.js');
 const addComma = require('../../module/addComma.js');
 
 
-router.get('/:islike/:pre/:number', async(req, res, next) => {
+router.get('/:islike/:pre', async(req, res, next) => {
 
   const chkToken = jwt.verify(req.headers.authorization);
 
@@ -25,14 +25,13 @@ router.get('/:islike/:pre/:number', async(req, res, next) => {
 
   let islike = req.params.islike;
   let pre =+ req.params.pre;
-  let number =+ req.params.number;
+  let number = 15;
 
   try {
     let setSql =
     `
     SET @row_num:=0;
-    `
-
+    `;
     let listSql =
     `
     SELECT *, @row_num := @row_num + 1 as row_number
@@ -44,7 +43,7 @@ router.get('/:islike/:pre/:number', async(req, res, next) => {
       GROUP BY lv_legislator_id) as lv
       ON legislator.id = lv.lv_legislator_id
       ORDER BY lv.score DESC) as l1;
-    `
+    `;
     let setQuery = await db.queryParamCnt_Arr(setSql,[]);
     let listQuery = await db.queryParamCnt_Arr(listSql,[islike]);
 
@@ -52,6 +51,7 @@ router.get('/:islike/:pre/:number', async(req, res, next) => {
     for(var i=0; i<listQuery.length; i++){
       var rankingInfo = {};
 
+      rankingInfo.row_number = listQuery[i].row_number;
       rankingInfo.l_id = listQuery[i].id;
       rankingInfo.l_name = listQuery[i].name;
       rankingInfo.party_name = listQuery[i].l_party_name;
