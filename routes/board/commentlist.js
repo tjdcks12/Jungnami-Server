@@ -61,15 +61,15 @@ router.get('/:board_id/:pre', async(req, res, next) => {
 			let subresultObj = {};
 			let timeset = checktime.checktime(commenttableInfo[i].writingtime);
 
-
-			console.log(commenttableInfo[i].id)
-			if(number <= 0)
-				break;
-			else if(commenttableInfo[i].id >= pre)
-				continue;
+			/* by Jiyeon */
+			// console.log(commenttableInfo[i].id)
+			// if(number <= 0)
+			// 	break;
+			// else if(commenttableInfo[i].id >= pre)
+			// 	continue;
 		
-			console.log(number)
-			number--;
+			// console.log(number)
+			// number--;
 
 			//유저닉네임이랑 이미지 사진
 			let getuserinfoQuery =

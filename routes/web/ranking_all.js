@@ -1,6 +1,5 @@
-/*  호감, 비호감 순 리스트  */
-/*  /ranking/list/:islike/:pre  */
-/*  KIM JI YEON  */
+/*  웹용 - 호감, 비호감 순 리스트  */
+/*  /web/ranking/all  */
 
 var express = require('express');
 const router = express.Router();
@@ -11,6 +10,7 @@ const jwt = require('../../module/jwt.js');
 const addComma = require('../../module/addComma.js');
 
 
+/*  /web/ranking/all/:islike  */
 router.get('/:islike/:pre', async(req, res, next) => {
 
   const chkToken = jwt.verify(req.headers.authorization);
