@@ -1,4 +1,4 @@
-/*  웹용 - 컨텐츠 글 등록하기 / 가져오기  */
+/*  웹용 - 컨텐츠 글 등록하기 / 가져오기 / 삭제하기  */
 /*  /web/contents  */
 
 var express = require('express');
@@ -12,7 +12,7 @@ const jwt = require('../../module/jwt.js');
 const checktime = require('../../module/checktime.js');
 
 
-// contents/post
+// contents/post.js
 /*  관리자가 컨텐츠 글을 게시하기  */
 /*  /web/contents  */
 router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'cardnews', maxCount : 50}]), async(req, res, next) => {
@@ -107,7 +107,7 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
 
 
 
-// contents/recommendforweb
+// contents/recommendforweb.js
 /*  컨텐츠 글 가져오기 (best + story + tmi 20개씩)  */
 /*  /web/contents  */
 router.get('/', async (req, res, next) => {
@@ -241,6 +241,131 @@ router.get('/', async (req, res, next) => {
     return next("500");
   }
 });
+
+
+
+
+// contents/main.js
+/*  카테고리별 컨텐츠 게시글 가져오기  */
+/*  /web/contents/:category  */
+router.get('/:category', async (req, res, next) => {
+
+  const chkToken = jwt.verify(req.headers.authorization);
+
+  var userid;
+  if(chkToken == -1){
+    userid = "";
+  }
+  else{
+    userid = chkToken.id;
+  }
+
+  try{
+    // 푸쉬알람 카운트 가져오기
+    let pushcntSql =
+    `
+    SELECT count(*) as pushcnt
+    FROM push
+    WHERE p_user_id = ? AND ischecked = false
+    `
+    let pushcntQuery = await db.queryParamCnt_Arr(pushcntSql,[userid]);
+
+    // 컨텐츠 다가져오기 ( score desc )
+    var select_contents =
+    `
+    SELECT *
+    FROM contents
+    WHERE category = ?
+    ORDER BY writingtime DESC
+    `;
+    var result_contents = await db.queryParamCnt_Arr(select_contents, [req.params.category]);
+
+    var result = [];
+    for(var i=0; i<result_contents.length; i++){
+      var data = {};
+      // id
+      data.contentsid = result_contents[i].id;
+
+      // title
+      data.title = result_contents[i].title;
+
+      // thumbnail
+      data.thumbnail = result_contents[i].thumbnail_url;
+
+      // 카테고리 + 시간
+      data.text = result_contents[i].category + " · " + checktime.checktime(result_contents[i].writingtime);
+
+      // 동영상 체크
+      data.type = result_contents[i].contents_type; // 0: cardnews, 1:youtube_url
+
+      result.push(data);
+    }
+
+    res.status(200).send({
+      "message" : "Success",
+      "data" : {
+        content : result,
+        alarmcnt : pushcntQuery[0].pushcnt
+      }
+    });
+
+  }catch(err){
+    return next("500");
+  }
+});
+
+
+
+
+// delete/contents.js
+/*  컨텐츠 게시글 삭제하기  */
+/*  /web/contents/:contentsid  */
+router.delete('/:contentsid',  async (req, res, next) => {
+  try{
+    let c_id = req.params.contentsid;
+
+    let deletecontentsSql =
+    `
+    DELETE
+    FROM cotents
+    WHERE id = ?
+    `;
+
+    // database 확인
+    // 해당 컨텐츠를 스크랩한 것도 함께 삭제
+    let deletecotentsscrapsharedSql =
+    `
+    DELETE
+    FROM scrap
+    WHERE s_contents_id = ?
+    `;
+
+    let Transaction = await db.Transaction( async (connection) => {
+      let deletecontentsQuery = await connection.query(deletecontentsSql, [c_id]);
+      if(!deletecontentsQuery){
+        return next("500");
+      }
+
+      let deletecotentsscrapQuery = await connection.query(deletecotentsscrapsharedSql, [c_id]);
+      if(!deletecotentsscrapQuery){
+        return next("500");
+      }
+    });
+
+    if(!Transaction){
+      return next("500");
+    }
+
+		res.status(200).send({
+			"message" : "Success"
+	 	});
+
+  }catch(err){
+  	console.log(err);
+    return next("500");
+  }
+});
+
 
 
 module.exports = router;

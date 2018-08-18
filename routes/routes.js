@@ -2,9 +2,6 @@
 const express = require('express');
 const router = express.Router();
 
-/** 'uri 중간에 params가 있는 코드'에 삽입해야 함. **/
-// var router = express.Router({mergeParams : true});
-
 
 // board
 router.use('/board', require('./board/board_routes'));

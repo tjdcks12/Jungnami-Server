@@ -30,22 +30,14 @@ router.use('/scrap', require('./scrap'));
 
 
 
-
 // Follow (post/delete)
 router.use('/follow', require('./follow'));
 
-// f_id의 Follower List 보여주기
+// f_id의 Follower List 보여주기 / 검색
 router.use('/:f_id/followerlist', require('./followerlist'));
 
-// f_id의 Following List 보여주기
+// f_id의 Following List 보여주기 / 검색
 router.use('/:f_id/followinglist', require('./followinglist'));
-
-// f_id의 Follower List -검색
-router.use('/:f_id/followerlist/search', require('./followerlist'));
-
-// f_id의 Following List -검색
-router.use('/:f_id/followinglist/search', require('./followinglist'));
-
 
 
 

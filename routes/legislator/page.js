@@ -2,7 +2,6 @@
 /*  /legislator/page  */
 /*  KIM JI YEON  */
 
-
 var express = require('express');
 const router = express.Router();
 
@@ -12,6 +11,7 @@ const db = require('../../module/pool.js');
 const checktime = require('../../module/checktime.js');
 
 
+/*  /legislator/page/:l_id  */
 router.get('/:l_id', async(req, res, next) => {
 
   const chkToken = jwt.verify(req.headers.authorization);

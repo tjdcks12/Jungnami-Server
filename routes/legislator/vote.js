@@ -8,44 +8,8 @@ const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 
 
-/*  의원에게 투표하기 버튼 눌렀을 때  */
-/*  /legislator/voting/  */
-router.get('/', async(req, res, next) => {
-
-  const chkToken = jwt.verify(req.headers.authorization);
-
-  if(chkToken == -1) {
-    return next("401");
-  }
-  
-  try {
-
-    let u_id = chkToken.id;
-    let selectSql =
-    `
-    SELECT voting_cnt
-    FROM user
-    WHERE id = ?
-    `
-    let selectQuery = await db.queryParamCnt_Arr(selectSql,[u_id]);
-
-    let data = {};
-    data.voting_cnt = selectQuery[0].voting_cnt;
-
-    res.status(200).send({
-      message : "Success",
-      data : data
-    });
-
-  } catch(error){
-    return next("500");
-  }
-});
-
-
-
-/*  의원에게 투표 완료하고 나서  */
-/*  /legislator/voting  */
+/*  의원에게 투표 완료  */
+/*  /legislator/vote  */
 router.post('/', async(req, res, next) => {
 
   const chkToken = jwt.verify(req.headers.authorization);
@@ -55,7 +19,6 @@ router.post('/', async(req, res, next) => {
   }
   
   try {
-
     let u_id = chkToken.id;
     let l_id =+ req.body.l_id;
     let islike =+ req.body.islike;

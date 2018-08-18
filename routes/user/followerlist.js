@@ -1,7 +1,7 @@
 /* KIM JI YEON */
 
 var express = require('express');
-const router = express.Router();
+const router = express.Router({mergeParams : true});
 
 const async = require('async');
 const db = require('../../module/pool.js');

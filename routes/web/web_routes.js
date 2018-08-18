@@ -14,7 +14,7 @@ router.use('/ranking/party/:p_name', require('./ranking_party'));
 // 지역별 의원순위
 router.use('/ranking/city/:city', require('./ranking_city'));
 
-// 컨텐츠 리스트
+// 컨텐츠 관련
 router.use('/contents', require('./contents'));
 
 
