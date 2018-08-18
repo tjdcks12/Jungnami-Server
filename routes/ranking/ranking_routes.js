@@ -17,7 +17,3 @@ router.use('/city/:city', require('./city'));
 
 module.exports = router;
 
-
-
-
-// 모두 반영 후 list.js 삭제 해도 됨.
