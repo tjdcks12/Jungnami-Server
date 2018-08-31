@@ -17,5 +17,8 @@ router.use('/ranking/city/:city', require('./ranking_city'));
 // 컨텐츠 관련
 router.use('/contents', require('./contents'));
 
+// 컨텐츠 등록 관련 (사용안함)
+router.use('/contents/post', require('./contentspost'));
+
 
 module.exports = router;

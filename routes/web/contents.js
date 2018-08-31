@@ -224,7 +224,6 @@ router.get('/', async (req, res, next) => {
       story.push(data);
     }
 
-
     res.status(200).send({
       "message" : "Success",
       "data" : {
@@ -361,7 +360,6 @@ router.delete('/:contentsid',  async (req, res, next) => {
     return next("500");
   }
 });
-
 
 
 module.exports = router;

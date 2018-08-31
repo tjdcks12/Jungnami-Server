@@ -1,4 +1,5 @@
-/* KIM JI YEON */
+/*  컨텐츠 카드뉴스 + 유투브링크 등록  */
+/*  /web/contents/post  */
 /* 사용안함 */
 
 var express = require('express');
@@ -10,8 +11,8 @@ const upload = require('../../module/multer_contents_cardnews.js');
 
 
 /*  컨텐츠 카드뉴스 등록  */
-/*  /contents/postcardnews  */
-router.post('/', upload.array('cardnews'), async(req, res, next) => {
+/*  /web/contents/post/cardnews  */
+router.post('/cardnews', upload.array('cardnews'), async(req, res, next) => {
 
   let c_id = req.body.contents_id; // contents_id
   let cardnews = req.files[0].location; // cardnews
@@ -43,11 +44,34 @@ router.post('/', upload.array('cardnews'), async(req, res, next) => {
 
   } catch (error) {
     return next("500");
-    // res.status(500).send({
-    //     message : "Internal Server Error"
-    //   });
   }
 });
 
+
+/*  컨텐츠 유투브링크 등록  */
+/*  /web/contents/post/youtubelink  */
+router.post('/youtubelink', async(req, res, next) => {
+
+  let c_id = req.body.contents_id; // contents_id
+  let youtubelink = req.body.youtubelink; // youtubelink
+
+  try{
+      // content table에 youtubelink 삽입
+      let insertyoutubelinkSql =
+      `
+      UPDATE contents
+      SET youtubelink = ?
+      WHERE id = ?;
+      `
+      let insertyoutubelinkQuery = await db.queryParamCnt_Arr(insertyoutubelinkSql,[youtubelink, c_id]);
+
+      res.status(201).send({
+        message : "Success"
+      });
+
+  } catch (error) {
+    return next("500");
+  }
+});
 
 module.exports = router;

@@ -109,6 +109,44 @@ router.get('/:comment_id', async(req, res, next) => {
 });
 
 
+
+/*  컨텐츠 대댓글 작성하기  */
+/*  /contents/recomment  */
+router.post('/', async(req, res, next) => {
+
+	const chkToken = jwt.verify(req.headers.authorization);
+
+	if(chkToken == -1) {
+		return next("401");
+	}
+
+	var userid = chkToken.id;
+
+	try{
+		let contentsmakerecommentQuery =
+		`
+		INSERT INTO
+		myjungnami.contentsRecomment(id, cr_contentsComment_id, cr_user_id, content)
+		VALUES (null, ?, ?, ?)
+		`;
+		let data = await db.queryParamCnt_Arr(contentsmakerecommentQuery, [req.body.comment_id, userid, req.body.content]);
+		if(!data){
+			console.log(err);
+			return next("500");
+		}
+
+		res.status(201).send({
+			"message" : "Success"
+		});
+
+	}catch(err){
+		console.log(err);
+		return next("500");
+	}
+});
+
+
+
 /*  컨텐츠 대댓글 삭제하기  */
 /*  /contents/recomment/:contentsrecommentid  */
 router.delete('/:contentsrecommentid', async(req, res, next) => {

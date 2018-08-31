@@ -27,5 +27,3 @@ router.use('/recomment/like', require('./recommentlike'));
 
 module.exports = router;
 
-
-// postcardnews.js 랑 postyoutubelink.js 사용안함
