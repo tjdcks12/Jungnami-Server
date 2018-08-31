@@ -1,4 +1,4 @@
-/*  정나미 포인트   */
+/*  유저의 정나미 포인트   */
 /*  /user/point  */
 
 var express = require('express');

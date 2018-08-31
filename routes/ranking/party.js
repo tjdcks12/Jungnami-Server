@@ -7,6 +7,7 @@ const router = express.Router({mergeParams : true});
 const async = require('async');
 const jwt = require('../../module/jwt.js');
 const db = require('../../module/pool.js');
+const hangul = require('hangul-js');
 
 
 

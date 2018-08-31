@@ -1,4 +1,6 @@
-//컨텐츠 대댓글 보여주기
+/*  컨텐츠 대댓글   */
+/*  /contents/recomment  */
+
 var express = require('express');
 var router = express.Router();
 const async = require('async');
@@ -6,6 +8,13 @@ const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 const checktime = require('../../module/checktime.js');
 
+var FCM = require('fcm-node');
+const get_pushdata = require('../../module/pushdata.js');
+const serverKey = require('../../config/fcmKey.js').key;
+
+
+/*  컨텐츠 대댓글 리스트 보여주기  */
+/*  /contents/recomment/:comment_id  */
 router.get('/:comment_id', async(req, res, next) => {
 	const chkToken = jwt.verify(req.headers.authorization);
 
@@ -86,7 +95,6 @@ router.get('/:comment_id', async(req, res, next) => {
 			}
 
 			resultArry.push(subresultObj);
-
 		}
 
 		res.status(200).send({
@@ -94,15 +102,61 @@ router.get('/:comment_id', async(req, res, next) => {
 			"data" : resultArry
 		});
 
-
 	}catch(err){
 		console.log(err);
 		return next("500");
-		// res.status(500).send({
-		// 	"message" : "Server error"
-		// });
 	}
-})
+});
+
+
+/*  컨텐츠 대댓글 삭제하기  */
+/*  /contents/recomment/:contentsrecommentid  */
+router.delete('/:contentsrecommentid', async(req, res, next) => {
+
+	const chkToken = jwt.verify(req.headers.authorization);
+  
+	if(chkToken == -1) {
+	  return next("401");
+	}
+  
+	let userid = chkToken.id;
+  
+	try{
+	  // contents comment 정보 가져오기
+	  let select_comment =
+	  `
+	  SELECT *
+	  FROM contentsRecomment
+	  WHERE id = ?
+	  `;
+	  let result_comment = await db.queryParamCnt_Arr(select_comment,[req.params.contentsrecommentid]);
+  
+	  // id 비교
+	  if(userid == result_comment[0].cr_user_id){
+		let delete_comment =
+		`
+		DELETE
+		FROM contentsRecomment
+		WHERE id = ?
+		`;
+		let result_delete = await db.queryParamCnt_Arr(delete_comment,[req.params.contentsrecommentid]);
+		if(!result_delete){
+		  return next("500");
+		}
+  
+		res.status(200).send({
+		  "message" : "Success"
+		});
+	  }
+	  else{
+		return next("401");
+	  }
+	}catch(err){
+		console.log(err);
+	  	return next("500");
+	}
+  
+});
 
 
 module.exports = router;

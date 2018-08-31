@@ -26,13 +26,10 @@ router.get('/',  async (req, res, next) => {
 
     res.status(200).send({
       "message" : "Success",
-      "data" : {
-        img_url : data[0].img_url
-      }
+      "data" : data[0].img_url
     });
 
   }catch(err){
-    console.log(err);
     return next("500");
   }
 });

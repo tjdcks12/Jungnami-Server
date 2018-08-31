@@ -12,7 +12,6 @@ const jwt = require('../../module/jwt.js');
 const checktime = require('../../module/checktime.js');
 
 
-// contents/post.js
 /*  관리자가 컨텐츠 글을 게시하기  */
 /*  /web/contents  */
 router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'cardnews', maxCount : 50}]), async(req, res, next) => {
@@ -30,7 +29,6 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
       thumbnail = null;
     }
 
-
     // content table에 thumbnail 저장
     var postSql =
     `
@@ -40,6 +38,7 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     `;
     var postResult = await db.queryParamCnt_Arr(postSql,[title, subtitle, thumbnail, category, contents_type]);
     if(!postResult){
+      console.log(err);
       return next("500");
     }
 
@@ -100,14 +99,13 @@ router.post('/', upload.fields([{name : 'thumbnail', maxCount : 1}, {name : 'car
     });
 
   } catch (error) {
+    console.log(err);
     return next("500");
   }
 });
 
 
 
-
-// contents/recommendforweb.js
 /*  컨텐츠 글 가져오기 (best + story + tmi 20개씩)  */
 /*  /web/contents  */
 router.get('/', async (req, res, next) => {
@@ -230,10 +228,10 @@ router.get('/', async (req, res, next) => {
     res.status(200).send({
       "message" : "Success",
       "data" : {
+        alarmcnt : pushcntQuery[0].pushcnt,
         recommend : recommend,
         tmi : tmi,
-        story : story,
-        alarmcnt : pushcntQuery[0].pushcnt
+        story : story
       }
     });
 
@@ -244,8 +242,6 @@ router.get('/', async (req, res, next) => {
 
 
 
-
-// contents/main.js
 /*  카테고리별 컨텐츠 게시글 가져오기  */
 /*  /web/contents/:category  */
 router.get('/:category', async (req, res, next) => {
@@ -304,8 +300,8 @@ router.get('/:category', async (req, res, next) => {
     res.status(200).send({
       "message" : "Success",
       "data" : {
-        content : result,
-        alarmcnt : pushcntQuery[0].pushcnt
+        alarmcnt : pushcntQuery[0].pushcnt,
+        content : result
       }
     });
 
@@ -316,8 +312,6 @@ router.get('/:category', async (req, res, next) => {
 
 
 
-
-// delete/contents.js
 /*  컨텐츠 게시글 삭제하기  */
 /*  /web/contents/:contentsid  */
 router.delete('/:contentsid',  async (req, res, next) => {
@@ -331,7 +325,6 @@ router.delete('/:contentsid',  async (req, res, next) => {
     WHERE id = ?
     `;
 
-    // database 확인
     // 해당 컨텐츠를 스크랩한 것도 함께 삭제
     let deletecotentsscrapsharedSql =
     `
@@ -343,16 +336,19 @@ router.delete('/:contentsid',  async (req, res, next) => {
     let Transaction = await db.Transaction( async (connection) => {
       let deletecontentsQuery = await connection.query(deletecontentsSql, [c_id]);
       if(!deletecontentsQuery){
+        console.log(err);
         return next("500");
       }
 
       let deletecotentsscrapQuery = await connection.query(deletecotentsscrapsharedSql, [c_id]);
       if(!deletecotentsscrapQuery){
+        console.log(err);
         return next("500");
       }
     });
 
     if(!Transaction){
+      console.log(err);
       return next("500");
     }
 

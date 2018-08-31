@@ -1,6 +1,5 @@
 /*  국회의원 페이지  */
 /*  /legislator/page  */
-/*  KIM JI YEON  */
 
 var express = require('express');
 const router = express.Router();

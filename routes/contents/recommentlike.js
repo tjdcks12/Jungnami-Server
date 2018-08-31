@@ -1,4 +1,6 @@
-//컨텐츠 대댓글 좋아요
+/*  커뮤니티 대댓글 좋아요   */
+/*  /board/recomment/like  */
+
 var express = require('express');
 var router = express.Router();
 
@@ -10,6 +12,8 @@ var FCM = require('fcm-node');
 const get_pushdata = require('../../module/pushdata.js');
 const serverKey = require('../../config/fcmKey.js').key;
 
+/*  컨텐츠 대댓글 좋아요 하기  */
+/*  /contents/recomment/like  */
 router.post('/', async(req, res, next) => {
 
 	const chkToken = jwt.verify(req.headers.authorization);
@@ -29,6 +33,7 @@ router.post('/', async(req, res, next) => {
 		`;
 		let data = await db.queryParamCnt_Arr(contentsRecommentlikeQuery, [req.body.recomment_id, userid]);
 		if(!data){
+			console.log(err);
 			return next("500");
 		}
 
@@ -73,7 +78,6 @@ router.post('/', async(req, res, next) => {
 				}
 
 				console.log('Push메시지가 발송되었습니다.');
-				console.log(response);
 			});
 		}
 		else {
@@ -89,9 +93,45 @@ router.post('/', async(req, res, next) => {
 
 
 	}catch(err){
+		console.log(err);
 		return next("500");
 	}
-})
+});
+
+
+/*  컨텐츠 대댓글 좋아요 취소하기  */
+/*  /contents/recomment/like/:contentsrecommentid  */
+router.delete('/:contentsrecommentid', async(req, res, next) => {
+
+	const chkToken = jwt.verify(req.headers.authorization);
+  
+	if(chkToken == -1) {
+	  return next("401");
+	}
+  
+	try{
+	  let delete_like =
+	  `
+	  DELETE
+	  FROM contentsRecommentLike
+	  WHERE crl_contentsRecomment_id = ? AND crl_user_id = ?
+	  `;
+	  let result_delete = await db.queryParamCnt_Arr(delete_like,[req.params.contentsrecommentid, userid]);
+	  if(!result_delete){
+		console.log(err);
+		return next("500");
+	  }
+	  
+	  res.status(200).send({
+		"message" : "Success"
+	  });
+  
+	}catch(err){
+		console.log(err);
+	  	return next("500");
+	}
+  
+});
 
 
 module.exports = router;

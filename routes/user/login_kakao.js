@@ -1,6 +1,6 @@
 /* 카카오톡 로그인 */
 /* /user/kakaologin */
-/* 종찬 */
+
 
 const express = require('express');
 const router = express.Router();

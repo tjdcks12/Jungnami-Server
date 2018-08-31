@@ -1,4 +1,5 @@
-/* KIM JI YEON */
+/*  팔로우하기 + 언팔로우하기  */
+/*  /user/follow/  */
 
 var express = require('express');
 const router = express.Router();
@@ -6,6 +7,7 @@ const router = express.Router();
 const async = require('async');
 const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
+const hangul = require('hangul-js');
 
 var FCM = require('fcm-node');
 const get_pushdata = require('../../module/pushdata.js');

@@ -1,4 +1,6 @@
-//컨텐츠에 달린 댓글 보여주기
+/*  컨텐츠 댓글   */
+/*  /contents/comment  */
+
 var express = require('express');
 var router = express.Router();
 const async = require('async');
@@ -7,6 +9,9 @@ const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 const checktime = require('../../module/checktime.js');
 
+
+/*  컨텐츠 댓글 리스트 보여주기  */
+/*  /contents/comment/:contents_id  */
 router.get('/:contents_id', async(req, res, next) => {
 	const chkToken = jwt.verify(req.headers.authorization);
 
@@ -35,14 +40,14 @@ router.get('/:contents_id', async(req, res, next) => {
 		//유저 닉, 이미지, 시간, 컨텐츠, 좋아요, 대댓 수 출력
 		let getcommentlistQuery =
 		`
-		select *
-		from contentsComment
-		left join
-		(SELECT ccl_contentsComment_id, count(*) as cnt from contentsCommentLike GROUP BY ccl_contentsComment_id) as ccl
-		on contentsComment.id = ccl.ccl_contentsComment_id
-		where cc_contents_id = ?
-		order by ccl.cnt desc, writingtime desc
-		`;
+		SELECT *
+		FROM contentsComment
+		LEFT JOIN
+			(SELECT ccl_contentsComment_id, count(*) as cnt from contentsCommentLike GROUP BY ccl_contentsComment_id) as ccl
+			ON contentsComment.id = ccl.ccl_contentsComment_id
+		WHERE cc_contents_id = ?
+		ORDER BY ccl.cnt desc, writingtime DESC
+		`;						
 		let commenttableInfo = await db.queryParamCnt_Arr(getcommentlistQuery, [req.params.contents_id]);
 		//댓글 테이블에서 댓글 목록 받아와서
 
@@ -59,27 +64,27 @@ router.get('/:contents_id', async(req, res, next) => {
 			//유저닉네임이랑 이미지 사진
 			let getuserinfoQuery =
 			`
-			select user.id, user.nickname, user.img_url
-			from myjungnami.user
-			where id = ?
+			SELECT user.id, user.nickname, user.img_url
+			FROM myjungnami.user
+			WHERE id = ?
 			`;
 			userinfoObj = await db.queryParamCnt_Arr(getuserinfoQuery, [commenttableInfo[i].cc_user_id]);
 
 			//게시글 대댓글 갯수
 			let getrecommentcntQuery =
 			`
-			select count(*) as recommentCnt
-			from myjungnami.contentsRecomment
-			where cr_contentsComment_id = ?
+			SELECT count(*) as recommentCnt
+			FROM myjungnami.contentsRecomment
+			WHERE cr_contentsComment_id = ?
 			`;
 			recommentCnt = await db.queryParamCnt_Arr(getrecommentcntQuery, [commenttableInfo[i].id] );
 
 			//댓글 좋아요 수
 			let getlikecntQuery =
 			`
-			select count(*) as commentlikeCnt
-			from myjungnami.contentsCommentLike
-			where ccl_contentsComment_id = ?
+			SELECT count(*) as commentlikeCnt
+			FROM myjungnami.contentsCommentLike
+			WHERE ccl_contentsComment_id = ?
 			`;
 			commentlikeCnt = await db.queryParamCnt_Arr(getlikecntQuery, [commenttableInfo[i].id]);
 
@@ -109,9 +114,95 @@ router.get('/:contents_id', async(req, res, next) => {
 		});
 
 	}catch(err){
+		return next("500");
+	}
+});
+
+
+
+/*  컨텐츠 댓글 작성하기  */
+/*  /contents/comment  */
+router.post('/', async(req, res, next) => {
+
+	const chkToken = jwt.verify(req.headers.authorization);
+
+	if(chkToken == -1) {
+		return next("401");
+	}
+
+	var userid = chkToken.id;
+
+	try{
+		let contentsmakecommentQuery =
+		`
+		INSERT INTO
+		myjungnami.contentsComment(id, cc_contents_id, cc_user_id, content)
+		VALUES (null, ?, ?, ?)
+		`;
+		let data = await db.queryParamCnt_Arr(contentsmakecommentQuery, [req.body.contents_id, userid, req.body.content]);
+		if(!data){
+			return next("500");
+		}
+
+		res.status(201).send({
+			message : "Success"
+		});
+
+	}catch(err){
+		return next("500");
+	}
+});
+
+
+/*  켄텐츠 댓글 삭제하기  */
+/*  /contents/comment/:contentscommentid  */
+router.delete('/:contentscommentid', async(req, res, next) => {
+
+	const chkToken = jwt.verify(req.headers.authorization);
+  
+	if(chkToken == -1) {
+	  return next("401");
+	}
+  
+	let userid = chkToken.id;
+  
+	try{
+	  // contents comment 정보 가져오기
+	  let select_comment =
+	  `
+	  SELECT *
+	  FROM contentsComment
+	  WHERE id = ?
+	  `;
+	  let result_comment = await db.queryParamCnt_Arr(select_comment,[req.params.contentscommentid]);
+  
+	  // id 비교
+	  if(userid == result_comment[0].cc_user_id){
+		let delete_comment =
+		`
+		DELETE
+		FROM contentsComment
+		WHERE id = ?
+		`;
+		let result_delete = await db.queryParamCnt_Arr(delete_comment,[req.params.contentscommentid]);
+		if(!result_delete){
+			console.log(err);
+		  	return next("500");
+		}
+  
+		res.status(200).send({
+		  "message" : "Success"
+		});
+	  }
+	  else{
+		return next("401");
+	  }
+	}catch(err){
 		console.log(err);
 		return next("500");
 	}
-})
+  
+});
+
 
 module.exports = router;

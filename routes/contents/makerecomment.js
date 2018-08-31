@@ -10,7 +10,6 @@ const get_pushdata = require('../../module/pushdata.js');
 const serverKey = require('../../config/fcmKey.js').key;
 
 router.post('/', async(req, res, next) => {
-	var id; // 사용자 email
 
 	const chkToken = jwt.verify(req.headers.authorization);
 

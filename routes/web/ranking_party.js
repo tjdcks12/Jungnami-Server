@@ -1,6 +1,5 @@
 /*  정당별 호감/비호감 의원 리스트  */
 /*  /web/ranking/party/:p_name   */
-/* 종찬 */
 
 var express = require('express');
 const router = express.Router({mergeParams : true});
@@ -123,14 +122,15 @@ router.get('/:islike', async(req, res, next) => {
       }
     }
 
-
     res.status(200).json({
       message : "Success",
       data : result
     });
+
   } catch(error) {
     return next("500");
   }
+  
 });
 
 module.exports = router;

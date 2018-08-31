@@ -1,4 +1,5 @@
-/* KIM JI YEON */
+/*  내 프로필  */
+/*  /user/profile  */
 
 var express = require('express');
 const router = express.Router();
@@ -9,8 +10,8 @@ const jwt = require('../../module/jwt.js');
 const upload = require('../../module/multer_user_img.js');
 
 
-/*  내 프로필 수정하는 뷰  */
-/*  /user/editprofile  */
+/*  내 프로필 정보 보기  */
+/*  /user/profile  */
 router.get('/', async(req, res, next) => {
 
   try {
@@ -31,7 +32,6 @@ router.get('/', async(req, res, next) => {
     `
     let myprofileQuery = await db.queryParamCnt_Arr(myprofileSql,[u_id]);
 
-
     res.status(200).send({
         message : "Success",
         data : myprofileQuery
@@ -40,12 +40,12 @@ router.get('/', async(req, res, next) => {
   } catch(error) {
     return next("500");
   }
+
 });
 
 
-
-/*  내 프로필 수정 완료하고 나서  */
-/*  /user/editprofile  */
+/*  내 프로필 수정 완료  */
+/*  /user/profile  */
 router.post('/', upload.array('img_url'), async(req, res, next) => {
 
   try {

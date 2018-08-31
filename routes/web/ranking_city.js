@@ -1,6 +1,5 @@
 /*  지역별 호감/비호감 의원 리스트  */
 /*  /web/ranking/city/:city  */
-/* 종찬 */
 
 var express = require('express');
 const router = express.Router({mergeParams : true});

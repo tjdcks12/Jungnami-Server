@@ -1,4 +1,4 @@
-/*  투표권   */
+/*  유저의 투표권   */
 /*  /user/vote  */
 
 var express = require('express');
@@ -113,7 +113,6 @@ router.post('/', async(req, res, next) => {
     return next("500");
   }
 });
-
 
 
 module.exports = router;

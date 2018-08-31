@@ -1,5 +1,5 @@
 /*  300명 순위 + 의원 검색  */
-/*  /ranking/all/  */
+/*  /ranking/all  */
 
 var express = require('express');
 const router = express.Router();
@@ -8,6 +8,7 @@ const async = require('async');
 const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 const addComma = require('../../module/addComma.js');
+const hangul = require('hangul-js');
 
 
 /*  호감, 비호감 순 리스트 보여주기  */

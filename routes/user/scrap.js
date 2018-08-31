@@ -9,7 +9,6 @@ const jwt = require('../../module/jwt.js');
 const db = require('../../module/pool.js');
 
 
-// contents/scrap
 /*  컨텐츠 스크랩하기  */
 /*  /user/scrap  */
 router.post('/',  async (req, res, next) => {
@@ -37,17 +36,13 @@ router.post('/',  async (req, res, next) => {
 			"message" : "Success"
 	 	});
 
-
   }catch(err){
-  	console.log(err);
     return next("500");
   }
 });
 
 
 
-
-// delete/scrap
 /*  컨텐츠 스크랩 삭제  */
 /*  /user/scrap/:contentsid  */
 router.delete('/:contentsid',  async (req, res, next) => {
@@ -93,11 +88,10 @@ router.delete('/:contentsid',  async (req, res, next) => {
 			"message" : "Success"
 	 	});
 
-
   }catch(err){
-  	console.log(err);
     return next("501");
   }
+
 });
 
 module.exports = router;

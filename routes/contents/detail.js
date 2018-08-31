@@ -1,5 +1,5 @@
-/*  컨텐츠물 클릭시 카드뉴스 시작 화면  */
-/*  /contents/cardnews  */
+/*  컨텐츠 글 상세보기  */
+/*  /contents/detail  */
 
 var express = require('express');
 var router = express.Router();
@@ -7,14 +7,9 @@ const async = require('async');
 const db = require('../../module/pool.js');
 
 const jwt = require('../../module/jwt.js');
-const checktime = require('../../module/checktime.js');
 
 
-
-
-// contents에서 받아오는 id 로  title 좋아요 수, 댓글 수, 시간, category
-// contents_id로 contentsimg 테이블에서 사진 20개 받아오기
-
+/*  /contents/detail/:contents_id  */
 router.get('/:contents_id',  async (req, res, next) => {
 
   const chkToken = jwt.verify(req.headers.authorization);
@@ -129,6 +124,7 @@ router.get('/:contents_id',  async (req, res, next) => {
       "message" : "Success",
       "data" : resultdata
     });
+
   }catch(err){
     return next("500");
   }
