@@ -14,6 +14,7 @@ const get_pushdata = require('../../module/pushdata.js');
 const serverKey = require('../../config/fcmKey.js').key;
 
 
+
 /*  커뮤니티 대댓글 리스트 보여주기  */
 /*  /board/recomment/:comment_id  */
 router.get('/:comment_id', async(req, res, next) => {
@@ -63,7 +64,7 @@ router.get('/:comment_id', async(req, res, next) => {
 			let subresultObj = {};
 			let timeset = checktime.checktime(recommenttableInfo[i].writingtime);
 
-			//유저닉네임이랑 이미지 사진
+			// 유저닉네임이랑 이미지 사진
 			let getuserinfoQuery =
 			`
 			select nickname, img_url
@@ -72,7 +73,7 @@ router.get('/:comment_id', async(req, res, next) => {
 			`;
 			userinfoObj = await db.queryParamCnt_Arr(getuserinfoQuery, [recommenttableInfo[i].br_user_id]);
 
-			//좋아요 수
+			// 좋아요 수
 			let getlikecntQuery =
 			`
 			select count(*) as recommentlikeCnt
