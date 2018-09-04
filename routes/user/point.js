@@ -1,6 +1,5 @@
-/* 포인트 충전 페이지 */
-/* /user/point */
-/* 종찬 */
+/*  유저의 정나미 포인트   */
+/*  /user/point  */
 
 var express = require('express');
 const router = express.Router();
@@ -9,6 +8,10 @@ const async = require('async');
 const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 
+
+
+/*  정나미 포인트 가져오기  */
+/*  /user/point  */
 router.get('/', async(req, res, next) => {
   try {
     const chkToken = jwt.verify(req.headers.authorization);
@@ -52,5 +55,46 @@ router.get('/', async(req, res, next) => {
     return next("500");
   }
 });
+
+
+
+/*  정나미 포인트 충전하기  */
+/*  /user/point  */
+router.post('/', async(req, res, next) => {
+  try {
+    const chkToken = jwt.verify(req.headers.authorization);
+    if(chkToken == -1) {
+      return next("401");
+    }
+
+    let id = chkToken.id;
+    let point = req.body.point;
+    
+    // null 방지 : point + null = null
+    if(!point){
+      point = 0;
+    }
+
+    // 유저 포인트 증가하기
+    let select_addpoint =
+    `
+    UPDATE user
+    SET point = point + ?
+    WHERE id = ?
+    `;
+    let result_addpoint = await db.queryParamCnt_Arr(select_addpoint,[]);
+    if(!result_addpoint){
+      return next("500");
+    }
+
+    res.status(201).send({
+      message : "Success"
+    });
+
+  } catch(error) {
+    return next("500");
+  }
+});
+
 
 module.exports = router;

@@ -1,4 +1,5 @@
-/* KIM JI YEON */
+/*  유저의 마이 페이지  */
+/*  /user/mapage  */
 
 var express = require('express');
 const router = express.Router();
@@ -8,7 +9,7 @@ const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 const checktime = require('../../module/checktime.js');
 
-/*  유저의 마이 페이지  */
+
 /*  /user/mapage/:mypage_id  */
 router.get('/:mypage_id', async(req, res, next) => {
 
@@ -279,7 +280,6 @@ router.get('/:mypage_id', async(req, res, next) => {
       });
 
   } catch(error) {
-    console.log(error)
     return next("500");
   }
 });

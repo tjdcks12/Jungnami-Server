@@ -1,43 +1,30 @@
+/*  contents routes  */
+
 const express = require('express');
 const router = express.Router();
 
-//1. 컨텐츠 탭 메인화면 - ok
-router.use('/main', require('./main'));
 
-//2. 컨텐츠 하나 클릭시에 카드뉴스 뿌려주기  - ok
-router.use('/cardnews', require('./cardnews'));
+// 컨텐츠 글 목록
+router.use('/', require('./contents'));
 
-//3. 컨텐츠 좋아요
+// 컨텐츠 글 상세보기
+router.use('/detail', require('./detail'));
+
+// 컨텐츠 글에 좋아요
 router.use('/like', require('./like'));
 
-//4. 컨텐츠에 달린 댓글리스트 보여주기
-router.use('/commentlist', require('./commentlist'));
+// 컨텐츠 글에 달린 댓글
+router.use('/comment', require('./comment'));
 
-//5. 컨텐츠에 댓글 작성하기
-router.use('/makecomment', require('./makecomment'));
+// 컨텐츠 글에 댓글 좋아요
+router.use('/comment/like', require('./commentlike'));
 
-//6. 컨텐츠에 댓글 좋아요
-router.use('/likecomment', require('./likecomment'));
+// 컨텐츠 댓글에 달린 대댓글
+router.use('/recomment', require('./recomment'));
 
-//7. 컨텐츠 대댓글 목록 보여주기
-router.use('/recommentlist', require('./recommentlist'));
+// 컨텐츠 댓글에 대댓글 좋아요
+router.use('/recomment/like', require('./recommentlike'));
 
-//8. 컨텐츠에 대댓글 달기
-router.use('/makerecomment', require('./makerecomment'));
-
-//9. 컨텐츠에 대댓글 좋아요
-router.use('/likerecomment', require('./likerecomment'));
-
-//10. 컨텐츠 스크랩
-router.use('/scrap', require('./scrap'));
-
-//11. 컨텐츠 작성
-router.use('/post', require('./post'));
-
-//12. 컨텐츠 리스트 메인화면 추천탭
-router.use('/recommend', require('./recommend'));
-
-//13. web에서 contents 탭
-router.use('/recommendforweb', require('./recommendforweb'))
 
 module.exports = router;
+

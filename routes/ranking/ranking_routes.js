@@ -1,10 +1,19 @@
-// 탭 1
+/*  의원 순위  */
+/*  /ranking  */
 
 const express = require('express');
 const router = express.Router();
 
-// 호감, 비호감 별 순위
-router.use('/list', require('./list'));
+
+// 300명 순위 / 의원 검색
+router.use('/all', require('./all'));
+
+// 정당별 순위 / 의원 검색
+router.use('/party/:p_name', require('./party'));
+
+// 지역별 순위 / 의원 검색
+router.use('/city/:city', require('./city'));
 
 
 module.exports = router;
+

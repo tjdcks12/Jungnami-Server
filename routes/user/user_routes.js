@@ -1,48 +1,43 @@
-// user routes
+/*  user routes  */
 
 const express = require('express');
 const router = express.Router();
 
 
-// mypage
+// Kakao Login
+router.use('/login/kakao', require('./login_kakao'))
+
+// Mypage
 router.use('/mypage', require('./mypage'));
 
-// mypage 수정하기
-router.use('/editprofile', require('./editprofile'));
+// 나의 Profile
+router.use('/profile', require('./profile'));
 
+// Push 알림 띄우기
+router.use('/push', require('./push'));
 
-// kakao login
-router.use('/kakaologin', require('./kakaologin'))
-
-// facebook login
-router.use('/facebooklogin', require('./facebooklogin'))
-
-// follow 하기
-router.use('/follow', require('./follow'));
-
-// unfollow 하기
-router.use('/unfollow', require('./unfollow'));
-
-// follower list
-router.use('/followerlist', require('./followerlist'));
-
-// following list
-router.use('/followinglist', require('./followinglist'));
-
-// 코인 충전 페이지
+// 정나미 포인트 (get/post)
 router.use('/point', require('./point'));
 
-// 투표권 충전 페이지
+// 투표권 (get/post)
 router.use('/vote', require('./vote'));
 
-// 코인 충전 하기
-router.use('/addpoint', require('./addpoint'));
+// 나의 이미지 사진
+router.use('/img', require('./img'));
 
-// 투표권 충전 하기
-router.use('/addvote', require('./addvote'));
+// Contetns Scrap (post/delete)
+router.use('/scrap', require('./scrap'));
 
-// 푸시 알림창 띄우기
-router.use('/push', require('./push'));
+
+
+// Follow (post/delete)
+router.use('/follow', require('./follow'));
+
+// f_id의 Follower List 보여주기 / 검색
+router.use('/:f_id/followerlist', require('./followerlist'));
+
+// f_id의 Following List 보여주기 / 검색
+router.use('/:f_id/followinglist', require('./followinglist'));
 
 
 

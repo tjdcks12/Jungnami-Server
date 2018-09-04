@@ -1,4 +1,5 @@
-/* KIM JI YEON */
+/*  푸시알림 목록보기  */
+/*  /user/push  */
 
 var express = require('express');
 const router = express.Router();
@@ -9,8 +10,7 @@ const jwt = require('../../module/jwt.js');
 const checktime = require('../../module/checktime.js');
 
 
-/*  푸시알림 목록보기  */
-/*  /user/push  */
+
 router.get('/', async(req, res, next) => {
 
   const chkToken = jwt.verify(req.headers.authorization);

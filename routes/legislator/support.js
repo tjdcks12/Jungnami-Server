@@ -1,4 +1,4 @@
-/* KIM JI YEON */
+/*   KIM JI YEON  */
 
 var express = require('express');
 const router = express.Router();
@@ -8,48 +8,10 @@ const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 
 
-/*  의원에게 후원하기 버튼 눌렀을 때  */
-/*  /legislator/support  */
-router.get('/', async(req, res, next) => {
-
-  const chkToken = jwt.verify(req.headers.authorization);
-
-  if(chkToken == -1) {
-    return next("401");
-  }
-
-  try{
-    let u_id = chkToken.id;
-    let selectSql =
-    `
-    SELECT point
-    FROM user
-    WHERE id = ?
-    `
-    let selectQuery = await db.queryParamCnt_Arr(selectSql,[u_id]);
-
-
-    let data = {};
-    data.user_point = selectQuery[0].point;
-
-    res.status(200).send({
-      message : "Success",
-      data : data
-    });
-
-
-  } catch(error) {
-    console.log(error);
-    return next("500");
-  }
-
-});
-
-
-
-/*  의원에게 후원 완료하고 나서  */
+/*  의원에게 후원 완료  */
 /*  /legislator/support  */
 router.post('/', async(req, res, next) => {
+
   const chkToken = jwt.verify(req.headers.authorization);
 
   if(chkToken == -1) {
@@ -57,12 +19,9 @@ router.post('/', async(req, res, next) => {
   }
 
   try {
-    const chkToken = jwt.verify(req.headers.authorization);
-
     let u_id = chkToken.id;
     let l_id =+ req.body.l_id;
     let point =+ req.body.point; // 몇 포인트 후원할 것인지
-
 
     // 유저의 포인트 현황
     let userpointSql = "SELECT point FROM user WHERE id = ?;"
@@ -72,26 +31,36 @@ router.post('/', async(req, res, next) => {
 
     // update point
     if (user_point >= point) {
-      let supportSql = "UPDATE legislator SET point = point + ? WHERE id = ?;"
+      let supportSql =
+      `
+      UPDATE legislator
+      SET point = point + ?
+      WHERE id = ?;
+      `;
 
-      let updateSql = "UPDATE user SET point = point - ? WHERE id = ?;"
+      let updateSql =
+      `
+      UPDATE user
+      SET point = point - ?
+      WHERE id = ?;
+      `
 
       let Transaction = await db.Transaction( async (connection) => {
         let supportQuery = await connection.query(supportSql,[point, l_id]);
         if(!supportQuery){
-          console.log("의원 + 실패")
+          console.log("update legislator error");
           return next("500");
         }
 
         let updateQuery = await connection.query(updateSql,[point, u_id]);
         if(!updateQuery){
-          console.log("유저 - 실패")
+          console.log("update user error");
           return next("500");
         }
       })
 
       if(!Transaction){
-        console.log("트랜잭션 실패")
+        console.log("transaction error"); // 수진이 여기서 에러남
         return next("500");
       }
 
@@ -103,7 +72,7 @@ router.post('/', async(req, res, next) => {
     }
 
   } catch(error) {
-    console.log("잉 서버에러")
+    console.log("server error");
     return next("500");
   }
 
