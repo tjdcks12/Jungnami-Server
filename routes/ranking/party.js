@@ -163,6 +163,8 @@ router.get('/:islike/:pre', async(req, res, next) => {
 
     let returnResult = [];
     for(var i=pre; i<pre+number; i++){
+      if(!result[i])
+        break;
       returnResult.push(result[i]);
     }
 
@@ -339,8 +341,8 @@ router.get('/search/:l_name', async(req, res, next) => {
     }
 
     res.status(200).json({
-      data : result,
-      message : "Success"
+      message : "Success",
+      data : result
     });
 
   }catch(error) {
@@ -348,9 +350,6 @@ router.get('/search/:l_name', async(req, res, next) => {
     return next("500");
   }
 });
-
-
-
 
 
 module.exports = router;

@@ -35,7 +35,10 @@ router.get('/:pre', async (req, res, next) => {
 
   try{
 
-    var select_img = `SELECT img_url FROM user WHERE id = ?`;
+    var select_img = 
+    `
+    SELECT img_url FROM user WHERE id = ?
+    `;
     var result_img = await db.queryParamCnt_Arr(select_img, userid);
 
     if(result_img.length != 0){
