@@ -104,6 +104,8 @@ router.get('/:islike/:pre', async(req, res, next) => {
 
     let returnResult = [];
     for(var i=pre; i<pre+number; i++){
+      if(!result[i])
+        break;
       returnResult.push(result[i]);
     }
 
