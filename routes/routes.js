@@ -9,7 +9,7 @@ const router = express.Router();
 
 
 // User
-router.use('/user', require('./user/_user_routes'));
+router.use('/user', require('./user/user_routes'));
 
 // Legislator
 router.use('/legislator', require('./legislator/legislator_routes'));
@@ -18,10 +18,10 @@ router.use('/legislator', require('./legislator/legislator_routes'));
 router.use('/ranking', require('./ranking/ranking_routes'));
 
 // Board
-router.use('/board', require('./board/_board_routes'));
+router.use('/board', require('./board/board_routes'));
 
 // Contents
-router.use('/contents', require('./contents/_contents_routes'));
+router.use('/contents', require('./contents/contents_routes'));
 
 // For Web
 router.use('/web', require('./web/web_routes'));

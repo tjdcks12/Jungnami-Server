@@ -11,8 +11,8 @@ const hangul = require('hangul-js');
 
 
 /*  컨텐츠 글 (추천)  */
-/*  /contents  */
-router.get('/', async (req, res, next) => {
+/*  /contents/:pre  */
+router.get('/:pre', async (req, res, next) => {
 
   const chkToken = jwt.verify(req.headers.authorization);
 
@@ -23,6 +23,9 @@ router.get('/', async (req, res, next) => {
   else{
     userid = chkToken.id;
   }
+
+  let pre =+ req.params.pre;  // contentsid
+  let number = 10;
 
   try{
     // 푸쉬알람 카운트 가져오기
@@ -46,16 +49,17 @@ router.get('/', async (req, res, next) => {
     var result = [];
     for(var i=0; i<result_contents.length; i++){
       var data = {};
-      // id
+
+      if(number <= 0)
+        break;
+      else if(result_contents[i].id >= pre)
+        continue;
+
+      number--;
+
       data.contentsid = result_contents[i].id;
-
-      // title
       data.title = result_contents[i].title;
-
-      // thumbnail
       data.thumbnail = result_contents[i].thumbnail_url;
-
-      // 카테고리 + 시간
       data.text = result_contents[i].category + " · " + checktime.checktime(result_contents[i].writingtime);
 
       // 동영상 체크
@@ -80,7 +84,7 @@ router.get('/', async (req, res, next) => {
 
 /*  컨텐츠 글 (TMI, story)  */
 /*  /contents/:category  */
-router.get('/:category', async (req, res, next) => {
+router.get('/:category/:pre', async (req, res, next) => {
 
   const chkToken = jwt.verify(req.headers.authorization);
 
@@ -91,6 +95,9 @@ router.get('/:category', async (req, res, next) => {
   else{
     userid = chkToken.id;
   }
+
+  let pre =+ req.params.pre;  // contentsid
+  let number = 10;
 
   try{
     // 푸쉬알람 카운트 가져오기
@@ -115,16 +122,17 @@ router.get('/:category', async (req, res, next) => {
     var result = [];
     for(var i=0; i<result_contents.length; i++){
       var data = {};
-      // id
+
+      if(number <= 0)
+        break;
+      else if(result_contents[i].id >= pre)
+        continue;
+
+      number--;
+
       data.contentsid = result_contents[i].id;
-
-      // title
       data.title = result_contents[i].title;
-
-      // thumbnail
       data.thumbnail = result_contents[i].thumbnail_url;
-
-      // 카테고리 + 시간
       data.text = result_contents[i].category + " · " + checktime.checktime(result_contents[i].writingtime);
 
       // 동영상 체크
@@ -150,8 +158,6 @@ router.get('/:category', async (req, res, next) => {
 /*  컨텐츠 글 검색결과 보여주기  */
 /*  /contents/search/:keyword  */
 router.get('/search/:keyword', async(req, res, next) => {
-
-  var id; // 사용자 id
 
   const chkToken = jwt.verify(req.headers.authorization);
   if(chkToken == -1) {
@@ -181,16 +187,9 @@ router.get('/search/:keyword', async(req, res, next) => {
       var data = {};
       if(searcher.search(result_content[i].title) >= 0){
 
-        // id
         data.contentsid = result_content[i].id;
-
-        // 제목
         data.title = result_content[i].title;
-
-        // 썸네일
         data.thumbnail = result_content[i].thumbnail_url;
-
-        // 카테고리 + 시간
         data.text = result_content[i].category + " · " + checktime.checktime(result_content[i].writingtime);
 
         result.push(data);

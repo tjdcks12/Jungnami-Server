@@ -25,7 +25,6 @@ router.get('/', async(req, res, next) => {
         data : legislatorQuery
       });
   
-  
     } catch(error) {
       return next("500");
     }
