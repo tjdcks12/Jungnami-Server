@@ -165,21 +165,14 @@ router.post('/', upload.array('image'), async(req, res, next) => {
     let content, image;
     let shared = req.body.shared;
 
-    // for iOS
-    if (req.body.content){
-      content = req.body.content;
-    } else {
-      content = ""
-    }
-/*
-    // for android
-    if (req.body.content){
+    // 따옴표 제거 for android
+    if (req.useragent.isAndroid && req.body.content){
       content = req.body.content;
       content = content.substr(1, content.length-2)
     } else {
       content = ""
     }
-*/
+
 
     if (req.files[0]){
       image = req.files[0].location;

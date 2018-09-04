@@ -69,6 +69,11 @@ router.post('/', async(req, res, next) => {
 
     let id = chkToken.id;
     let point = req.body.point;
+    
+    // null 방지 : point + null = null
+    if(!point){
+      point = 0;
+    }
 
     // 유저 포인트 증가하기
     let select_addpoint =

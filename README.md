@@ -3,6 +3,11 @@
 
 ---
 
+# 워크플로우
+![workflow](./public/images/workflow.jpeg)
+
+---
+
 # Server Architecture
 ![Server Architecture](./public/images/architecture.png)
 

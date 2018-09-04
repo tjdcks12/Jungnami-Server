@@ -7,7 +7,7 @@ const router = express.Router();
 
 const async = require('async');
 const db = require('../../module/pool.js');
-const upload = require('../../module/multer_contents_cardnews.js');
+const upload = require('../../module/multer_contents_img.js');
 
 
 /*  컨텐츠 카드뉴스 등록  */
