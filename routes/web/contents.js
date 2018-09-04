@@ -143,7 +143,7 @@ router.get('/main', async (req, res, next) => {
     var recommend = [];
     for(var i=0; i<result_contents.length; i++){
       var data = {};
-      
+
       data.contentsid = result_contents[i].id;
       data.title = result_contents[i].title;
       data.thumbnail = result_contents[i].thumbnail_url;
@@ -256,7 +256,7 @@ router.get('/', async (req, res, next) => {
     FROM contents
     ORDER BY score DESC
     `
-    var result_contents = await db.queryParamCnt_Arr(select_contents, [req.params.category]);
+    var result_contents = await db.queryParamCnt_Arr(select_contents, []);
 
     var result = [];
     for(var i=0; i<result_contents.length; i++){
