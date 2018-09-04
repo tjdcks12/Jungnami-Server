@@ -48,7 +48,7 @@ router.get('/:pre', async (req, res, next) => {
     FROM contents
     ORDER BY score DESC
     `
-    var result_contents = await db.queryParamCnt_Arr(select_contents, [req.params.category]);
+    var result_contents = await db.queryParamCnt_Arr(select_contents, []);
 
     var result = [];
     for(var i=0; i<result_contents.length; i++){
@@ -104,7 +104,7 @@ router.get('/:category/:pre', async (req, res, next) => {
   if(pre == 0){
     pre = 100000000;
   }
-  
+
   let number = 10;
 
   try{
