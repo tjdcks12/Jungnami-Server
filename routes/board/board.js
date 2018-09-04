@@ -20,6 +20,10 @@ router.get('/:pre', async (req, res, next) => {
   var userid;
   var user_img_url;
   let pre =+ req.params.pre;  // boardid
+  if(pre == 0){
+    pre = 100000000;
+  }
+
   let number = 10;
  
   if(chkToken == -1){

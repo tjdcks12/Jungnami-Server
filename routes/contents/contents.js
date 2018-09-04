@@ -25,6 +25,10 @@ router.get('/:pre', async (req, res, next) => {
   }
 
   let pre =+ req.params.pre;  // contentsid
+  if(pre == 0){
+    pre = 100000000;
+  }
+  
   let number = 10;
 
   try{
