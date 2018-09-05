@@ -24,7 +24,7 @@ router.get('/', async(req, res, next) => {
 
     let select_point =
     `
-    SELECT coin
+    SELECT point
     FROM user
     WHERE id = ?
     `
@@ -32,7 +32,7 @@ router.get('/', async(req, res, next) => {
 
     res.status(200).send({
       message : "Success",
-      data : result_point[0].coin
+      data : result_point[0].point
     });
 
   } catch(error) {
