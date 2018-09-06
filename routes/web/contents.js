@@ -290,8 +290,8 @@ router.get('/', async (req, res, next) => {
 
 
 /*  카테고리별 컨텐츠 게시글 가져오기  */
-/*  /web/contents/:category  */
-router.get('/:category', async (req, res, next) => {
+/*  /web/contents/category/:category  */
+router.get('/category/:category', async (req, res, next) => {
 
   const chkToken = jwt.verify(req.headers.authorization);
 
