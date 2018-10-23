@@ -84,7 +84,7 @@
 
 # Security
 
-## [JWT(JsonWebTokens)](http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html)
+* [JWT(JsonWebTokens)](http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html)
 
 <!-- * JsonWebTokens의 유효성을 검사하고 req.user를 설정하는 미들웨어.
 
@@ -102,19 +102,19 @@
   5. 헤더에 포함된 토큰으로 서버는 로그인 유무 확인 -->
 
 
-## [Nginx](https://nginx.org/en/)
+* [Nginx](https://nginx.org/en/)
 
 <!-- * 클라이언트가 Reverse Proxy 서버에 요청
 * 이 서버는 내부의 서버로 전달 후, 결과를 클라이언트에게 전달
 * 직접적으로 내부 서버와 연결이 되는 것이 아니기 때문에 보안성 향상 -->
 
 
-## [Helmet](http://badge.fury.io/js/helmet)
+* [Helmet](http://badge.fury.io/js/helmet)
 
 <!-- Helmet은 Application을 보호하기 위한 미들웨어로, 다양한 HTTP headers 설정을 통해 잘 알려진 웹의 취약점으로 부터 보호합니다. -->
 
 
-## [SSL(Let's encrypt)](https://letsencrypt.org/)
+* [SSL(Let's encrypt)](https://letsencrypt.org/)
 
 <!-- * 전송 계층 보안 (영어: Transport Layer Security, TLS, 과거 명칭: 보안 소켓 레이어/Secure Sockets Layer, SSL)는 암호 규약입니다.
 
