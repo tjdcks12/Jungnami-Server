@@ -45,7 +45,7 @@
 
 # Develop Framework & Environment
 
-* [Node.js](https://nodejs.org/en/) v10.10.0 [(Express)](http://expressjs.com/)
+* [Node.js](https://nodejs.org/en/) v8.12.0 [(Express)](http://expressjs.com/)
 
 * AWS - EC2
 
@@ -53,7 +53,7 @@
 
 * AWS - S3
 
-* MYSQL (Workbench)
+* MYSQL v5.7 (Workbench)
 
 ---
 
