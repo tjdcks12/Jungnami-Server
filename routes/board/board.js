@@ -180,8 +180,8 @@ router.post('/', upload.array('image'), async(req, res, next) => {
       content = ""
     }
 
-
-    if (req.files[0]){
+    console.log(req.files)
+    if (req.files[0] != undefined){
       image = req.files[0].location;
     } else {
       image = "0"
