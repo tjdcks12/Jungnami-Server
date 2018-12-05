@@ -43,8 +43,12 @@ router.post('/profile', upload.array('profile'), async(req, res, next) => {
     SET profile_img_url = ?
     WHERE name = ?;
     `
+    console.log("update sql")
 
     let updateQuery = await db.queryParamCnt_Arr(updateSql,[profile_img_url, name]);
+
+    console.log("update query")
+
     if(!updateQuery){
       return next("500");
     }
