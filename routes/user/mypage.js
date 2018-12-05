@@ -209,26 +209,40 @@ router.get('/:mypage_id', async(req, res, next) => {
           `
           let selectsharedboardinfoQuery = await db.queryParamCnt_Arr(selectsharedboardinfoSql,[selectboardQuery[i].shared]);
 
-          let selectshareduserSql =
-          `
-          SELECT *
-          FROM user
-          WHERE id = ?
-          `
-          let selectshareduserQuery = await db.queryParamCnt_Arr(selectshareduserSql,[selectsharedboardinfoQuery[0].b_user_id]);
+          if(selectsharedboardinfoQuery.length > 0){
 
-          source.u_id = selectshareduserQuery[0].id;
-          source.u_nickname = selectshareduserQuery[0].nickname;
-          source.u_img = selectshareduserQuery[0].img_url;
+            let selectshareduserSql =
+            `
+            SELECT *
+            FROM user
+            WHERE id = ?
+            `
+            let selectshareduserQuery = await db.queryParamCnt_Arr(selectshareduserSql,[selectsharedboardinfoQuery[0].b_user_id]);
 
-          source.b_content = selectsharedboardinfoQuery[0].content;
-          source.b_img = selectsharedboardinfoQuery[0].img_url;
-          source.b_time = checktime.checktime(selectsharedboardinfoQuery[0].writingtime);
+            source.u_id = selectshareduserQuery[0].id;
+            source.u_nickname = selectshareduserQuery[0].nickname;
+            source.u_img = selectshareduserQuery[0].img_url;
 
-          board.source.push(source);
+            source.b_content = selectsharedboardinfoQuery[0].content;
+            source.b_img = selectsharedboardinfoQuery[0].img_url;
+            source.b_time = checktime.checktime(selectsharedboardinfoQuery[0].writingtime);
 
-          board.b_content = '0';
-          board.b_img = '0';
+            board.source.push(source);
+
+            board.b_content = '0';
+            board.b_img = '0';
+          } else {
+            let deleteSharedBoardSql =
+              `
+              DELETE
+              FROM board
+              WHERE id = ?
+              `;
+            let deleteSharedBoardQuery = await db.queryParamCnt_Arr(deleteSharedBoardSql,[selectboardQuery[i].id]);
+
+            continue;
+          }
+
         }
 
 
