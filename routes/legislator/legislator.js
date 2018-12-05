@@ -34,9 +34,6 @@ router.get('/', async(req, res, next) => {
 router.post('/profile', upload.array('profile'), async(req, res, next) => {
 
   try {
-
-    console.log("들어오긴 함")
-
     let name = req.body.name;
     let profile_img_url = req.files[0].location;
 
@@ -49,11 +46,8 @@ router.post('/profile', upload.array('profile'), async(req, res, next) => {
 
     let selectLegislatorQuery = await db.queryParamCnt_Arr(selectLegislatorSql,[name]);
 
-    console.log("Select Legislator Query")
-
     if(selectLegislatorQuery.length < 1){
 
-      console.log("잘못된 요청")
       return res.status(400).send({
         message : name + " 의원은 없는 의원입니다."
       });
@@ -69,13 +63,9 @@ router.post('/profile', upload.array('profile'), async(req, res, next) => {
   
       let updateQuery = await db.queryParamCnt_Arr(updateSql,[profile_img_url, name]);
   
-      console.log("Update Query")
-  
       if(!updateQuery){
         return next("500");
       }
-
-      console.log("변경 완료")
 
       res.status(201).send({
         message : name + " 의원 프로필 변경 완료"
@@ -83,11 +73,9 @@ router.post('/profile', upload.array('profile'), async(req, res, next) => {
     }
 
   } catch(error) {
-    console.log("왜 그러지")
     return next("500");
   }
 
 });
-  
 
 module.exports = router;

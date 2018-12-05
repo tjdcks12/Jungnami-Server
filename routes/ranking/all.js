@@ -15,8 +15,6 @@ const hangul = require('hangul-js');
 /*  /ranking/all/:islike/:pre  */
 router.get('/:islike/:pre', async(req, res, next) => {
 
-  console.log("hello")
-
   const chkToken = jwt.verify(req.headers.authorization);
 
   let u_id;
