@@ -35,7 +35,7 @@ router.post('/', async(req, res, next) => {
       'Authorization': "Bearer " +  accessToken
     }
   }
-
+	console.log(accessToken)
   try {
     let kakaoResult = await request(option);
 
