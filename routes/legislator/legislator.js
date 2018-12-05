@@ -40,25 +40,47 @@ router.post('/profile', upload.array('profile'), async(req, res, next) => {
     let name = req.body.name;
     let profile_img_url = req.files[0].location;
 
-    let updateSql =
+    let selectLegislatorSql =
     `
-    UPDATE legislator
-    SET profile_img_url = ?
+    SELECT id
+    FROM legislator
     WHERE name = ?;
     `
-    console.log("update sql")
 
-    let updateQuery = await db.queryParamCnt_Arr(updateSql,[profile_img_url, name]);
+    let selectLegislatorQuery = await db.queryParamCnt_Arr(selectLegislatorSql,[name]);
 
-    console.log("update query")
+    console.log("Select Legislator Query")
 
-    if(!updateQuery){
-      return next("500");
+    if(selectLegislatorQuery.length < 1){
+
+      console.log("잘못된 요청")
+      return res.status(400).send({
+        message : name + " 의원은 없는 의원입니다."
+      });
+    
+    } else{
+
+      let updateSql =
+      `
+      UPDATE legislator
+      SET profile_img_url = ?
+      WHERE name = ?;
+      `
+  
+      let updateQuery = await db.queryParamCnt_Arr(updateSql,[profile_img_url, name]);
+  
+      console.log("Update Query")
+  
+      if(!updateQuery){
+        return next("500");
+      }
+
+      console.log("변경 완료")
+
+      res.status(201).send({
+        message : name + " 의원 프로필 변경 완료"
+      });
     }
-
-    res.status(201).send({
-      message : "Success"
-    });
 
   } catch(error) {
     console.log("왜 그러지")
