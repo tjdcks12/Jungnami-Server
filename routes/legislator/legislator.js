@@ -33,12 +33,13 @@ router.get('/', async(req, res, next) => {
 
 router.post('/profile', upload.array('profile'), async(req, res, next) => {
 
-  console.log("들어오긴 함")
-
-  let name = req.body.name;
-  let profile_img_url = req.files[0].location;
-
   try {
+
+    console.log("들어오긴 함")
+
+    let name = req.body.name;
+    let profile_img_url = req.files[0].location;
+
     let updateSql =
     `
     UPDATE legislator
