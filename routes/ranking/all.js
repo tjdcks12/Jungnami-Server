@@ -128,6 +128,8 @@ router.get('/:islike/:pre', async(req, res, next) => {
 router.get('/search/:l_name', async(req, res, next) => {
   var id; // 사용자 id
 
+  console.log("hello")
+
   const chkToken = jwt.verify(req.headers.authorization);
   if(chkToken == -1) {
     id = "";
@@ -135,6 +137,8 @@ router.get('/search/:l_name', async(req, res, next) => {
   else{
     id = chkToken.id;
   }
+
+  console.log(req.params)
 
   // 자음, 모음까지 검색 되도록 하기 위해 사용
   let searchWord = req.params.l_name;
@@ -144,6 +148,8 @@ router.get('/search/:l_name', async(req, res, next) => {
   var ranklike = []; // 의원별 호감 랭킹 정보 저장
   var rankunlike = []; // 의원별 비호감 랭킹 정보 저장
   var votedLegislator = []; // 유저에 해당하는 투표한 의원 id
+
+  console.log(searchWord)
 
   try{
     // 투표 여부
@@ -225,6 +231,7 @@ router.get('/search/:l_name', async(req, res, next) => {
       var data = {};
       if(searcher.search(result_legislator[i].name) >= 0){
 
+        console.log(result_legislator[i])
         // 의원 id
         data.id = result_legislator[i].id;
 
@@ -275,6 +282,7 @@ router.get('/search/:l_name', async(req, res, next) => {
           }
         }
 
+        console.log(data)
         result.push(data);
       }
     }
@@ -284,7 +292,7 @@ router.get('/search/:l_name', async(req, res, next) => {
     }
 
     res.status(200).json({
-      message : "Success",
+      message : "Successasdf",
       data : result
     });
 
