@@ -14,11 +14,11 @@ const upload = multer({
     s3: s3,
     bucket: 'myrubysbucket',
     acl: 'public-read',
-    key: function(req, file, cb) {
+    key: function (req, file, cb) {
       var currentTime = new Date();
       currentTime = currentTime.toLocaleDateString() + "_" + currentTime.toLocaleTimeString();
 
-      cb(null, "contents/" + currentTime+ "/" + file.originalname);
+      cb(null, "contents/" + currentTime + "/" + file.originalname);
     }
   })
 });

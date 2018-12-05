@@ -1,5 +1,35 @@
-# Jungnami-Server
-* SOPT 22th 정치가 나의 미래다 프로젝트 서버 개발 레파지토리
+# 정치가 나의 미래다
+
+* 대학생 연합 IT 벤처 창업 동아리 SOPT에서 주최한 해커톤 AppJam에서 진행한 프로젝트입니다.
+
+---
+
+# 주요 기능
+
+* 소셜 로그인 (Kakao, Facebook)
+
+* 국회의원 순위 보여주기
+  * 전체
+  * 정당별
+  * 지역별
+
+* 투표 기능
+
+* 컨텐츠 게시판 기능
+
+* 검색 기능
+  * 게시물
+  * 컨텐츠
+  * 국회의원
+
+* SNS 기능
+  * 자유 게시판
+  * 팔로잉, 팔로우 기능
+  * 게시물 공유, 스크랩 기능
+
+* 마이페이지
+
+* 푸쉬알람 기능 (Firebase)
 
 ---
 
@@ -15,7 +45,7 @@
 
 # Develop Framework & Environment
 
-* [Node.js](https://nodejs.org/en/)[(Express)](http://expressjs.com/)
+* [Node.js](https://nodejs.org/en/) v8.12.0 [(Express)](http://expressjs.com/)
 
 * AWS - EC2
 
@@ -23,7 +53,7 @@
 
 * AWS - S3
 
-* MYSQL (Workbench)
+* MYSQL v5.7 (Workbench)
 
 ---
 
@@ -50,13 +80,13 @@
 
 * [express-useragent](https://www.npmjs.com/package/express-useragent) : device detection
 
-
+---
 
 # Security
 
-## [JWT(JsonWebTokens)](http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html)
+* [JWT(JsonWebTokens)](http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html)
 
-* JsonWebTokens의 유효성을 검사하고 req.user를 설정하는 미들웨어.
+<!-- * JsonWebTokens의 유효성을 검사하고 req.user를 설정하는 미들웨어.
 
 * 이 모듈을 사용하면 Node.js 응용 프로그램에서 JWT 토큰을 사용하여 HTTP 요청을 인증 할 수 있습니다.
 
@@ -69,24 +99,24 @@
   2. 서버는 AccessToken으로 카카오톡에 사용자 정보 요청
   3. 카카오톡으로부터 받은 유저정보(id)를 JWT를 이용하여 토큰 생성 후 응답
   4. 클라이언트는 응답받은 토큰을 서버 통신 시 헤더부분에 포힘하여 전송
-  5. 헤더에 포함된 토큰으로 서버는 로그인 유무 확인
+  5. 헤더에 포함된 토큰으로 서버는 로그인 유무 확인 -->
 
 
-## [Nginx](https://nginx.org/en/)
+* [Nginx](https://nginx.org/en/)
 
-* 클라이언트가 Reverse Proxy 서버에 요청
+<!-- * 클라이언트가 Reverse Proxy 서버에 요청
 * 이 서버는 내부의 서버로 전달 후, 결과를 클라이언트에게 전달
-* 직접적으로 내부 서버와 연결이 되는 것이 아니기 때문에 보안성 향상
+* 직접적으로 내부 서버와 연결이 되는 것이 아니기 때문에 보안성 향상 -->
 
 
-## [Helmet](http://badge.fury.io/js/helmet)
+* [Helmet](http://badge.fury.io/js/helmet)
 
-Helmet은 Application을 보호하기 위한 미들웨어로, 다양한 HTTP headers 설정을 통해 잘 알려진 웹의 취약점으로 부터 보호합니다.
+<!-- Helmet은 Application을 보호하기 위한 미들웨어로, 다양한 HTTP headers 설정을 통해 잘 알려진 웹의 취약점으로 부터 보호합니다. -->
 
 
-## [SSL(Let's encrypt)](https://letsencrypt.org/)
+* [SSL(Let's encrypt)](https://letsencrypt.org/)
 
-* 전송 계층 보안 (영어: Transport Layer Security, TLS, 과거 명칭: 보안 소켓 레이어/Secure Sockets Layer, SSL)는 암호 규약입니다.
+<!-- * 전송 계층 보안 (영어: Transport Layer Security, TLS, 과거 명칭: 보안 소켓 레이어/Secure Sockets Layer, SSL)는 암호 규약입니다.
 
 * '트랜스포트 레이어 보안'이라는 이름은 '보안 소켓 레이어'가 표준화 되면서 바뀐 이름입니다.
 
@@ -94,4 +124,4 @@ Helmet은 Application을 보호하기 위한 미들웨어로, 다양한 HTTP hea
   1. 지원 가능한 알고리즘 서로 교환
   2. 키 교환, 인증
   3. 대칭키 암호로 암호화하고 메시지 인증
----
+--- -->
