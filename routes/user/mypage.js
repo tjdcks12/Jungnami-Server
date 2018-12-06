@@ -151,6 +151,8 @@ router.get('/:mypage_id', async(req, res, next) => {
         result.scrap.push(scrap);
       }
 
+
+
       // 작성한 커뮤니티 게시물
       result.board = [];
 
@@ -163,129 +165,131 @@ router.get('/:mypage_id', async(req, res, next) => {
       `
       let selectboardQuery = await db.queryParamCnt_Arr(selectboardSql,[mypage_id]);
 
-      for(var i=0; i<selectboardQuery.length; i++) {
+          for(var i=0; i<selectboardQuery.length; i++) {
 
-        var board = {};
+            var board = {};
 
-        board.b_id = selectboardQuery[i].id;
+            board.b_id = selectboardQuery[i].id;
 
-        let selectuserSql =
-        `
-        SELECT *
-        FROM user
-        WHERE id = ?
-        `
-        let selectuserQuery = await db.queryParamCnt_Arr(selectuserSql,[mypage_id]);
-
-        board.u_id = selectuserQuery[0].id;
-        board.u_nickname = selectuserQuery[0].nickname;
-        board.u_img = selectuserQuery[0].img_url;
-
-        board.source = [];
-
-        // 내가 직접 쓴 글
-        if (selectboardQuery[i].shared == 0) {
-
-          let selectboardinfoSql =
-          `
-          SELECT *
-          FROM board
-          WHERE id = ?
-          `
-          let selectboardinfoQuery = await db.queryParamCnt_Arr(selectboardinfoSql,[board.b_id]);
-
-          board.b_content = selectboardinfoQuery[0].content;
-          board.b_img = selectboardinfoQuery[0].img_url;
-
-        } // 공유한 글
-        else if (selectboardQuery[i].shared > 0) {
-          source = {};
-
-          let selectsharedboardinfoSql =
-          `
-          SELECT *
-          FROM board
-          WHERE id = ?
-          `
-          let selectsharedboardinfoQuery = await db.queryParamCnt_Arr(selectsharedboardinfoSql,[selectboardQuery[i].shared]);
-
-          if(selectsharedboardinfoQuery.length > 0){
-
-            let selectshareduserSql =
+            let selectuserSql =
             `
             SELECT *
             FROM user
             WHERE id = ?
             `
-            let selectshareduserQuery = await db.queryParamCnt_Arr(selectshareduserSql,[selectsharedboardinfoQuery[0].b_user_id]);
+            let selectuserQuery = await db.queryParamCnt_Arr(selectuserSql,[mypage_id]);
 
-            source.u_id = selectshareduserQuery[0].id;
-            source.u_nickname = selectshareduserQuery[0].nickname;
-            source.u_img = selectshareduserQuery[0].img_url;
+            board.u_id = selectuserQuery[0].id;
+            board.u_nickname = selectuserQuery[0].nickname;
+            board.u_img = selectuserQuery[0].img_url;
 
-            source.b_content = selectsharedboardinfoQuery[0].content;
-            source.b_img = selectsharedboardinfoQuery[0].img_url;
-            source.b_time = checktime.checktime(selectsharedboardinfoQuery[0].writingtime);
+            board.source = [];
 
-            board.source.push(source);
+            // 내가 직접 쓴 글
+            if (selectboardQuery[i].shared == 0) {
 
-            board.b_content = '0';
-            board.b_img = '0';
-          } else {
-            let deleteSharedBoardSql =
+              let selectboardinfoSql =
               `
-              DELETE
+              SELECT *
               FROM board
               WHERE id = ?
-              `;
-            let deleteSharedBoardQuery = await db.queryParamCnt_Arr(deleteSharedBoardSql,[selectboardQuery[i].id]);
+              `
+              let selectboardinfoQuery = await db.queryParamCnt_Arr(selectboardinfoSql,[board.b_id]);
 
-            continue;
+              board.b_content = selectboardinfoQuery[0].content;
+              board.b_img = selectboardinfoQuery[0].img_url;
+
+            } // 공유한 글
+            else if (selectboardQuery[i].shared > 0) {
+              source = {};
+
+              let selectsharedboardinfoSql =
+              `
+              SELECT *
+              FROM board
+              WHERE id = ?
+              `
+              let selectsharedboardinfoQuery = await db.queryParamCnt_Arr(selectsharedboardinfoSql,[selectboardQuery[i].shared]);
+
+              if(selectsharedboardinfoQuery.length > 0){
+
+                let selectshareduserSql =
+                `
+                SELECT *
+                FROM user
+                WHERE id = ?
+                `
+                let selectshareduserQuery = await db.queryParamCnt_Arr(selectshareduserSql,[selectsharedboardinfoQuery[0].b_user_id]);
+
+                source.u_id = selectshareduserQuery[0].id;
+                source.u_nickname = selectshareduserQuery[0].nickname;
+                source.u_img = selectshareduserQuery[0].img_url;
+
+                source.b_content = selectsharedboardinfoQuery[0].content;
+                source.b_img = selectsharedboardinfoQuery[0].img_url;
+                source.b_time = checktime.checktime(selectsharedboardinfoQuery[0].writingtime);
+
+                board.source.push(source);
+
+                board.b_content = '0';
+                board.b_img = '0';
+              } else {
+                let deleteSharedBoardSql =
+                  `
+                  DELETE
+                  FROM board
+                  WHERE id = ?
+                  `;
+                let deleteSharedBoardQuery = await db.queryParamCnt_Arr(deleteSharedBoardSql,[selectboardQuery[i].id]);
+
+                continue;
+              }
+
+            }
+
+
+            // 내가 좋아요한 글 가져오기
+            var select_like =
+            `
+            SELECT bl_board_id
+            FROM boardLike
+            WHERE bl_user_id = ?
+            `
+            var result_like = await db.queryParamCnt_Arr(select_like, [u_id]);
+
+            // 좋아요 여부
+            board.islike = 0;
+            for(var j=0; j<result_like.length; j++){
+              if(result_like[j].bl_board_id == selectboardQuery[i].id){
+                board.islike = 1;
+                break;
+              }
+            }
+
+            // 좋아요 개수
+            let getlikecntSql =
+            `
+            SELECT count(*) as like_cnt
+            FROM boardLike
+            WHERE bl_board_id = ?
+            `;
+            let getlikecntQuery = await db.queryParamCnt_Arr(getlikecntSql, [board.b_id]);
+
+            // 댓글 개수
+            let getcommentcntSql =
+            `
+            SELECT count(*) as comment_cnt
+            FROM boardComment
+            WHERE bc_board_id = ?
+            `;
+            let getcommentcntQuery = await db.queryParamCnt_Arr(getcommentcntSql, [board.b_id] );
+
+            board.b_time = checktime.checktime(selectboardQuery[i].writingtime);
+            board.like_cnt = getlikecntQuery[0].like_cnt;
+            board.comment_cnt = getcommentcntQuery[0].comment_cnt;
+
+            result.board.push(board);
           }
-
-        }
-
-
-        // 내가 좋아요한 글 가져오기
-        var select_like =
-        `
-        SELECT bl_board_id
-        FROM boardLike
-        WHERE bl_user_id = ?
-        `
-        var result_like = await db.queryParamCnt_Arr(select_like, [u_id]);
-
-        // 좋아요 여부
-        board.islike = 0;
-        for(var j=0; j<result_like.length; j++){
-          if(result_like[j].bl_board_id == selectboardQuery[i].id){
-            board.islike = 1;
-            break;
-          }
-        }
-
-        let getlikecntSql =
-        `
-        SELECT count(*) as like_cnt
-        FROM boardLike
-        WHERE bl_board_id = ?
-        `;
-        let getlikecntQuery = await db.queryParamCnt_Arr(getlikecntSql, [board.b_id]);
-
-        let getcommentcntSql =
-        `
-        SELECT count(*) as comment_cnt
-        FROM boardComment
-        WHERE bc_board_id = ?
-        `;
-        let getcommentcntQuery = await db.queryParamCnt_Arr(getcommentcntSql, [board.b_id] );
-
-        board.b_time = checktime.checktime(selectboardQuery[0].writingtime);
-        board.like_cnt = getlikecntQuery[0].like_cnt;
-        board.comment_cnt = getcommentcntQuery[0].comment_cnt;
-
-        result.board.push(board);
-      }
     }
 
     res.status(200).send({
