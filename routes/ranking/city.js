@@ -7,8 +7,6 @@ const router = express.Router({mergeParams : true});
 const async = require('async');
 const jwt = require('../../module/jwt.js');
 const db = require('../../module/pool.js');
-const hangul = require('hangul-js');
-
 
 
 /*  지역별 호감, 비호감 순 리스트 보여주기  */
