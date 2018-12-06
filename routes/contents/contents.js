@@ -25,9 +25,9 @@ router.get('/:pre', async (req, res, next) => {
   }
 
   let pre =+ req.params.pre;  // contentsid
-  if(pre == 0){
-    pre = 100000000;
-  }
+  // if(pre == 0){
+  //   pre = 100000000;
+  // }
   
   let number = 10;
 
@@ -46,9 +46,10 @@ router.get('/:pre', async (req, res, next) => {
     `
     SELECT *
     FROM contents
+    WHERE id > ?
     ORDER BY score DESC
     `
-    var result_contents = await db.queryParamCnt_Arr(select_contents, []);
+    var result_contents = await db.queryParamCnt_Arr(select_contents, [pre]);
 
     var result = [];
     for(var i=0; i<result_contents.length; i++){
@@ -56,8 +57,8 @@ router.get('/:pre', async (req, res, next) => {
 
       if(number <= 0)
         break;
-      else if(result_contents[i].id >= pre)
-        continue;
+      // else if(result_contents[i].id >= pre)
+      //   continue;
 
       number--;
 
@@ -88,9 +89,8 @@ router.get('/:pre', async (req, res, next) => {
 
 /*  컨텐츠 글 (TMI, story)  */
 /*  /contents/category/:category/:pre  */
-router.get('/category/:category/:pre', async (req, res, next) => {
+router.get('/category/:category', async (req, res, next) => {
 
-  console.log(req.params)
   const chkToken = jwt.verify(req.headers.authorization);
 
   var userid;
@@ -101,10 +101,10 @@ router.get('/category/:category/:pre', async (req, res, next) => {
     userid = chkToken.id;
   }
 
-  let pre =+ req.params.pre;  // contentsid
-  if(pre == 0){
-    pre = 100000000;
-  }
+  // let pre =+ req.params.pre;  // contentsid
+  // if(pre == 0){
+    let pre = 100000000;
+  // }
 
   let number = 10;
 

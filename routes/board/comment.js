@@ -16,12 +16,12 @@ const serverKey = require('../../config/fcmKey.js').key;
 
 /*  커뮤니티 댓글 리스트 보여주기  */
 /*  /board/comment/:board_id/:pre  */
-router.get('/:board_id/:pre', async(req, res, next) => {
+router.get('/:board_id', async(req, res, next) => {
 	const chkToken = jwt.verify(req.headers.authorization);
 
 	var userid;
-	let pre =+ req.params.pre;  // commentid
-	let number = 3;
+	// let pre =+ req.params.pre;  // commentid
+	// let number = 3;
 
 	if(chkToken == -1){
 		userid = "";
