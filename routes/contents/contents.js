@@ -127,7 +127,7 @@ router.get('/:category/:pre', async (req, res, next) => {
     AND id > ?
     ORDER BY id DESC
     `;
-    var result_contents = await db.queryParamCnt_Arr(select_contents, [req.params.category]);
+    var result_contents = await db.queryParamCnt_Arr(select_contents, [req.params.category, pre]);
 
     var result = [];
     for(var i=0; i<result_contents.length; i++){
