@@ -168,14 +168,22 @@ router.post('/', upload.array('image'), async(req, res, next) => {
     }
 
     var userid = chkToken.id;
-    let content = req.body.content;
+    
     let shared = req.body.shared;
-    let image;
+    let content, image = "0"
 
-    if (req.files[0] != undefined){
-      image = req.files[0].location;
-    } else {
-      image = "0"
+    // 공유하기
+    if(shared > 0){
+      content = " "
+    } 
+    // 내가 쓴거
+    else{
+
+      content = req.body.content;
+
+      if (req.files[0] != undefined){
+        image = req.files[0].location;
+      }
     }
 
     let postboardQuery =
@@ -194,7 +202,7 @@ router.post('/', upload.array('image'), async(req, res, next) => {
     res.status(201).send({
       "message" : "Success",
     });
-    
+
   }catch(err){
     console.log(err);
     return next("500");
