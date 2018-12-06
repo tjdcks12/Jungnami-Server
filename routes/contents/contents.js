@@ -25,9 +25,9 @@ router.get('/:pre', async (req, res, next) => {
   }
 
   let pre =+ req.params.pre;  // contentsid
-  // if(pre == 0){
-  //   pre = 100000000;
-  // }
+  if(pre == 0){
+    pre = 100000000;
+  }
   
   let number = 10;
 
@@ -46,7 +46,7 @@ router.get('/:pre', async (req, res, next) => {
     `
     SELECT *
     FROM contents
-    WHERE id > ?
+    WHERE id < ?
     ORDER BY id DESC
     `
     var result_contents = await db.queryParamCnt_Arr(select_contents, [pre]);
@@ -102,9 +102,9 @@ router.get('/:category/:pre', async (req, res, next) => {
   }
 
   let pre =+ req.params.pre;  // contentsid
-  // if(pre == 0){
-  //  let pre = 100000000;
-  // }
+  if(pre == 0){
+    pre = 100000000;
+  }
 
   let number = 10;
 
@@ -124,7 +124,7 @@ router.get('/:category/:pre', async (req, res, next) => {
     SELECT *
     FROM contents
     WHERE category = ?
-    AND id > ?
+    AND id < ?
     ORDER BY id DESC
     `;
     var result_contents = await db.queryParamCnt_Arr(select_contents, [req.params.category, pre]);
