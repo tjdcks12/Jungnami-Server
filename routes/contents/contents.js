@@ -89,7 +89,7 @@ router.get('/:pre', async (req, res, next) => {
 
 /*  컨텐츠 글 (TMI, story)  */
 /*  /contents/category/:category/:pre  */
-router.get('/category/:category/:pre', async (req, res, next) => {
+router.get('/:category/:pre', async (req, res, next) => {
 
   const chkToken = jwt.verify(req.headers.authorization);
 
