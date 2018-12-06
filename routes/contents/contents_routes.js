@@ -11,7 +11,7 @@ const router = express.Router();
 router.use('/', require('./contents'));
 
 // 컨텐츠 글 상세보기
-router.use('/detail', require('./detail'));
+// router.use('/detail', require('./detail'));
 
 // 컨텐츠 글에 좋아요
 router.use('/like', require('./like'));

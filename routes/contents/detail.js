@@ -1,5 +1,6 @@
 /*  컨텐츠 글 상세보기  */
 /*  /contents/detail  */
+/*  안써  */
 
 var express = require('express');
 var router = express.Router();
