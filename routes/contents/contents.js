@@ -101,12 +101,12 @@ router.get('/:category/:pre', async (req, res, next) => {
     userid = chkToken.id;
   }
 
-  let pre =+ req.params.pre;  // contentsid
+  // let pre =+ req.params.pre;  // contentsid
   // if(pre == 0){
   //  let pre = 100000000;
   // }
 
-  let number = 10;
+  // let number = 10;
 
   try{
     // 푸쉬알람 카운트 가져오기
@@ -124,21 +124,20 @@ router.get('/:category/:pre', async (req, res, next) => {
     SELECT *
     FROM contents
     WHERE category = ?
-    AND id > ?
     ORDER BY writingtime DESC
     `;
-    var result_contents = await db.queryParamCnt_Arr(select_contents, [req.params.category, pre]);
+    var result_contents = await db.queryParamCnt_Arr(select_contents, [req.params.category]);
 
     var result = [];
     for(var i=0; i<result_contents.length; i++){
       var data = {};
 
-      if(number <= 0)
-        break;
+      // if(number <= 0)
+      //  break;
       // else if(result_contents[i].id >= pre)
       //   continue;
 
-      number--;
+      // number--;
 
       data.contentsid = result_contents[i].id;
       data.title = result_contents[i].title;
