@@ -177,10 +177,9 @@ router.post('/', upload.array('image'), async(req, res, next) => {
       content = req.body.content;
       content = content.substr(1, content.length-2)
     } else {
-      content = ""
+      content = req.body.content;
     }
 
-    console.log(req.files)
     if (req.files[0] != undefined){
       image = req.files[0].location;
     } else {
