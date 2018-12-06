@@ -172,6 +172,12 @@ router.post('/', upload.array('image'), async(req, res, next) => {
     let content, image;
     let shared = req.body.shared;
 
+    console.log("## are you android ?")
+    console.log(req.useragent.isAndroid)
+
+    console.log("## content is ...")
+    console.log(req.body.content)
+
     // 따옴표 제거 for android
     if (req.useragent.isAndroid && req.body.content){
       content = req.body.content;
