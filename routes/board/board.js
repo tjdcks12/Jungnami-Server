@@ -151,7 +151,6 @@ router.get('/:pre', async (req, res, next) => {
     });
 
   }catch(err){
-    console.error(err);
     return next("500");
   }
 });
@@ -169,22 +168,9 @@ router.post('/', upload.array('image'), async(req, res, next) => {
     }
 
     var userid = chkToken.id;
-    let content, image;
+    let content = req.body.content;
     let shared = req.body.shared;
-
-    console.log("## are you android ?")
-    console.log(req.useragent.isAndroid)
-
-    console.log("## content is ...")
-    console.log(req.body.content)
-
-    // 따옴표 제거 for android
-    if (req.useragent.isAndroid && req.body.content){
-      content = req.body.content;
-      content = content.substr(1, content.length-2)
-    } else {
-      content = req.body.content;
-    }
+    let image;
 
     if (req.files[0] != undefined){
       image = req.files[0].location;
@@ -198,6 +184,7 @@ router.post('/', upload.array('image'), async(req, res, next) => {
     myjungnami.board (b_user_id, content, img_url, shared)
     VALUES (?, ?, ?, ?)
     `;
+
     let data = await db.queryParamCnt_Arr(postboardQuery, [userid, content, image, shared]);
     if(!data){
       console.log(err);
@@ -207,6 +194,7 @@ router.post('/', upload.array('image'), async(req, res, next) => {
     res.status(201).send({
       "message" : "Success",
     });
+    
   }catch(err){
     console.log(err);
     return next("500");
