@@ -28,6 +28,9 @@ router.use('/img', require('./img'));
 // Contetns Scrap (post/delete)
 router.use('/scrap', require('./scrap'));
 
+// 신고하기
+router.use('/report', require('./report'));
+
 
 
 // Follow (post/delete)
