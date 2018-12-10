@@ -293,7 +293,7 @@ router.get('/search/:keyword', async(req, res, next) => {
     user_id = "";
   }
   else{
-    id = chkToken.id;
+    user_id = chkToken.id;
   }
 
 
