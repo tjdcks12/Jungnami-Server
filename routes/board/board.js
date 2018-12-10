@@ -312,6 +312,10 @@ router.get('/search/:keyword', async(req, res, next) => {
     `;
     let result_content = await db.queryParamCnt_Arr(select_content);
 
+    if(result_content.length == 0){
+      return next("1204");
+    }
+
     // 좋아요한 글 가져오기
     var select_check =
     `
