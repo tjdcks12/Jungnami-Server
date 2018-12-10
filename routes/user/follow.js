@@ -104,15 +104,27 @@ router.delete('/:f_id', async(req, res, next) => {
     let follower_id = chkToken.id;
     let following_id = req.params.f_id;
 
-    let deleteSql =
+    let deleteFollowSql =
     `
     DELETE
     FROM follow
     WHERE f_follower_id = ? AND f_following_id = ?
     `
-    let result_delete = await db.queryParamCnt_Arr(deleteSql,[follower_id, following_id]);
+    let result_deleteFollow = await db.queryParamCnt_Arr(deleteFollowSql,[follower_id, following_id]);
 
-    if(!result_delete){
+    if(!result_deleteFollow){
+      return next("500");
+    }
+
+    let deletePushSql =
+    `
+    DELETE
+    FROM push
+    WHERE p_follower_id = ? AND p_user_id = ?
+    `
+    let result_deletePush = await db.queryParamCnt_Arr(deletePushSql,[follower_id, following_id]);
+
+    if(!result_deletePush){
       return next("500");
     }
 
