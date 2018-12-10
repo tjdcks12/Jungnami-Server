@@ -19,17 +19,18 @@ router.post('/',  async (req, res, next) => {
 
     let user_id = chkToken.id;
     let relation = req.body.relation;
+    let relation_id = req.body.relation_id;
     let content = req.body.content;
 
     console.log("new reporting!");
-    
+
     let reportSql =
     `
     INSERT INTO
-    myjungnami.report (r_user_id, relation, content)
-    VALUES (?, ?, ?)
+    myjungnami.report (r_user_id, relation, relation_id, content)
+    VALUES (?, ?, ?, ?)
     `;
-    let reportQuery = await db.queryParamCnt_Arr(reportSql, [user_id, relation, content]);
+    let reportQuery = await db.queryParamCnt_Arr(reportSql, [user_id, relation, relation_id, content]);
 
     if(!reportQuery){
       console.log(err);
