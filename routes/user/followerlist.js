@@ -95,11 +95,14 @@ router.get('/search/:keyword', async(req, res, next) => {
 
     const chkToken = jwt.verify(req.headers.authorization);
 
-    if(chkToken == -1) {
-      return next("401");
-    }
+    let u_id;
 
-    let u_id = chkToken.id;
+    if(chkToken == -1) {
+      u_id = '';
+    } else {
+      u_id = chkToken.id;
+    }
+    
     let following_id = req.params.f_id;
 
     let searchFollower = req.params.keyword;

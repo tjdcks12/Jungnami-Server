@@ -37,6 +37,10 @@ router.get('/', async(req, res, next) => {
 
     let followinglistQuery = await db.queryParamCnt_Arr(followinglistSql,[follower_id]);
 
+    if(followinglistQuery.length == 0){
+      return next("1204");
+    }
+
     let followingSelectSql =
     `
     SELECT f_following_id
@@ -45,9 +49,10 @@ router.get('/', async(req, res, next) => {
     `
     let followingSelectQuery = await db.queryParamCnt_Arr(followingSelectSql,[u_id]);
 
+
+
+
     var result = []; // following_id, following_nickname, following_img_url, isMyFollowing
-
-
 
     for (var i=0; i<followinglistQuery.length; i++) {
       var r = {};
@@ -81,7 +86,6 @@ router.get('/', async(req, res, next) => {
       result.push(r);
     }
 
-
     res.status(200).send({
       message : "Success",
       data : result
@@ -95,6 +99,7 @@ router.get('/', async(req, res, next) => {
 
 
 
+
 /*  팔로잉 리스트 보여주기  */
 /*  /user/:f_id/followinglist/search/:keyword  */
 router.get('/search/:keyword', async(req, res, next) => {
@@ -103,11 +108,14 @@ router.get('/search/:keyword', async(req, res, next) => {
 
     const chkToken = jwt.verify(req.headers.authorization);
 
+    let u_id;
+
     if(chkToken == -1) {
-      return next("401");
+      u_id = '';
+    } else {
+      u_id = chkToken.id;
     }
 
-    let u_id = chkToken.id;
     let follower_id = req.params.f_id;
 
     let searchFollowing = req.params.keyword;
@@ -135,19 +143,23 @@ router.get('/search/:keyword', async(req, res, next) => {
 
     let followingSelectQuery = await db.queryParamCnt_Arr(followingSelectSql,[u_id]);
 
+
+
+
     var result = []; // following_id, following_nickname, following_img_url, isMyFollowing
 
-    if(followingSelectQuery.length == 0) {
-      return next("1204");
-    }else{
-      for (var i=0; i<followinglistQuery.length; i++) {
-        var r = {};
+    for (var i=0; i<followinglistQuery.length; i++) {
+      var r = {};
 
-        r.following_id = followinglistQuery[i].f_following_id;
-        r.following_nickname = followinglistQuery[i].nickname;
-        r.following_img_url = followinglistQuery[i].img_url;
+      r.following_id = followinglistQuery[i].f_following_id;
+      r.following_nickname = followinglistQuery[i].nickname;
+      r.following_img_url = followinglistQuery[i].img_url;
+      //r.isMyFollowing = "팔로우"; // 팔로우 하세요
+      r.isMyFollowing = ''; // 로그인 안 되어 있을때 -> button 안만들어줘도 됨
+
+      if (u_id != '') { // 로그인 되어있을 때에는?
+
         r.isMyFollowing = "팔로우"; // 팔로우 하세요
-
         for (var j=0; j<followingSelectQuery.length; j++) {
 
           // 내가 이 사람을 팔로잉 중이에요
@@ -163,9 +175,12 @@ router.get('/search/:keyword', async(req, res, next) => {
             break;
           }
         }
-        result.push(r);
       }
+      result.push(r);
     }
+
+
+
 
     var searchResult = [];
     for(var i=0; i<result.length; i++){
@@ -189,6 +204,5 @@ router.get('/search/:keyword', async(req, res, next) => {
   }
 
 });
-
 
 module.exports = router;
