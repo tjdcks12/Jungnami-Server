@@ -28,8 +28,8 @@ router.post('/', async(req, res, next) => {
   // push 알람 클라이언트 토큰
   let fcmToken = req.body.fcmToken;
 
-  console.log(accessToken)
-  console.log(fcmToken)
+  console.log(" :: fcmToken");
+  console.log(fcmToken);
 
   let option = {
     method : 'GET',
@@ -63,14 +63,14 @@ router.post('/', async(req, res, next) => {
   try {
     let kakaoResult = await request(option);
 
-    // let result = {};
-    
     var nickname = kakaoResult.properties.nickname;
     var img_url = kakaoResult.properties.thumbnail_image;
     var id = kakaoResult.id;
     var token;
     var chkToken;
-
+    
+    // let result = {};
+    
     // result.nickname = nickname;
     // result.thumbnail_image = img_url;
 
@@ -90,8 +90,6 @@ router.post('/', async(req, res, next) => {
         if(!updateResult){
           return next("500");
         }
-        console.log(" :: fcmToken");
-        console.log(fcmToken);
 
         token = jwt.sign(id);
         res.status(201).send({

@@ -49,7 +49,7 @@ router.post('/', async(req, res, next) => {
     let selectfollowerQuery = await db.queryParamCnt_Arr(selectfollowerSql,[follower_id]);
 
 
-    // push 알람
+    /* push 알람 */
     p_text = selectfollowerQuery[0].nickname + "님이 팔로우 했습니다.";
 
     // client fcmToken 가져오기
@@ -74,7 +74,6 @@ router.post('/', async(req, res, next) => {
     } else {
       console.log("No fcmToken");
     }
-    // 푸쉬알람 끝
 
     res.status(201).send({
       message : "Success"
@@ -107,7 +106,8 @@ router.delete('/:f_id', async(req, res, next) => {
     `
     DELETE
     FROM follow
-    WHERE f_follower_id = ? AND f_following_id = ?
+    WHERE f_follower_id = ?
+    AND f_following_id = ?
     `
     let result_deleteFollow = await db.queryParamCnt_Arr(deleteFollowSql,[follower_id, following_id]);
 
@@ -119,7 +119,8 @@ router.delete('/:f_id', async(req, res, next) => {
     `
     DELETE
     FROM push
-    WHERE p_follower_id = ? AND p_user_id = ?
+    WHERE p_follower_id = ?
+    AND p_user_id = ?
     `
     let result_deletePush = await db.queryParamCnt_Arr(deletePushSql,[follower_id, following_id]);
 
