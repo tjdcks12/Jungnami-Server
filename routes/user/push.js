@@ -59,7 +59,8 @@ router.get('/', async(req, res, next) => {
           `
           SELECT *
           FROM follow
-          WHERE f_follower_id = ? AND f_following_id = ?
+          WHERE f_follower_id = ?
+          AND f_following_id = ?
           `;
           let followerdata = await db.queryParamCnt_Arr(followersql,[u_id, r.id]);
 
@@ -73,7 +74,8 @@ router.get('/', async(req, res, next) => {
           `
           SELECT time
           FROM follow
-          WHERE f_follower_id = ? AND f_following_id = ?
+          WHERE f_follower_id = ?
+          AND f_following_id = ?
           `;
           let followingtimedata = await db.queryParamCnt_Arr(followingtimesql,[r.id, u_id]);
 
