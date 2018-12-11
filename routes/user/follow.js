@@ -71,8 +71,7 @@ router.post('/', async(req, res, next) => {
         console.log('Push메시지가 발송되었습니다.');
         console.log(response);
       });
-    }
-    else {
+    } else {
       console.log("No fcmToken");
     }
     // 푸쉬알람 끝

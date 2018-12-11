@@ -18,6 +18,7 @@ const db = require('../../module/pool.js');
 const request = require('request-promise');
 
 router.post('/', async(req, res, next) => {
+
   // 카카오톡 access token
   let accessToken = req.body.accessToken;
   if(!accessToken){
@@ -27,6 +28,9 @@ router.post('/', async(req, res, next) => {
   // push 알람 클라이언트 토큰
   let fcmToken = req.body.fcmToken;
 
+  console.log(accessToken)
+  console.log(fcmToken)
+
   let option = {
     method : 'GET',
     uri: 'https://kapi.kakao.com/v2/user/me',
@@ -35,46 +39,52 @@ router.post('/', async(req, res, next) => {
       'Authorization': "Bearer " +  accessToken
     }
   }
-	console.log(accessToken)
+
+  // login SQL
+  let checkidQuery =
+  `
+  SELECT * FROM user
+  WHERE id = ?
+  `;
+
+  let insertQuery =
+  `
+  INSERT INTO user (id, nickname, img_url, fcmToken)
+  VALUES (?, ?, ?, ?);
+  `;
+
+  let updateQuery =
+  `
+  UPDATE user
+  SET fcmToken = ?
+  WHERE id = ?;
+  `;
+
   try {
     let kakaoResult = await request(option);
 
-    let result = {};
-    result.nickname = kakaoResult.properties.nickname;
-    result.thumbnail_image = kakaoResult.properties.thumbnail_image;
-
+    // let result = {};
+    
     var nickname = kakaoResult.properties.nickname;
     var img_url = kakaoResult.properties.thumbnail_image;
-
     var id = kakaoResult.id;
     var token;
-
     var chkToken;
+
+    // result.nickname = nickname;
+    // result.thumbnail_image = img_url;
+
     if(req.headers.authorization != undefined){
       chkToken = jwt.verify(req.headers.authorization);
     }
 
-
-    let checkidQuery =
-    `
-    SELECT * FROM user
-    WHERE id = ?
-    `;
-
-    let insertQuery =
-    `
-    INSERT INTO user (id, nickname, img_url, fcmToken)
-    VALUES (?, ?, ?, ?);
-    `;
-    let updateQuery =
-    `
-    UPDATE user SET fcmToken = ? WHERE id = ?;
-    `;
-
-    if(chkToken != undefined){ // 토큰이 이미 있는 경우 (로그인 되어있는 경우)
+    /* 토큰이 이미 있는 경우 (로그인 되어있는 경우) */
+    if(chkToken != undefined) { 
       console.log("토큰이 있습니다");
+
       if(chkToken.id == id){
         console.log("성공적으로 로그인 되었습니다");
+
         token = jwt.sign(id);
         res.status(201).send({
           data : {
@@ -85,6 +95,7 @@ router.post('/', async(req, res, next) => {
         });
       } else { // 토큰이 만료된 경우 재발급
         console.log("기간이 만료되었습니다. 재발급 합니다");
+
         token = jwt.sign(id);
         res.status(201).send({
           data : {
@@ -94,11 +105,16 @@ router.post('/', async(req, res, next) => {
           message : "Success"
         })
       }
-    } else{ // 토큰이 없는 경우
+    }
+
+    /* 토큰이 없는 경우 */
+    else { 
       let checkid = await db.queryParamCnt_Arr(checkidQuery,[id]);
 
-      if(checkid.length != 0){ // 기기를 변경했을 경우
-        // fcm token update
+      // 기기를 변경했을 경우
+      if(checkid.length != 0){ 
+        console.log("다른기기에서 접속했습니다");
+        
         // 모바일일 경우 푸쉬알람 토큰 업데이트
         if(req.useragent.isMobile){
           let updateResult = await db.queryParamCnt_Arr(updateQuery, [fcmToken, id]);
@@ -107,7 +123,9 @@ router.post('/', async(req, res, next) => {
           }
         }
 
-        console.log("다른기기에서 접속했습니다");
+        console.log(id)
+        console.log(token)
+
         token = jwt.sign(id);
         res.status(201).send({
           data : {
@@ -116,7 +134,9 @@ router.post('/', async(req, res, next) => {
           },
           message : "Success"
         });
-      } else{ // 다른 기기이고 회원이 아닐때
+      } 
+      // 다른 기기이고 회원이 아닐때
+      else{ 
         console.log("비회원입니다.")
 
         let insertResult = await db.queryParamCnt_Arr(insertQuery,[id, nickname ,img_url, fcmToken]);
@@ -125,7 +145,6 @@ router.post('/', async(req, res, next) => {
         }
 
         token = jwt.sign(id);
-
         res.status(201).send({
           data : {
             id : id,
@@ -139,9 +158,6 @@ router.post('/', async(req, res, next) => {
   catch(err) {
     console.log("kakao Error => " + err);
     next(err);
-  }
-  finally {
-    console.log('finally');
   }
 });
 

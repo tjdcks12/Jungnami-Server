@@ -1,6 +1,7 @@
 module.exports = {
   get_pushdata : function(fcmToken, body){
-    /** 발송할 Push 메시지 내용 */
+    
+    /** 발송할 Push 메시지 내용 **/
     var push_data = {
         // 수신대상
         to: fcmToken,
