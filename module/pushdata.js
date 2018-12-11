@@ -1,6 +1,6 @@
 module.exports = {
   get_pushdata : function(fcmToken, body){
-    
+
     /** 발송할 Push 메시지 내용 **/
     var push_data = {
         // 수신대상
@@ -11,7 +11,7 @@ module.exports = {
             body: body, // content
             sound: "default",
             click_action: "FCM_PLUGIN_ACTIVITY",
-            icon: "fcm_push_icon"
+            icon: "./public/images/push_icon.png"
         },
         // 메시지 중요도
         priority: "high",
