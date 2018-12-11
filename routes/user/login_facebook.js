@@ -18,6 +18,7 @@ const db = require('../../module/pool.js');
 const request = require('request-promise');
 
 router.post('/', async(req, res, next) => {
+
   // facebook access token
   let accessToken = req.body.accessToken;
   if(!accessToken){
@@ -36,55 +37,64 @@ router.post('/', async(req, res, next) => {
     // }
   }
 
+  // login SQL
+  let checkidQuery =
+  `
+  SELECT * FROM user
+  WHERE id = ?
+  `;
+
+  let insertQuery =
+  `
+  INSERT INTO user (id, nickname, img_url, fcmToken)
+  VALUES (?, ?, ?, ?);
+  `;
+
+  let updateQuery =
+  `
+  UPDATE user
+  SET fcmToken = ?
+  WHERE id = ?;
+  `;
+
   try {
     let facebookResult = await request(option);
-
-    let result = {};
-    // 닉네임 인코딩
-    result.nickname = facebookResult.name;
-    result.thumbnail_image = facebookResult.picture.data.url;
 
     var id = facebookResult.id;
     var nickname = facebookResult.name;
     var img_url = "https://graph.facebook.com/" + id + "/picture?type=large&width=720&height=720";
-
     var token;
-
     var chkToken;
+
     if(req.headers.authorization != undefined){
       chkToken = jwt.verify(req.headers.authorization);
     }
 
-    let checkidQuery =
-    `
-    select * from user
-    where id = ?
-    `;
 
-    let insertQuery =
-    `
-    INSERT INTO user (id, nickname, img_url, fcmToken)
-    VALUES (?, ?, ?, ?);
-    `;
-    let updateToken =
-    `
-    UPDATE user SET fcmToken = ? WHERE id = ?;
-    `;
-
-    if(chkToken != undefined){ // 토큰이 이미 있는 경우 (로그인 되어있는 경우)
+    
+    /* 토큰이 이미 있는 경우 (로그인 되어있는 경우) */
+    if(chkToken != undefined){ 
       console.log("토큰이 있습니다");
+
       if(chkToken.id == id){
         console.log("성공적으로 로그인 되었습니다");
+
+        let updatefcmToken = await db.queryParamCnt_Arr(updateQuery, [fcmToken, id]);
+        if(!updatefcmToken){
+          return next("500");
+        }
+
         token = jwt.sign(id);
         res.status(201).send({
           data : {
             id : id,
-            token : token,
+            token : token
           },
           message : "Success"
         });
       } else { // 토큰이 만료된 경우 재발급
         console.log("기간이 만료되었습니다. 재발급 합니다");
+
         token = jwt.sign(id);
         res.status(201).send({
           data : {
@@ -94,18 +104,23 @@ router.post('/', async(req, res, next) => {
           message : "Success"
         })
       }
-    } else{ // 토큰이 없는 경우
+    } 
+
+    /* 토큰이 없는 경우 */
+    else{ 
       let checkid = await db.queryParamCnt_Arr(checkidQuery,[id]);
 
-      if(checkid.length != 0){ // 기기를 변경했을 경우
-        // fcm token update
+      // 기기를 변경했을 경우
+      if(checkid.length != 0){
+        console.log("다른기기에서 접속했습니다");
+
+        // 푸쉬알람 토큰 업데이트
         let updatefcmToken = await db.queryParamCnt_Arr(updateToken, [fcmToken, id]);
         if(!updatefcmToken){
           return next("500");
         }
 
         token = jwt.sign(id);
-        console.log("다른기기에서 접속했습니다");
         res.status(201).send({
           data : {
             id : id,
@@ -113,7 +128,9 @@ router.post('/', async(req, res, next) => {
           },
           message : "Success"
         });
-      } else{ // 다른 기기이고 회원이 아닐때
+      } 
+      // 다른 기기이고 회원이 아닐때
+      else{ 
         console.log("비회원입니다.")
 
         let insertResult = await db.queryParamCnt_Arr(insertQuery,[id, nickname ,img_url, fcmToken]);
@@ -122,7 +139,6 @@ router.post('/', async(req, res, next) => {
         }
 
         token = jwt.sign(id);
-
         res.status(201).send({
           data : {
             id : id,
@@ -137,10 +153,6 @@ router.post('/', async(req, res, next) => {
     console.log("Facebook Error => " + err);
     next(err);
   }
-  finally {
-    console.log('finally');
-  }
-
 });
 
 module.exports = router;

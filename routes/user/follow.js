@@ -63,13 +63,12 @@ router.post('/', async(req, res, next) => {
       fcm.send(push_data, function(err, response) {
         console.log(push_data);
         if (err) {
-          console.error('__Push메시지 발송에 실패했습니다.');
+          console.error('Push메시지 발송에 실패했습니다.');
           console.error(err);
           return;
         }
 
-        console.log('__Push메시지가 발송되었습니다.');
-        console.log(response);
+        console.log('Push메시지가 발송되었습니다.');
       });
     } else {
       console.log("No fcmToken");

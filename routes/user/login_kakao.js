@@ -1,6 +1,6 @@
 /* 카카오톡 로그인 */
 /* /user/kakaologin */
-
+/* 종찬 */
 
 const express = require('express');
 const router = express.Router();
@@ -19,7 +19,7 @@ const request = require('request-promise');
 
 router.post('/', async(req, res, next) => {
 
-  // 카카오톡 access token
+  // kakao access token
   let accessToken = req.body.accessToken;
   if(!accessToken){
     return next("401");
@@ -63,21 +63,18 @@ router.post('/', async(req, res, next) => {
   try {
     let kakaoResult = await request(option);
 
+    var id = kakaoResult.id;
     var nickname = kakaoResult.properties.nickname;
     var img_url = kakaoResult.properties.thumbnail_image;
-    var id = kakaoResult.id;
     var token;
     var chkToken;
     
-    // let result = {};
-    
-    // result.nickname = nickname;
-    // result.thumbnail_image = img_url;
-
     if(req.headers.authorization != undefined){
       chkToken = jwt.verify(req.headers.authorization);
     }
 
+
+    
     /* 토큰이 이미 있는 경우 (로그인 되어있는 경우) */
     if(chkToken != undefined) { 
       console.log("토큰이 있습니다");
@@ -85,9 +82,8 @@ router.post('/', async(req, res, next) => {
       if(chkToken.id == id){
         console.log("성공적으로 로그인 되었습니다");
 
-        // for ios
-        let updateResult = await db.queryParamCnt_Arr(updateQuery, [fcmToken, id]);
-        if(!updateResult){
+        let updatefcmToken = await db.queryParamCnt_Arr(updateQuery, [fcmToken, id]);
+        if(!updatefcmToken){
           return next("500");
         }
 
@@ -159,7 +155,7 @@ router.post('/', async(req, res, next) => {
     }
   }
   catch(err) {
-    console.log("kakao Error => " + err);
+    console.log("Kakao Error => " + err);
     next(err);
   }
 });
