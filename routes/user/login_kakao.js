@@ -85,6 +85,14 @@ router.post('/', async(req, res, next) => {
       if(chkToken.id == id){
         console.log("성공적으로 로그인 되었습니다");
 
+        // for ios
+        let updateResult = await db.queryParamCnt_Arr(updateQuery, [fcmToken, id]);
+        if(!updateResult){
+          return next("500");
+        }
+        console.log(" :: fcmToken");
+        console.log(fcmToken);
+
         token = jwt.sign(id);
         res.status(201).send({
           data : {
@@ -122,9 +130,6 @@ router.post('/', async(req, res, next) => {
             return next("500");
           }
         }
-
-        console.log(id)
-        console.log(token)
 
         token = jwt.sign(id);
         res.status(201).send({
